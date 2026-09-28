@@ -1,0 +1,27 @@
+{
+    "title": "App Launcher",
+    "enabled": true,
+    "apps": [
+        {
+            "id": "chat",
+            "name": "Chat",
+            "icon": "\uD83D\uDCAC",
+            "description": "Terug naar de chatomgeving",
+            "url": "/",
+            "target": "navigate"
+        },
+        {
+            "id": "versimpelaar",
+            "name": "Versimpelaar",
+            "icon": "\uD83D\uDD24",
+            "description": "Vereenvoudig teksten naar B1 of B2 taalniveau",
+            "url": "https://n8n-dev.ai.flevoland.nl/webhook/versimpelaar",
+            "target": "versimpelaar",
+            "config": {
+                "language_levels": ["B1", "B2"],
+                "default_level": "B1",
+                "webhook_token": "s92uvLWZDFHe2VV6UVNq0ew128wY3g9r5HsC9NLS"
+            }
+        }
+    ]
+}
