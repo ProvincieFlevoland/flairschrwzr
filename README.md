@@ -5,6 +5,36 @@
 > Deze repository wordt gedeeld als **inspiratie en referentie-implementatie** voor leveranciers en mede-overheden.
 > Gebruik dit niet als kant-en-klare productieoplossing zonder eigen validatie, security review, hardening en acceptatietesten.
 
+## Provincie Flevoland deployment (this repo)
+
+This is Flevoland's own working copy of the codebase, migrated on 2026-09-28 from the
+`BvO-Flevoland/GovChat-AdminOverlay` GitHub fork into this Azure Repos repository so the
+docker-build pipeline in `tf-azure-ai-govchat` builds from an internal, access-controlled
+source instead of a public GitHub fork. The rest of this README is the original upstream
+GovChat-NL project documentation and still describes how the overlay itself works.
+
+- **Live app**: https://flair-dev.ai.flevoland.nl (Open WebUI + this overlay)
+- **Versimpelaar / n8n**: https://n8n-dev.ai.flevoland.nl (webhook + n8n UI, reachable via
+  Front Door + Private Link; the underlying Container Apps environment is internal-only)
+- The App Launcher here only exposes **Chat** and **Versimpelaar** — Beleidskompas and Live
+  transcriptie were intentionally removed for this deployment.
+- The App Launcher is a sidebar entry (next to Notes/Workspace), not a top-navbar button —
+  a deliberate deviation from upstream to avoid colliding with Open WebUI's own sidebar toggle.
+
+**To roll out a change:**
+1. Push to this repo's `main`.
+2. Run the `pipeline-dev-docker-build` pipeline in `tf-azure-ai-govchat`
+   (`.azuredevops/dev/pipeline-dev-docker-build.yaml`) — rebuilds
+   `acrflvaidev01.azurecr.io/govchat-adminoverlay`.
+3. Force a new Container Apps revision so the rebuilt image actually gets pulled — a same-tag
+   rebuild alone is not picked up automatically (yet):
+   `az containerapp update --name aca-flair-govchat-admin-dev --resource-group rg-flair-dev-001 --revision-suffix <unique>`
+
+The GitHub fork (`BvO-Flevoland/GovChat-AdminOverlay`) is left in place for now as a historical
+reference; this repo is what the pipeline actually builds from going forward.
+
+---
+
 ## Doel van publicatie
 
 - Inspiratie bieden voor leveranciersselectie en doorontwikkeling binnen overheidscontext.
