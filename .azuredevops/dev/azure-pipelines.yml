@@ -1,0 +1,258 @@
+# .azuredevops/dev/azure-pipelines.yml — Schrwzr image build & rollout (see docs/DESIGN.md)
+#
+# Lives in the GitHub repo ProvincieFlevoland/flairschrwzr. Create the Azure DevOps pipeline from
+# that GitHub repo (Azure Pipelines GitHub App connection, "Existing Azure Pipelines YAML file",
+# path /.azuredevops/dev/azure-pipelines.yml). Paths below are relative to the repo root. Repository resource
+# triggers do not fire for GitHub repos, so the YAML has to live in the repo it builds.
+#
+# Flow:
+#   PR into main/release/*  -> Validate (docker build + scan, no push)
+#   push to main/release/*  -> Build -> DeployTest
+#   tag v*                  -> Build (immutable release tag) -> DeployTest
+#   weekly schedule         -> Build (base-image refresh) -> DeployTest
+#
+# Acc and prod are out of scope for now: they will live in their own subscription and ACR and
+# get the release digest via `az acr import` (see DESIGN.md section 7.3). No stages for them yet.
+#
+# Everything is deployed by digest (repo@sha256:...), never by a mutable tag.
+#
+# Prerequisites:
+#   - ADO Environment 'schrwzr-test'.
+#   - ARM service connection with workload identity federation:
+#       AcrPush on the registry, Container Apps write on the TEST app resource group.
+#   - Terraform ignores image/revision_suffix on the TEST app (DESIGN.md 7.4).
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - release/*
+  tags:
+    include:
+      - v*
+  paths:
+    exclude:
+      - docs/**
+      - '**/*.md'
+      - .github/**
+
+pr:
+  branches:
+    include:
+      - main
+      - release/*
+  paths:
+    exclude:
+      - docs/**
+      - '**/*.md'
+      - .github/**
+
+schedules:
+  - cron: '0 3 * * 1' # Mondays 03:00 UTC: rebuild for base-image patches
+    displayName: Weekly base-image refresh
+    branches:
+      include:
+        - main
+        - release/*
+    always: true # run even without code changes, otherwise the refresh never happens
+
+pool:
+  name: 'devcenter-devops-agents'
+
+variables:
+  # --- registry -------------------------------------------------------------------------
+  azureServiceConnection: 'sc-iac-ai-hub-dev'          # TODO: federated connection, AcrPush + ACA write
+  acrSubscriptionId: 'fcc53a83-4017-47c8-ae71-018f604b68b9'
+  acrName: 'acrflvaidev01'
+  acrLoginServer: 'acrflvaidev01-bgbqa0bwfjhra4dv.azurecr.io'
+  imageRepository: 'govchat-adminoverlay'
+  buildContext: 'admin'
+  dockerfile: 'admin/Dockerfile'
+  # --- TEST -----------------------------------------------------------------------------
+  testSubscriptionId: 'fcc53a83-4017-47c8-ae71-018f604b68b9'
+  testResourceGroup: 'TODO-rg-of-aca-flair-admin-dev-schrwzr'
+  testContainerApp: 'aca-flair-admin-dev-schrwzr'
+  # --- shared ---------------------------------------------------------------------------
+  containerName: 'admin'
+  smokeTestPath: '/'                                  # TODO: health endpoint if the app has one
+
+stages:
+
+  # ===========================================================================================
+  # Validate — PR builds only. No Azure credentials are used, so fork PRs are safe.
+  # ===========================================================================================
+  - stage: Validate
+    displayName: 'Validate (PR)'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    jobs:
+      - job: BuildAndScan
+        displayName: 'docker build + Trivy scan (no push)'
+        steps:
+          - checkout: self
+          - bash: |
+              set -euo pipefail
+              docker build -f "$(dockerfile)" -t "pr-$(Build.BuildId)" "$(buildContext)"
+            displayName: 'docker build'
+          - bash: |
+              set -euo pipefail
+              docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                aquasec/trivy:0.56.2 image --exit-code 1 --severity CRITICAL --ignore-unfixed \
+                "pr-$(Build.BuildId)"
+            displayName: 'Trivy scan (fail on fixable CRITICAL)'
+          - bash: docker image rm "pr-$(Build.BuildId)" || true
+            displayName: 'Clean up local image'
+            condition: always()
+
+  # ===========================================================================================
+  # Build — CI, tag and scheduled runs. Builds in ACR Tasks and reads back the digest.
+  # ===========================================================================================
+  - stage: Build
+    displayName: 'Build & push image'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+    jobs:
+      - job: BuildImage
+        displayName: 'az acr build'
+        steps:
+          - checkout: self
+            fetchDepth: 0      # full history + tags, needed for the version calculation
+            fetchTags: true
+
+          - bash: |
+              set -euo pipefail
+              REF='$(Build.SourceBranch)'
+              SHA7=$(git rev-parse --short=7 HEAD)
+              LAST=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || echo v0.0.0)
+              LAST=${LAST#v}
+              IFS=. read -r MAJ MIN PAT <<< "$LAST"
+              EXTRA_TAGS=""
+              if [[ "$REF" == refs/tags/v* ]]; then
+                VERSION=${REF#refs/tags/v}
+                IFS=. read -r MAJ MIN PAT <<< "$VERSION"
+                EXTRA_TAGS="$MAJ.$MIN $MAJ"
+                IS_RELEASE=true
+              elif [[ "$REF" == refs/heads/release/* ]]; then
+                VERSION="$MAJ.$MIN.$((PAT + 1))-rc.$SHA7"
+                IS_RELEASE=false
+              else
+                VERSION="$MAJ.$((MIN + 1)).0-main.$SHA7"
+                IS_RELEASE=false
+              fi
+              if [ '$(Build.Reason)' = 'Schedule' ]; then
+                VERSION="$VERSION-r$(Build.BuildId)"
+              fi
+              # Revision suffix: lowercase letters, digits, hyphens; short and unique per run.
+              SUFFIX="v$(echo "${VERSION%%-*}" | tr '.' '-')-b$(Build.BuildId)"
+              echo "Version: $VERSION  suffix: $SUFFIX  extra tags: ${EXTRA_TAGS:-none}"
+              echo "##vso[task.setvariable variable=VERSION;isOutput=true]$VERSION"
+              echo "##vso[task.setvariable variable=EXTRA_TAGS;isOutput=true]$EXTRA_TAGS"
+              echo "##vso[task.setvariable variable=REVISION_SUFFIX;isOutput=true]$SUFFIX"
+              echo "##vso[task.setvariable variable=IS_RELEASE;isOutput=true]$IS_RELEASE"
+              echo "##vso[build.updatebuildnumber]$VERSION"
+            name: version
+            displayName: 'Compute version'
+
+          - task: AzureCLI@2
+            name: meta
+            displayName: 'az acr build + read digest'
+            inputs:
+              azureSubscription: '$(azureServiceConnection)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                az account set --subscription "$(acrSubscriptionId)"
+                VERSION='$(version.VERSION)'
+                TAG_ARGS=(--image "$(imageRepository):$VERSION")
+                for t in $(version.EXTRA_TAGS); do TAG_ARGS+=(--image "$(imageRepository):$t"); done
+
+                az acr build \
+                  --subscription "$(acrSubscriptionId)" \
+                  --registry "$(acrName)" \
+                  "${TAG_ARGS[@]}" \
+                  --build-arg "VERSION=$VERSION" \
+                  --build-arg "GIT_COMMIT=$(Build.SourceVersion)" \
+                  --file "$(Build.SourcesDirectory)/$(dockerfile)" \
+                  "$(Build.SourcesDirectory)/$(buildContext)"
+
+                DIGEST=$(az acr repository show --name "$(acrName)" \
+                  --image "$(imageRepository):$VERSION" --query digest -o tsv)
+                IMAGE_REF="$(acrLoginServer)/$(imageRepository)@$DIGEST"
+                echo "Built $IMAGE_REF"
+
+                # Release tags are immutable from here on.
+                if [ '$(version.IS_RELEASE)' = 'true' ]; then
+                  az acr repository update --name "$(acrName)" \
+                    --image "$(imageRepository):$VERSION" --write-enabled false -o none
+                fi
+
+                printf '{"version":"%s","digest":"%s","imageRef":"%s","commit":"%s"}\n' \
+                  "$VERSION" "$DIGEST" "$IMAGE_REF" "$(Build.SourceVersion)" > "$(Build.ArtifactStagingDirectory)/image.json"
+                echo "##vso[task.setvariable variable=IMAGE_REF;isOutput=true]$IMAGE_REF"
+
+          - publish: '$(Build.ArtifactStagingDirectory)/image.json'
+            artifact: image
+            displayName: 'Publish image.json'
+
+  # ===========================================================================================
+  # DeployTest — single revision mode, automatic. For now dev and test (TST) are the same
+  # environment (dev-schrwzr); users test there on request. A separate test environment can be
+  # added later as another stage like this one, pointing at different variables.
+  # ===========================================================================================
+  - stage: DeployTest
+    displayName: 'Deploy TEST'
+    dependsOn: Build
+    condition: succeeded('Build')
+    variables:
+      imageRef: $[ stageDependencies.Build.BuildImage.outputs['meta.IMAGE_REF'] ]
+      version: $[ stageDependencies.Build.BuildImage.outputs['version.VERSION'] ]
+      revisionSuffix: $[ stageDependencies.Build.BuildImage.outputs['version.REVISION_SUFFIX'] ]
+    jobs:
+      - deployment: DeployTest
+        displayName: 'az containerapp update (TEST)'
+        environment: 'schrwzr-test'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+                - task: AzureCLI@2
+                  displayName: 'Roll out $(version) to $(testContainerApp)'
+                  inputs:
+                    azureSubscription: '$(azureServiceConnection)'
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      set -euo pipefail
+                      az extension add --name containerapp --upgrade --only-show-errors
+                      az account set --subscription "$(testSubscriptionId)"
+                      APP='$(testContainerApp)'; RG='$(testResourceGroup)'
+                      REVISION="$APP--$(revisionSuffix)"
+
+                      az containerapp update -n "$APP" -g "$RG" \
+                        --container-name "$(containerName)" \
+                        --image "$(imageRef)" \
+                        --revision-suffix "$(revisionSuffix)" \
+                        --set-env-vars "SOFTWARE_VERSION_TAG=$(version)" -o none
+
+                      # Wait for the new revision to be provisioned and healthy (max ~10 min).
+                      for i in $(seq 1 60); do
+                        read -r PROV HEALTH <<< "$(az containerapp revision show -n "$APP" -g "$RG" \
+                          --revision "$REVISION" \
+                          --query "join(' ', [properties.provisioningState, properties.healthState])" -o tsv)"
+                        echo "[$i] $REVISION provisioning=$PROV health=$HEALTH"
+                        [ "$PROV" = "Failed" ] && { echo "##vso[task.logissue type=error]Revision failed to provision"; exit 1; }
+                        [ "$PROV" = "Provisioned" ] && [ "$HEALTH" = "Healthy" ] && break
+                        [ "$i" -eq 60 ] && { echo "##vso[task.logissue type=error]Timed out waiting for $REVISION"; exit 1; }
+                        sleep 10
+                      done
+
+                      FQDN=$(az containerapp show -n "$APP" -g "$RG" --query properties.configuration.ingress.fqdn -o tsv)
+                      curl -fsS --retry 5 --retry-delay 5 -o /dev/null "https://$FQDN$(smokeTestPath)"
+                      echo "Smoke test OK on https://$FQDN"
+
+                      # Informational pointer only; nothing deploys from it.
+                      az acr import --name "$(acrName)" --subscription "$(acrSubscriptionId)" \
+                        --source "$(imageRef)" --image "$(imageRepository):test" --force -o none
