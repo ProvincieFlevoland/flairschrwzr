@@ -15,7 +15,7 @@
 # get the release digest via `az acr import` (see DESIGN.md section 7.3). No stages for them yet.
 #
 # Everything is deployed by digest (repo@sha256:...), never by a mutable tag.
-#
+# dit is eentest 
 # Prerequisites:
 #   - ADO Environment 'schrwzr-test'.
 #   - ARM service connection with workload identity federation:
