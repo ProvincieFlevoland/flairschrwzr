@@ -1,0 +1,25 @@
+// log-tokens: Failed to save nota; Generate agent response failed; AI Agent call failed
+// Server errors. The gunicorn access log is OFF in the container (it would put request paths and query strings into the logs, gunicorn.conf.py), so
+// a 5xx has no access line. What the backend writes is an ERROR line per failed route ("Failed to save nota 'n1': <exception text>", "Generate agent
+// response failed: <type>", "AI Agent call failed: ...") and a traceback for an unhandled exception. Query 1 counts those. Query 2 is the Front Door
+// view of the same thing (needs the Front Door diagnostic setting "FrontDoorAccessLog" to a workspace; see schrijfassistent/OPERATIONS.md). Query 3 is the Container Apps metric.
+// Workspace: the Log Analytics workspace of the Container Apps environment. Table of the classic schema shown;
+// the resource-specific schema is ContainerAppConsoleLogs with the columns Log and ContainerAppName (swap the two names in the first lines).
+let appName = "aca-flair-schrijfassistent-api-dev-schrwzr";   // the name of the backend Container App (see schrijfassistent/OPERATIONS.md); change it to the name in your environment
+let window = 7d;                                              // the period to look back
+let logs = ContainerAppConsoleLogs_CL
+    | where ContainerAppName_s == appName and TimeGenerated > ago(window)
+    | extend Line = tostring(Log_s);
+logs
+| where Line has " ERROR " or Line has "Traceback (most recent call last)"
+| extend Day = bin(TimeGenerated, 1d), Kind = extract(@"(Failed to [a-z ]+|Generate agent response failed|AI Agent call failed|Generate nota title failed|Summarize nota failed|Traceback)", 1, Line)
+| summarize Errors = count() by Day, Kind
+| order by Day desc, Errors desc
+
+// Query 2 (Front Door, needs the diagnostic setting): 5xx on the path rule of the backend.
+// AzureDiagnostics
+// | where ResourceType == "FRONTDOORS" or Category == "FrontDoorAccessLog"
+// | where requestUri_s has "/apps/schrijfassistent/api/" and toint(httpStatusCode_s) >= 500
+// | summarize Count = count() by bin(TimeGenerated, 1h), httpStatusCode_s
+
+// Query 3 (metric, not KQL): az monitor metrics list --resource <container app id> --metric Requests --filter "StatusCodeCategory eq '5xx'" --interval PT1H --offset 7d

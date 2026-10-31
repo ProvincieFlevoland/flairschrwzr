@@ -1,0 +1,35 @@
+{
+  "id": "n1760000000001",
+  "title": "Parkeergarage provinciehuis — concept",
+  "titleManuallySet": true,
+  "status": "WIP",
+  "lastModified": "2026-10-22T10:00:00.000Z",
+  "configId": "GS-nota v5",
+  "configName": "GS-nota v5",
+  "templateVersion": "v5.0",
+  "toneOfVoice": "Zakelijk",
+  "allowedWords": [],
+  "authors": [
+    "Anna de Vries"
+  ],
+  "reviewers": [
+    "Mark Beheer"
+  ],
+  "content": "<h2 class=\"dynamic-chapter\" data-chapter-id=\"h1\">Onderwerp</h2>\n<p><i>Schrijf hier een korte, krachtige titel</i></p>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h2\">Beslispunten</h2>\n<p>Kennis te nemen van het voorstel om een parkeergarage te bouwen onder het provinciehuis. Wij verzoeken u dit te <span class=\"reviewer-highlight\" data-note-id=\"note-1\" style=\"background-color: #8b5cf630; border-bottom: 2px solid #8b5cf6;\">accorderen</span>. Dit kost twee&nbsp; spaties en een&nbsp;harde spatie .</p>\n<p>Financiële dekking: € 500.000 — zie hoofdstuk 8; ‘Kennis te nemen van’ is geen besluit.</p>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h3\">Kern voorstel (aanleiding en doel)</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h4\">Eerdere behandeling</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h5\">Argumenten voor beslispunten</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h6\">Kanttekeningen, risico’s en tegenargumenten</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h7\">Alternatieven</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h8\">Financiële impact – Korte samenvatting financiële aspecten</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h9\">Personele impact</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h10\">Bevoegdheden GS</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h11\">Externe afstemming</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h12\">Participatie</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h13\">Externe communicatie</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h14\">Samenvatting voor op de openbare besluitenlijst</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h15\">Bijlagen</h2>\n",
+  "notes": [
+    {
+      "id": "note-1",
+      "reviewerName": "Mark Beheer",
+      "text": "Is ‘accorderen’ B1? Liever ‘goedkeuren’.",
+      "type": "Opmerking",
+      "timestamp": "2026-10-20T09:15:00.000Z",
+      "resolved": false
+    }
+  ],
+  "shortSummary": "",
+  "blockWorkflow": {
+    "block-h1": "concept",
+    "block-h2": "review",
+    "block-h3": "done"
+  }
+}

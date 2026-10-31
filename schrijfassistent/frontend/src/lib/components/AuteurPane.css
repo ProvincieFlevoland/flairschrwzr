@@ -1,0 +1,130 @@
+/* ── Handled (accepted / denied) suggestion rows ── */
+.sa-root .sa-auteur-pane-sidebar-row--handled {
+    border-radius: 6px;
+    background: var(--sa-bg-sidebar, #f8fafc);
+    border: 1px solid var(--sa-border-color, #e2e8f0);
+    opacity: 0.7;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: opacity 0.15s;
+}
+
+.sa-root .sa-auteur-pane-sidebar-row--handled:hover {
+    opacity: 0.9;
+}
+
+.sa-root .sa-auteur-pane-handled-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 7px 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.sa-root .sa-auteur-pane-handled-caret {
+    font-size: 0.75rem;
+    color: var(--sa-text-muted, #64748b);
+    flex-shrink: 0;
+    margin-left: auto;
+    opacity: 0.6;
+}
+
+.sa-root .sa-auteur-pane-handled-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sa-text-muted, #64748b);
+    background: rgba(100, 116, 139, 0.12);
+    padding: 2px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.sa-root .sa-auteur-pane-handled-text {
+    font-size: 0.82rem;
+    color: var(--sa-text-muted, #64748b);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: line-through;
+    text-decoration-color: rgba(100, 116, 139, 0.4);
+}
+
+/* ── Expanded detail panel ── */
+.sa-root .sa-auteur-pane-handled-detail {
+    padding: 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid var(--sa-border-color, #e2e8f0);
+}
+
+.sa-root .sa-auteur-pane-diff-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 8px;
+}
+
+.sa-root .sa-auteur-pane-diff-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sa-root .sa-auteur-pane-diff-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sa-text-muted, #64748b);
+}
+
+.sa-root .sa-auteur-pane-diff-text {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    padding: 5px 8px;
+    border-radius: 5px;
+}
+
+.sa-root .sa-auteur-pane-diff-text--removed {
+    background: rgba(239, 68, 68, 0.07);
+    border-left: 3px solid rgba(239, 68, 68, 0.45);
+    color: #b91c1c;
+    text-decoration: line-through;
+    text-decoration-color: rgba(185, 28, 28, 0.5);
+}
+
+.sa-root .sa-auteur-pane-diff-text--added {
+    background: rgba(16, 185, 129, 0.07);
+    border-left: 3px solid rgba(16, 185, 129, 0.45);
+    color: #065f46;
+}
+
+.sa-root .sa-auteur-pane-btn-undo-suggestion {
+    align-self: flex-start;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--sa-border-color, #e2e8f0);
+    background: white;
+    color: var(--sa-primary-color, #0b6edb);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+
+.sa-root .sa-auteur-pane-btn-undo-suggestion:hover {
+    background: var(--sa-primary-color, #0b6edb);
+    color: white;
+    border-color: transparent;
+}

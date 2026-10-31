@@ -1,0 +1,36 @@
+{
+  "assignment": "agent_woordenlijst",
+  "raw": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"accorderen\",\n      \"Categorie\": \"niet-B1\",\n      \"Alternatieven\": [\n        {\n          \"Tekst\": \"goedkeuren\",\n          \"Uitleg\": \"Gewoon Nederlands woord dat iedereen kent.\"\n        },\n        {\n          \"Tekst\": \"instemmen\",\n          \"Uitleg\": \"Eenvoudig en gebruikelijk in besluiten.\"\n        }\n      ]\n    },\n    {\n      \"Origineel\": \"verzoeken\",\n      \"Categorie\": \"jargon\",\n      \"Alternatieven\": [\n        {\n          \"Tekst\": \"vragen\",\n          \"Uitleg\": \"Korter en alledaags (B1).\"\n        },\n        {\n          \"Tekst\": \"willen\",\n          \"Uitleg\": \"Direct en begrijpelijk.\"\n        }\n      ]\n    }\n  ]\n}",
+  "expected": {
+    "Suggesties": [
+      {
+        "Origineel": "accorderen",
+        "Categorie": "niet-B1",
+        "Alternatieven": [
+          {
+            "Tekst": "goedkeuren",
+            "Uitleg": "Gewoon Nederlands woord dat iedereen kent."
+          },
+          {
+            "Tekst": "instemmen",
+            "Uitleg": "Eenvoudig en gebruikelijk in besluiten."
+          }
+        ]
+      },
+      {
+        "Origineel": "verzoeken",
+        "Categorie": "jargon",
+        "Alternatieven": [
+          {
+            "Tekst": "vragen",
+            "Uitleg": "Korter en alledaags (B1)."
+          },
+          {
+            "Tekst": "willen",
+            "Uitleg": "Direct en begrijpelijk."
+          }
+        ]
+      }
+    ]
+  }
+}

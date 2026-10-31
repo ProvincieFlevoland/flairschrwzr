@@ -6,6 +6,8 @@ const http = require("http");
 const path = require("path");
 const sharp = require("sharp");
 const { WebSocket, WebSocketServer } = require("ws");
+const { prepareAppsForPublish, jsonForScript } = require("./lib/schrijfassistent-card");
+const { publishAppsDir: publishAppsDirTo } = require("./lib/publish-apps");
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -74,6 +76,23 @@ const BELEIDSKOMPAS_N8N_BASE_URL = String(process.env.BELEIDSKOMPAS_N8N_BASE_URL
 const BELEIDSKOMPAS_N8N_WEBHOOK_TOKEN = String(process.env.BELEIDSKOMPAS_N8N_WEBHOOK_TOKEN || process.env.N8N_WEBHOOK_TOKEN || "").trim();
 const TRANSCRIPT_AUTH_DEBUG = String(process.env.TRANSCRIPT_AUTH_DEBUG || "false").toLowerCase() === "true";
 const LIBRECHAT_JWT_REFRESH_SECRET = String(process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || "").trim();
+// Local development only: lets the local overlay call the Schrijfassistent backend on
+// http://localhost:<port>. Set by docker-compose.local.yaml; the pipeline and the Terraform App Settings never set
+// it, and prepareAppsForPublish() strips `allow_local_api` from every card otherwise.
+const SCHRIJFASSISTENT_LOCAL_API = {
+  allowLocalApi: ["1", "true", "yes"].includes(String(process.env.SCHRIJFASSISTENT_ALLOW_LOCAL_API || "").trim().toLowerCase()),
+  localApiBaseUrl: String(process.env.SCHRIJFASSISTENT_LOCAL_API_BASE_URL || "").trim(),
+};
+if (SCHRIJFASSISTENT_LOCAL_API.allowLocalApi) {
+  console.warn("[govchat-admin] SCHRIJFASSISTENT_ALLOW_LOCAL_API is set: the published schrijfassistent card allows a local http backend. Local development only.");
+}
+
+// Periodic republish of the overlay files: Open WebUI rewrites
+// /static on its own restart, so the admin republishes every N seconds. 0 disables.
+const REPUBLISH_INTERVAL_SEC = Math.max(
+  0,
+  Number.parseInt(String(process.env.GOVCHAT_REPUBLISH_INTERVAL_SEC || "60"), 10) || 0,
+);
 
 // Active sessions (in-memory, resets on restart)
 const sessions = new Map();
@@ -352,6 +371,23 @@ function initDefaults() {
   const beleidskompasState = readBeleidskompasState();
   publishBeleidskompasLiveConfig(beleidskompasState.live || beleidskompasState.draft || defaultBeleidskompasFlow());
   syncBeleidskompasWorkflowFiles(beleidskompasState);
+}
+
+// apps.json as it is published: the stored file, prepared for the schrijfassistent card. Used by publishAll(), the apps
+// write path and the public GET /api/config/apps (sync-config.sh copies that into /static).
+function readPublishedApps() {
+  const data = readJSON("apps.json");
+  if (!data) return null;
+  return prepareAppsForPublish(data, SCHRIJFASSISTENT_LOCAL_API);
+}
+
+// Returns { merged, published, error }: `published` is the write result of
+// publishFile, so a failed write is reported instead of assumed.
+function publishApps() {
+  const merged = readPublishedApps();
+  if (!merged) return { merged: null, published: false, error: "apps.json ontbreekt in DATA_DIR" };
+  const result = publishFile("apps.json", merged);
+  return { merged, published: result.ok, error: result.ok ? "" : result.error };
 }
 
 function readJSON(filename) {
@@ -1073,8 +1109,10 @@ function publishFile(filename, data) {
     const target = path.join(PUBLISH_DIR, filename);
     fs.writeFileSync(target, JSON.stringify(data, null, 2), "utf-8");
     console.log(`[publish] ${filename} → ${PUBLISH_DIR}`);
+    return { ok: true, error: "" };
   } catch (err) {
     console.warn(`[publish] Failed to publish ${filename}: ${err.message}`);
+    return { ok: false, error: err.message };
   }
 }
 
@@ -1093,18 +1131,31 @@ function publishFileRaw(filename) {
   }
 }
 
+// Copies admin/defaults/apps/ (the built Schrijfassistent bundle: schrijfassistent.<hash>.js/.css,
+// manifest.json, logo_flevoland.png, fonts/, inside the image only) to PUBLISH_DIR/apps/, so Open WebUI serves it
+// at /static/apps/schrijfassistent/ (schrijfassistent/README.md). Bundle files first, the
+// manifest last through a temporary file and a rename; the previous release's files stay (manifest.prev.json)
+// and older hashes are pruned (admin/lib/publish-apps.js).
+function publishAppsDir() {
+  return publishAppsDirTo(path.join(__dirname, "defaults", "apps"), path.join(PUBLISH_DIR, "apps"));
+}
+
 function publishAll() {
-  const jsonFiles = ["help-content.json", "apps.json", "orchestrator-config.json"];
+  const jsonFiles = ["help-content.json", "orchestrator-config.json"];
   for (const file of jsonFiles) {
     const data = readJSON(file);
     if (data) publishFile(file, data);
   }
+  // apps.json is published prepared for the Schrijfassistent card.
+  publishApps();
   const bkState = readBeleidskompasState();
   publishBeleidskompasLiveConfig(bkState.live || bkState.draft || defaultBeleidskompasFlow());
   const rawFiles = ["loader.js", "custom.css"];
   for (const file of rawFiles) {
     publishFileRaw(file);
   }
+  // The Schrijfassistent bundle.
+  publishAppsDir();
 }
 
 function readCrawlerConfig() {
@@ -2426,7 +2477,8 @@ function sendView(res, name, vars = {}) {
   const filepath = path.join(__dirname, "views", name);
   let html = fs.readFileSync(filepath, "utf-8");
   for (const [key, value] of Object.entries(vars)) {
-    html = html.replaceAll(`{{${key}}}`, value);
+    // Function replacement: `$&`, `$'` and `$$` in the value stay literal.
+    html = html.replaceAll(`{{${key}}}`, () => String(value));
   }
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.set("Pragma", "no-cache");
@@ -2443,7 +2495,7 @@ app.get("/api/config/help-content", (req, res) => {
 });
 
 app.get("/api/config/apps", (req, res) => {
-  const data = readJSON("apps.json");
+  const data = readPublishedApps();
   if (!data) return res.status(404).json({ error: "Not found" });
   res.json(data);
 });
@@ -2611,34 +2663,34 @@ app.get("/dashboard", requireAuth, (req, res) => {
 
 app.get("/crawler-editor", requireAuth, (req, res) => {
   sendView(res, "crawler-editor.html", {
-    jsonData: JSON.stringify(readCrawlerConfig()),
-    orchestratorData: JSON.stringify(readOrchestratorConfig()),
+    jsonData: jsonForScript(readCrawlerConfig()),
+    orchestratorData: jsonForScript(readOrchestratorConfig()),
   });
 });
 
 app.get("/orchestrator-editor", requireAuth, (req, res) => {
   sendView(res, "orchestrator-editor.html", {
-    orchestratorData: JSON.stringify(readOrchestratorConfig()),
+    orchestratorData: jsonForScript(readOrchestratorConfig()),
   });
 });
 
 app.get("/help-editor", requireAuth, (req, res) => {
   const data = readJSON("help-content.json") || { title: "", subtitle: "", sections: [] };
   sendView(res, "help-editor.html", {
-    jsonData: JSON.stringify(data),
+    jsonData: jsonForScript(data),
   });
 });
 
 app.get("/apps-editor", requireAuth, (req, res) => {
   const data = readJSON("apps.json") || { title: "App Launcher", apps: [] };
   sendView(res, "apps-editor.html", {
-    jsonData: JSON.stringify(data),
+    jsonData: jsonForScript(data),
   });
 });
 
 app.get("/beleidskompas-editor", requireAuth, (req, res) => {
   sendView(res, "beleidskompas-editor.html", {
-    jsonData: JSON.stringify(readBeleidskompasState()),
+    jsonData: jsonForScript(readBeleidskompasState()),
   });
 });
 
@@ -2654,8 +2706,11 @@ app.post("/api/config/help-content", requireAuth, (req, res) => {
 
 app.post("/api/config/apps", requireAuth, (req, res) => {
   try {
-    writeJSON("apps.json", req.body);
-    res.json({ ok: true });
+    // Store the editor's apps.json as sent; publish it prepared for the Schrijfassistent card.
+    ensureDataDir();
+    fs.writeFileSync(path.join(DATA_DIR, "apps.json"), JSON.stringify(req.body, null, 2), "utf-8");
+    const result = publishApps();
+    res.json({ ok: true, published: result.published, error: result.error || undefined });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -3363,6 +3418,21 @@ setTimeout(() => {
   publishAll();
   console.log(`[govchat-admin] Published config to ${PUBLISH_DIR}`);
 }, 15000);
+
+// Periodic republish: restores the overlay files after an
+// Open WebUI restart without an admin restart.
+if (REPUBLISH_INTERVAL_SEC > 0) {
+  console.log(`[govchat-admin] Periodic republish every ${REPUBLISH_INTERVAL_SEC}s (GOVCHAT_REPUBLISH_INTERVAL_SEC)`);
+  setInterval(() => {
+    try {
+      publishAll();
+    } catch (err) {
+      console.warn(`[govchat-admin] Periodic republish failed: ${err.message}`);
+    }
+  }, REPUBLISH_INTERVAL_SEC * 1000);
+} else {
+  console.log("[govchat-admin] Periodic republish disabled (GOVCHAT_REPUBLISH_INTERVAL_SEC=0)");
+}
 
 const server = http.createServer(app);
 

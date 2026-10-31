@@ -1,0 +1,15 @@
+// log-tokens: auth=denied
+// Every request the backend refused because no Open WebUI token verified: one INFO line "auth=denied route=...".
+// Expected: a few per day (an expired session in an open tab). A steady stream from one hour points at a broken token hand-over or an unreachable Open WebUI.
+// Workspace: the Log Analytics workspace of the Container Apps environment. Table of the classic schema shown;
+// the resource-specific schema is ContainerAppConsoleLogs with the columns Log and ContainerAppName (swap the two names in the first lines).
+let appName = "aca-flair-schrijfassistent-api-dev-schrwzr";   // the name of the backend Container App (see schrijfassistent/OPERATIONS.md); change it to the name in your environment
+let window = 7d;
+let logs = ContainerAppConsoleLogs_CL
+    | where ContainerAppName_s == appName and TimeGenerated > ago(window)
+    | extend Line = tostring(Log_s);
+logs
+| where Line has "auth=denied"
+| extend Hour = bin(TimeGenerated, 1h), Route = extract(@"route=(.+)$", 1, Line)
+| summarize Calls = count() by Hour, Route
+| order by Hour desc, Calls desc

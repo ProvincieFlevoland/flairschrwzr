@@ -1,0 +1,26 @@
+{
+  "assignment": "agent_spelling_grammatica",
+  "raw": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"twee\u00a0 spaties\",\n      \"Suggestie\": \"twee spaties\",\n      \"Uitleg\": \"Dubbele spatie tussen woorden; één spatie is de norm.\"\n    },\n    {\n      \"Origineel\": \"een&nbsp;harde spatie .\",\n      \"Suggestie\": \"een harde spatie.\",\n      \"Uitleg\": \"Harde spatie en spatie vóór de punt verwijderd (interpunctie).\"\n    },\n    {\n      \"Origineel\": \"accorderen\",\n      \"Suggestie\": \"akkoord gaan\",\n      \"Uitleg\": \"Consistente, begrijpelijke schrijfwijze (woordkeuze).\"\n    }\n  ]\n}",
+  "expected": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"twee\u00a0 spaties\",\n      \"Suggestie\": \"twee spaties\",\n      \"Uitleg\": \"Dubbele spatie tussen woorden; één spatie is de norm.\"\n    },\n    {\n      \"Origineel\": \"een&nbsp;harde spatie .\",\n      \"Suggestie\": \"een harde spatie.\",\n      \"Uitleg\": \"Harde spatie en spatie vóór de punt verwijderd (interpunctie).\"\n    },\n    {\n      \"Origineel\": \"accorderen\",\n      \"Suggestie\": \"akkoord gaan\",\n      \"Uitleg\": \"Consistente, begrijpelijke schrijfwijze (woordkeuze).\"\n    }\n  ]\n}",
+  "expected_validated": false,
+  "parsed": {
+    "Suggesties": [
+      {
+        "Origineel": "twee\u00a0 spaties",
+        "Suggestie": "twee spaties",
+        "Uitleg": "Dubbele spatie tussen woorden; één spatie is de norm."
+      },
+      {
+        "Origineel": "een&nbsp;harde spatie .",
+        "Suggestie": "een harde spatie.",
+        "Uitleg": "Harde spatie en spatie vóór de punt verwijderd (interpunctie)."
+      },
+      {
+        "Origineel": "accorderen",
+        "Suggestie": "akkoord gaan",
+        "Uitleg": "Consistente, begrijpelijke schrijfwijze (woordkeuze)."
+      }
+    ]
+  },
+  "note": "Row 1's Origineel carries U+00A0 + space (what the editor holds for a typed double space and what a model echoes when it sees the raw text). Row 2 carries a literal `&nbsp;` entity. Together they exercise both branches of decodeHtmlSpaceEntities (blockPlainText.js): entity decoding and U+00A0 normalisation. The e2e scenario for the taalreview rows relies on both rows."
+}

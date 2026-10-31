@@ -1,0 +1,1838 @@
+@import './reset.css';
+@import './phosphor.css';
+@keyframes sa-ph-spin-keyframes {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.sa-root .ph-spin {
+    animation: sa-ph-spin-keyframes 0.8s linear infinite;
+    display: inline-block;
+}
+
+.sa-root {
+    --sa-primary-color: #0b6edb;
+    /* Official Purple */
+    --sa-primary-hover: #0856ad;
+    --sa-secondary-color: #5cb4e6;
+    /* Official Blue */
+    --sa-accent-color: #ee76a4;
+    /* Official Pink */
+    --sa-bg-main: #f3f6f9;
+    --sa-bg-panel: #ffffff;
+    --sa-text-main: #1e293b;
+    --sa-text-muted: #475569; /* slate-600: 4.5:1 or better on the panel, the main background and the pale tiles */
+    --sa-primary-text: #0a5fbf; /* the primary colour as text: readable on the pale blue of the AI button; dark.css lightens it */
+    --sa-border-color: #e2e8f0;
+
+    /* Suggestion Severities */
+    --sa-color-green: #10b981;
+    --sa-color-green-bg: #ecfdf5;
+    --sa-color-yellow: #f59e0b;
+    --sa-color-yellow-bg: #fffbeb;
+    --sa-color-red: #ef4444;
+    --sa-color-red-bg: #fef2f2;
+    --sa-color-purple: #8b5cf6;
+    --sa-color-purple-bg: #f5f3ff;
+
+    --sa-a4-width: 210mm;
+    --sa-a4-height: 297mm;
+
+    --sa-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --sa-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+    /* Tokens that dark.css redefines; their light values live here, so a rule that reads them without a fallback works in light mode too */
+    --sa-bg-sidebar: #f8fafc;
+    --sa-bg-secondary: #e8edf5;
+    --sa-bg-hover: #f5f7fa;
+    --sa-color-danger: #dc2626;
+    --sa-highlight-bg: rgba(239, 68, 68, 0.2);
+
+    /* Text colours of the status badges: dark enough on their pale backgrounds (WCAG AA); dark.css lightens them */
+    --sa-color-green-text: #047857;
+    --sa-color-yellow-text: #b45309;
+    --sa-color-red-text: #b91c1c;
+    --sa-color-purple-text: #6d28d9;
+
+    /* Sidebar accents (AuteurPane): tab labels, headings, count badges and feedback boxes per source; readable on the
+       light panel here and on the dark panel in dark.css. A badge uses the text colour as background and the panel colour as text. */
+    --sa-structuur-text: #a16207;
+    --sa-spelling-text: #047857;
+    --sa-b1-text: #0b6edb;
+    --sa-woordenlijst-text: #7e3fa0;
+    --sa-ok-bg: #f0fdf4;
+    --sa-ok-border: #bbf7d0;
+    --sa-ok-text: #166534;
+    --sa-ok-accent: #4ade80;
+    --sa-warn-border: #fde68a;
+    --sa-warn-text: #92400e;
+    --sa-purple-border: #e9d5ff;
+}
+
+.sa-root, .sa-root * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.sa-root {
+    font-family: inherit;
+    background-color: var(--sa-bg-main);
+    color: var(--sa-text-main);
+    line-height: 1.5;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sa-root .app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header */
+.sa-root .app-header {
+    height: 60px;
+    background-color: var(--sa-bg-panel);
+    border-bottom: 1px solid var(--sa-border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    box-shadow: var(--sa-shadow-sm);
+    z-index: 10;
+}
+
+.sa-root .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sa-root .header-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--sa-text-main);
+}
+
+.sa-root .sa-badge-draft {
+    background-color: var(--sa-color-yellow-bg);
+    color: var(--sa-color-yellow-text);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #fde68a;
+}
+
+.sa-root .sa-badge-review {
+    background-color: var(--sa-color-purple-bg);
+    color: var(--sa-color-purple-text);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #ddd6fe;
+}
+
+/* Role Switcher */
+.sa-root .role-switcher-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 16px;
+    border-right: 1px solid var(--sa-border-color);
+    margin-right: 8px;
+}
+
+.sa-root .role-select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--sa-border-color);
+    background-color: var(--sa-bg-main);
+    color: var(--sa-text-main);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.sa-root .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.sa-root .sa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.sa-root .sa-btn-secondary {
+    background-color: var(--sa-bg-panel);
+    border-color: var(--sa-border-color);
+    color: var(--sa-text-main);
+}
+
+.sa-root .sa-btn-secondary:hover {
+    background-color: var(--sa-bg-main);
+}
+
+.sa-root .sa-btn-primary {
+    background-color: var(--sa-primary-color);
+    color: white;
+}
+
+.sa-root .sa-btn-primary:hover {
+    background-color: var(--sa-primary-hover);
+}
+
+.sa-root .sa-btn-success {
+    background-color: var(--sa-color-green);
+    color: white;
+}
+
+.sa-root .sa-btn-success:hover {
+    background-color: #059669;
+    /* Darker green */
+}
+
+.sa-root .sa-btn-danger {
+    background-color: white;
+    color: var(--sa-color-red-text);
+    border-color: var(--sa-color-red);
+}
+
+.sa-root .sa-btn-danger:hover {
+    background-color: var(--sa-color-red-bg);
+}
+
+
+/* Main Content Split */
+.sa-root .main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Editor Section */
+.sa-root .editor-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--sa-bg-panel);
+    border-right: 1px solid var(--sa-border-color);
+}
+
+.sa-root .editor-section.read-only {
+    background-color: #fafafa;
+}
+
+.sa-root .editor-toolbar {
+    height: 48px;
+    border-bottom: 1px solid var(--sa-border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+    background-color: var(--sa-bg-panel);
+}
+
+.sa-root .toolbar-btn {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--sa-text-muted);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.sa-root .toolbar-btn:hover {
+    background-color: var(--sa-bg-main);
+    color: var(--sa-text-main);
+}
+
+.sa-root .toolbar-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sa-root .editor-blocks-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    background-color: #e5e9f0;
+    /* Darker desk-like color */
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Legacy single-column paper (kept for any other references) */
+.sa-root .editor-paper {
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 8px rgba(0, 0, 0, 0.05);
+    width: min(var(--sa-a4-width), 100%);
+    margin: 0 auto;
+    padding: 0;
+}
+
+.sa-root .editor-blocks-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+.sa-root .editor-desk-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    gap: 14px;
+}
+
+/* Fixed slot: column of workflow icon buttons beside header */
+.sa-root .wf-slot {
+    flex: 0 0 44px;
+    width: 44px;
+    min-height: 1px;
+    display: flex;
+    justify-content: center;
+    padding-top: 16px;
+    align-self: flex-start;
+    box-sizing: border-box;
+}
+
+.sa-root .editor-paper-seg {
+    flex: 0 1 var(--sa-a4-width);
+    width: min(var(--sa-a4-width), 100%);
+    max-width: 100%;
+    min-width: 0;
+    background-color: #ffffff;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.sa-root .editor-desk-row:first-child .editor-paper-seg {
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.07);
+}
+
+.sa-root .editor-desk-row:last-child .editor-paper-seg {
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.1), 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.sa-root .editor-desk-row:only-child .editor-paper-seg {
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sa-root .editor-blocks-container.has-expanded .editor-desk-row:not(.is-expanded-row) {
+    display: none;
+}
+
+.sa-root .editor-cell {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    transition: all 0.2s ease;
+    position: relative;
+    width: 100%;
+    border-bottom: 1px dashed var(--sa-border-color);
+}
+
+.sa-root .editor-cell:last-child {
+    border-bottom: none;
+}
+
+.sa-root .editor-cell:hover {
+    box-shadow: none;
+}
+
+.sa-root .editor-cell.focused {
+    background-color: rgba(11, 110, 219, 0.02);
+    border-color: transparent;
+    box-shadow: none;
+    z-index: 2;
+}
+
+.sa-root .cell-header {
+    padding: 12px 32px 4px;
+    /* Reduced padding */
+    border-bottom: none;
+    /* Cleaner look */
+    background-color: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sa-root .metadata-header {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+.sa-root .chapter-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--sa-text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.sa-root .cell-header h2 {
+    margin: 0 !important;
+    font-size: 1.15rem;
+    color: var(--sa-text-main);
+    font-weight: 600;
+}
+
+.sa-root .cell-content {
+    padding: 24px 60px 60px;
+    min-height: 68px;
+    /* Correctly increased by 40% (48 -> 68) */
+    outline: none;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--sa-text-main);
+    position: relative;
+}
+
+.sa-root .cell-content[data-placeholder]:empty::before,
+.sa-root .cell-content[data-placeholder][data-isempty="true"]::before {
+    content: attr(data-placeholder);
+    color: var(--sa-text-muted);
+    position: absolute;
+    top: 8px;
+    /* Adjusted for new padding */
+    left: 32px;
+    pointer-events: none;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.sa-root .cell-content p {
+    margin-bottom: 1em;
+}
+
+.sa-root .cell-footer-hint {
+    padding: 8px 24px;
+    background-color: #f8fafc;
+    border-top: 1px solid var(--sa-border-color);
+    font-size: 0.75rem;
+    color: var(--sa-primary-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    animation: sa-fadeInCellHint 0.3s ease-out;
+}
+
+@keyframes sa-fadeInCellHint {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Focus Mode Adjustments */
+.sa-root .editor-blocks-container:has(.focused) .editor-cell:not(.focused) {
+    opacity: 0.5;
+    filter: grayscale(40%);
+    transform: scale(0.98);
+}
+
+.sa-root .editor-blocks-container:has(.focused) .editor-cell:not(.focused):hover {
+    opacity: 0.7;
+    filter: grayscale(20%);
+}
+
+/* Expanded Cell (Fullscreen Writing Mode) */
+.sa-root .editor-blocks-container {
+    position: relative;
+}
+
+.sa-root .editor-blocks-container.has-expanded .editor-cell:not(.expanded) {
+    display: none;
+}
+
+.sa-root .editor-cell.expanded {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9997; /* capped below the container's 10000; order: cell < modals < toasts */
+    background-color: #ffffff !important;
+    /* Force white background in full screen */
+    margin: 0;
+    max-width: none;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+    animation: sa-cellExpandIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sa-root .editor-cell.expanded .cell-header {
+    border-radius: 0;
+    padding: 20px 40px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #f0f6ff 0%, #f8fafc 100%);
+    border-bottom: 2px solid var(--sa-primary-color);
+}
+
+.sa-root .editor-cell.expanded .cell-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px 80px;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    min-height: unset;
+}
+
+.sa-root .editor-cell.expanded .cell-footer-hint {
+    border-radius: 0;
+    padding: 10px 40px;
+    background-color: #f0f6ff;
+    border-top: 1px solid var(--sa-border-color);
+    flex-shrink: 0;
+}
+
+@keyframes sa-cellExpandIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Expand Button in Cell Header */
+.sa-root .cell-expand-btn,
+.sa-root .cell-copy-btn,
+.sa-root .cell-ai-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 4px;
+    border: 1px solid var(--sa-border-color);
+    background-color: #ffffff;
+    color: var(--sa-text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: inherit;
+    line-height: 1;
+}
+
+.sa-root .cell-expand-btn:hover,
+.sa-root .cell-copy-btn:hover,
+.sa-root .cell-ai-btn:hover {
+    background-color: #f8fafc;
+    color: var(--sa-primary-text);
+    border-color: var(--sa-primary-color);
+}
+
+.sa-root .cell-expand-btn {
+    color: var(--sa-primary-text);
+    border-color: rgba(11, 110, 219, 0.2);
+}
+
+.sa-root .cell-ai-btn {
+    color: var(--sa-primary-text);
+    background-color: rgba(11, 110, 219, 0.08);
+    border-color: rgba(11, 110, 219, 0.2);
+    font-weight: 600;
+}
+
+.sa-root .cell-ai-btn:hover {
+    background-color: rgba(11, 110, 219, 0.12) !important;
+    border-color: var(--sa-primary-color) !important;
+    color: var(--sa-primary-text) !important;
+}
+
+.sa-root .cell-ai-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.sa-root .cell-ai-btn--analyzing {
+    background: rgba(11, 110, 219, 0.15);
+    border-color: rgba(11, 110, 219, 0.3);
+    animation: sa-pulse-glow 1.4s ease-in-out infinite;
+}
+
+@keyframes sa-pulse-glow {
+    0%, 100% {
+        background-color: rgba(11, 110, 219, 0.15);
+        box-shadow: 0 0 0 rgba(11, 110, 219, 0);
+    }
+    50% {
+        background-color: rgba(11, 110, 219, 0.25);
+        box-shadow: 0 0 12px rgba(11, 110, 219, 0.3);
+    }
+}
+
+.sa-root .editor-cell.expanded .cell-expand-btn {
+    background-color: rgba(11, 110, 219, 0.05);
+}
+
+.sa-root .cell-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.sa-root .editor-cell.focused .cell-actions,
+.sa-root .editor-cell:hover .cell-actions {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+
+/* Specific highlight styles in editor */
+.sa-root .highlight-green {
+    background-color: var(--sa-color-green-bg);
+    border-bottom: 2px solid var(--sa-color-green);
+    cursor: pointer;
+}
+
+.sa-root .reviewer-highlight {
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.sa-root .reviewer-highlight:hover {
+    filter: brightness(0.95);
+}
+
+.sa-root .reviewer-highlight.resolved {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    text-decoration: inherit !important;
+}
+
+.sa-root .reviewer-highlight-pulse {
+    animation: sa-highlightPop 1.2s ease-out forwards;
+}
+
+@keyframes sa-highlightPop {
+    0% {
+        filter: brightness(1.0);
+        outline: none;
+    }
+
+    15% {
+        filter: brightness(1.8);
+        outline: 3px solid currentColor;
+        outline-offset: 2px;
+        box-shadow: 0 0 12px 4px rgba(255, 220, 50, 0.6);
+    }
+
+    40% {
+        filter: brightness(1.6);
+    }
+
+    100% {
+        filter: brightness(1.0);
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+/* Global CSS Appendages for the new UI Forms & Dashboard */
+
+/* Dashboard Layout */
+.sa-root .dashboard-layout {
+    display: flex;
+    height: calc(100vh - 60px);
+    background-color: var(--sa-bg-main);
+}
+
+.sa-root .sa-flex-2 {
+    flex: 2;
+    border-right: 1px solid var(--sa-border-color);
+}
+
+.sa-root .sa-flex-1 {
+    flex: 1;
+    background-color: var(--sa-bg-panel);
+}
+
+.sa-root .nota-list {
+    padding: 24px;
+    overflow-y: auto;
+    height: calc(100% - 80px);
+    /* Account for header */
+}
+
+.sa-root .nota-list-item {
+    background-color: var(--sa-bg-panel);
+    border: 1px solid var(--sa-border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sa-root .nota-list-item:hover {
+    box-shadow: var(--sa-shadow-sm);
+    border-color: #cbd5e1;
+}
+
+.sa-root .nota-list-item.active {
+    border-left: 4px solid var(--sa-primary-color);
+    border-color: var(--sa-primary-color);
+}
+
+.sa-root .sa-badge-success {
+    background-color: var(--sa-color-green-bg);
+    color: var(--sa-color-green-text);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #d1fae5;
+}
+
+.sa-root .detail-group {
+    margin-bottom: 24px;
+}
+
+.sa-root .detail-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--sa-text-muted);
+    margin-bottom: 8px;
+}
+
+.sa-root .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--sa-bg-main);
+    border-radius: 6px;
+    border: 1px solid var(--sa-border-color);
+}
+
+.sa-root .highlight-yellow {
+    background-color: var(--sa-color-yellow-bg);
+    border-bottom: 2px solid var(--sa-color-yellow);
+    cursor: pointer;
+}
+
+.sa-root .highlight-red {
+    background-color: var(--sa-color-red-bg);
+    border-bottom: 2px solid var(--sa-color-red);
+    cursor: pointer;
+}
+
+.sa-root .highlight-purple {
+    background-color: var(--sa-color-purple-bg);
+    border-bottom: 2px solid var(--sa-color-purple);
+    cursor: pointer;
+}
+
+.sa-root .highlight-active {
+    outline: 2px solid var(--sa-primary-color);
+}
+
+
+/* Right Pane Section (Suggestions or Checklist) */
+.sa-root .right-pane-section {
+    flex: 1;
+    background-color: var(--sa-bg-main);
+    display: flex;
+    flex-direction: column;
+    min-width: 450px;
+    max-width: 500px;
+    border-left: 1px solid var(--sa-border-color);
+}
+
+.sa-root .pane-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--sa-border-color);
+    background-color: var(--sa-bg-panel);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sa-root .pane-title {
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sa-root .stats-badge {
+    background-color: var(--sa-primary-color);
+    color: white;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Tabs */
+.sa-root .sa-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--sa-border-color);
+    background-color: var(--sa-bg-panel);
+}
+
+.sa-root .sa-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--sa-text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.sa-root .sa-tab:hover {
+    color: var(--sa-text-main);
+}
+
+.sa-root .sa-tab.active {
+    color: var(--sa-primary-text);
+    border-bottom-color: var(--sa-primary-color);
+}
+
+/* Pane Scrolling List */
+.sa-root .pane-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Suggestion Card */
+.sa-root .suggestion-card {
+    background-color: var(--sa-bg-panel);
+    border-radius: 8px;
+    border: 1px solid var(--sa-border-color);
+    padding: 16px;
+    box-shadow: var(--sa-shadow-sm);
+    transition: box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+
+.sa-root .suggestion-card:hover {
+    box-shadow: var(--sa-shadow-md);
+}
+
+.sa-root .suggestion-card.active {
+    border-left: 4px solid var(--sa-primary-color);
+    border-top-color: var(--sa-primary-color);
+    border-right-color: var(--sa-primary-color);
+    border-bottom-color: var(--sa-primary-color);
+}
+
+/* Review Checklist Card */
+.sa-root .review-checklist-card {
+    background-color: var(--sa-bg-panel);
+    border-radius: 8px;
+    border: 1px solid var(--sa-border-color);
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--sa-shadow-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sa-root .review-checklist-card:hover {
+    box-shadow: var(--sa-shadow-md);
+}
+
+.sa-root .review-checklist-card.active {
+    border-color: var(--sa-primary-color) !important;
+    background-color: rgba(11, 110, 219, 0.05);
+    /* very light blue */
+    box-shadow: 0 0 0 2px rgba(11, 110, 219, 0.2);
+}
+
+.sa-root .sa-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.sa-root .severity-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.sa-root .severity-green {
+    background-color: var(--sa-color-green);
+}
+
+.sa-root .severity-yellow {
+    background-color: var(--sa-color-yellow);
+}
+
+.sa-root .severity-red {
+    background-color: var(--sa-color-red);
+}
+
+.sa-root .severity-purple {
+    background-color: var(--sa-color-purple);
+}
+
+.sa-root .sa-card-category {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--sa-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sa-root .sa-card-content {
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+}
+
+.sa-root .sa-card-content .original-text {
+    text-decoration: line-through;
+    color: var(--sa-text-muted);
+    margin-bottom: 4px;
+}
+
+.sa-root .alternatives-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.sa-root .alternative-btn {
+    background-color: var(--sa-bg-main);
+    border: 1px solid var(--sa-border-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sa-root .alternative-btn:hover {
+    background-color: var(--sa-primary-color);
+    color: white;
+    border-color: var(--sa-primary-color);
+}
+
+.sa-root .ai-explain {
+    font-size: 0.8rem;
+    color: var(--sa-text-muted);
+    background-color: #f8fafc;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 2px solid var(--sa-primary-color);
+    margin-top: 12px;
+    display: none;
+}
+
+.sa-root .suggestion-card.active .ai-explain {
+    display: block;
+}
+
+.sa-root .sa-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid var(--sa-border-color);
+    padding-top: 12px;
+    margin-top: 12px;
+}
+
+.sa-root .sa-btn-icon {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--sa-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.sa-root .sa-btn-icon:hover {
+    background-color: var(--sa-bg-main);
+    color: var(--sa-text-main);
+}
+
+.sa-root .sa-btn-icon.accept:hover {
+    color: var(--sa-color-green);
+}
+
+.sa-root .sa-btn-icon.reject:hover {
+    color: var(--sa-color-red);
+}
+
+/* Review Checklist Card */
+.sa-root .review-checklist-card {
+    background-color: var(--sa-bg-panel);
+    border-radius: 8px;
+    border: 1px solid var(--sa-border-color);
+    padding: 16px;
+    box-shadow: var(--sa-shadow-sm);
+}
+
+.sa-root .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--sa-bg-main);
+}
+
+.sa-root .checklist-item:last-child {
+    border-bottom: none;
+}
+
+.sa-root .checklist-item input[type="checkbox"] {
+    margin-top: 4px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--sa-primary-color);
+    cursor: pointer;
+}
+
+.sa-root .checklist-text {
+    font-size: 0.875rem;
+    color: var(--sa-text-main);
+}
+
+.sa-root .checklist-subtext {
+    font-size: 0.75rem;
+    color: var(--sa-text-muted);
+    margin-top: 4px;
+}
+
+/* Admin View Styles */
+.sa-root .admin-layout {
+    display: flex;
+    height: calc(100vh - 60px);
+    background-color: var(--sa-bg-main);
+}
+
+.sa-root .admin-sidebar {
+    width: 250px;
+    background-color: var(--sa-bg-panel);
+    border-right: 1px solid var(--sa-border-color);
+    padding: 24px 0;
+}
+
+.sa-root .admin-nav-item {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: var(--sa-text-muted);
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.sa-root .admin-nav-item:hover {
+    background-color: var(--sa-bg-main);
+    color: var(--sa-primary-text);
+}
+
+.sa-root .admin-nav-item.active {
+    background-color: #e0f2fe;
+    color: var(--sa-primary-text);
+    border-right: 3px solid var(--sa-primary-color);
+}
+
+.sa-root .admin-content-area {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.sa-root .admin-card {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--sa-shadow-sm);
+    border: 1px solid var(--sa-border-color);
+    padding: 24px;
+}
+
+.sa-root .version-badge {
+    background-color: #e2e8f0;
+    color: #475569;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-family: monospace;
+    margin-left: 8px;
+}
+
+/* Dashboard Metrics Grid */
+.sa-root .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.sa-root .metric-box {
+    background-color: var(--sa-bg-main);
+    border: 1px solid var(--sa-border-color);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.sa-root .metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sa-primary-text);
+    margin-bottom: 4px;
+}
+
+.sa-root .metric-label {
+    font-size: 0.875rem;
+    color: var(--sa-text-muted);
+    font-weight: 500;
+}
+
+.sa-root .charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.sa-root .chart-container {
+    background: white;
+    border: 1px solid var(--sa-border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.sa-root .chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--sa-text-main);
+}
+
+/* Pane Tabs */
+.sa-root .pane-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    border-bottom: 1px solid var(--sa-border-color);
+    background-color: var(--sa-bg-panel);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    position: relative;
+}
+
+.sa-root .pane-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.sa-root .pane-tab {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    text-align: center;
+    padding: 12px 10px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--sa-text-muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+    min-width: max-content;
+}
+
+.sa-root .pane-tab.active {
+    color: var(--sa-active-color, var(--sa-primary-color));
+    border-bottom-color: var(--sa-active-color, var(--sa-primary-color));
+}
+
+.sa-root .pane-tab i {
+    margin-right: 6px;
+}
+
+/* Guideline Card */
+.sa-root .guideline-card {
+    background-color: var(--sa-bg-panel);
+    border: 1px solid var(--sa-border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sa-root .guideline-card:hover {
+    box-shadow: var(--sa-shadow-sm);
+    border-color: #cbd5e1;
+}
+
+.sa-root .guideline-card.active {
+    border-left: 4px solid var(--sa-primary-color);
+    border-top-color: var(--sa-primary-color);
+    border-right-color: var(--sa-primary-color);
+    border-bottom-color: var(--sa-primary-color);
+    box-shadow: var(--sa-shadow-sm);
+}
+
+.sa-root .guideline-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--sa-text-main);
+}
+
+.sa-root .guideline-card.active .guideline-title {
+    color: var(--sa-primary-text);
+}
+
+/* Guideline card header row (title + expand button) */
+.sa-root .guideline-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+/* Expand / collapse toggle button */
+.sa-root .guideline-expand-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--sa-primary-text);
+    background: rgba(11, 110, 219, 0.07);
+    border: 1px solid rgba(11, 110, 219, 0.2);
+    border-radius: 20px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+
+.sa-root .guideline-expand-btn:hover {
+    background: rgba(11, 110, 219, 0.15);
+    border-color: var(--sa-primary-color);
+}
+
+/* Structuur Instructies tab — yellow accents (same family as structuur AI / modal) */
+.sa-root .structuur-instructions-pane .guideline-card.active {
+    border-left-color: #f1c40f;
+    border-top-color: rgba(241, 196, 64, 0.55);
+    border-right-color: rgba(241, 196, 64, 0.55);
+    border-bottom-color: rgba(241, 196, 64, 0.45);
+}
+
+.sa-root .structuur-instructions-pane .guideline-card.active .guideline-title {
+    color: #b7790f;
+}
+
+.sa-root .structuur-instructions-pane .guideline-expand-btn {
+    color: #b7790f;
+    background: rgba(241, 196, 64, 0.14);
+    border-color: rgba(214, 158, 12, 0.45);
+}
+
+.sa-root .structuur-instructions-pane .guideline-expand-btn:hover {
+    background: rgba(241, 196, 64, 0.26);
+    border-color: #d69e0c;
+}
+
+/* 2-row doel preview */
+.sa-root .guideline-preview {
+    margin-top: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.sa-root .guideline-preview-text {
+    font-size: 0.82rem;
+    color: var(--sa-text-muted);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+.sa-root .guideline-section {
+    margin-bottom: 16px;
+}
+
+.sa-root .guideline-section h4 {
+    font-size: 0.75rem;
+    color: var(--sa-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.sa-root .guideline-section ul {
+    padding-left: 20px;
+    font-size: 0.875rem;
+    color: var(--sa-text-main);
+    margin: 0;
+}
+
+.sa-root .guideline-section p {
+    font-size: 0.875rem;
+    color: var(--sa-text-main);
+    margin: 0;
+}
+
+.sa-root .example-list {
+    list-style-type: none !important;
+    padding-left: 0 !important;
+}
+
+.sa-root .example-list li {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.sa-root .dynamic-chapter {
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    padding-left: 12px;
+    margin-left: -16px;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.sa-root .dynamic-chapter:hover {
+    background-color: #f8fafc;
+    border-color: var(--sa-primary-color);
+}
+
+/* ---- Selection Bubble ---- */
+.sa-root .selection-bubble {
+    background-color: var(--sa-bg-panel);
+    border: 1px solid var(--sa-border-color);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08);
+    min-width: 220px;
+    max-width: 300px;
+    animation: sa-bubblePop 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    pointer-events: all;
+    margin-bottom: 8px;
+}
+
+@keyframes sa-bubblePop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -95%) scale(0.88);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -100%) scale(1);
+    }
+}
+
+.sa-root .selection-bubble-arrow {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background-color: var(--sa-bg-panel);
+    border-right: 1px solid var(--sa-border-color);
+    border-bottom: 1px solid var(--sa-border-color);
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.sa-root .bubble-type-row {
+    display: flex;
+    gap: 0;
+    padding: 6px;
+}
+
+.sa-root .bubble-type-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    justify-content: center;
+    padding: 7px 10px;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--sa-text-main);
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.sa-root .bubble-type-btn:hover {
+    background-color: var(--sa-bubble-color, var(--sa-primary-color));
+    color: white;
+}
+
+.sa-root .bubble-input-area {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sa-root .bubble-input-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sa-root .bubble-type-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.sa-root .bubble-close-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--sa-text-muted);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.sa-root .bubble-close-btn:hover {
+    color: var(--sa-color-red);
+    background-color: var(--sa-color-red-bg);
+}
+
+.sa-root .bubble-textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--sa-border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--sa-text-main);
+    background-color: var(--sa-bg-main);
+    resize: none;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+}
+
+.sa-root .bubble-textarea:focus {
+    outline: none;
+    border-color: var(--sa-primary-color);
+    box-shadow: 0 0 0 3px rgba(11, 110, 219, 0.15);
+}
+
+.sa-root .bubble-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sa-root .bubble-hint {
+    font-size: 0.7rem;
+    color: var(--sa-text-muted);
+    font-style: italic;
+}
+
+.sa-root .bubble-ok-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    background-color: var(--sa-primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.15s, opacity 0.15s;
+}
+
+.sa-root .bubble-ok-btn:hover:not(:disabled) {
+    background-color: var(--sa-primary-hover);
+}
+
+.sa-root .bubble-ok-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   TEXTMETRICS DASHBOARD
+   ======================================== */
+
+.sa-root .tm-dashboard {
+    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+    border: 1px solid #dde8f8;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(11, 110, 219, 0.08);
+    animation: sa-tmFadeIn 0.35s ease-out;
+}
+
+@keyframes sa-tmFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sa-root .tm-dashboard-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--sa-border-color);
+    font-size: 1.2rem;
+}
+
+.sa-root .tm-dashboard-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sa-primary-text);
+}
+
+.sa-root .tm-dashboard-cell {
+    font-size: 0.78rem;
+    color: var(--sa-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.sa-root .tm-wordcount {
+    margin-left: auto;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--sa-text-main);
+    white-space: nowrap;
+}
+
+.sa-root .tm-wordcount span {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--sa-text-muted);
+}
+
+/* Metrics grid: 3 gauges in a row */
+.sa-root .tm-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.sa-root .tm-metric-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 6px;
+    background: #ffffff;
+    border: 1px solid var(--sa-border-color);
+    border-radius: 10px;
+    transition: box-shadow 0.2s;
+}
+
+.sa-root .tm-metric-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sa-root .tm-gauge-wrap {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+}
+
+.sa-root .tm-gauge-value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.sa-root .tm-metric-info {
+    text-align: center;
+}
+
+.sa-root .tm-metric-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--sa-text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.sa-root .tm-metric-sub {
+    font-size: 0.68rem;
+    color: var(--sa-text-muted);
+    line-height: 1.3;
+}
+
+/* Detail chips below gauges */
+.sa-root .tm-detail-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sa-root .tm-detail-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--sa-chip-color, var(--sa-text-muted));
+    background-color: color-mix(in srgb, var(--sa-chip-color, var(--sa-border-color)) 12%, white);
+    border: 1px solid color-mix(in srgb, var(--sa-chip-color, var(--sa-border-color)) 25%, white);
+}
+
+/* Suggestions section below the dashboard */
+.sa-root .tm-suggestions-section {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sa-root .tm-section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sa-text-muted);
+    padding: 6px 0 4px;
+    border-top: 1px solid var(--sa-border-color);
+}
+
+.sa-root .tm-sugg-count {
+    background-color: var(--sa-primary-color);
+    color: white;
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+/* "Select a cell" placeholder */
+.sa-root .tm-select-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 20px;
+    color: var(--sa-text-muted);
+    text-align: center;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    animation: sa-tmFadeIn 0.3s ease;
+}
+
+/* AI Suggestions Highlight API Custom Styling */
+::highlight(sa-ai-suggestions) {
+    /* the colour comes from a custom property (the dark theme sets it in dark.css); the fallback is the light value */
+    background-color: var(--sa-highlight-bg, rgba(239, 68, 68, 0.2));
+    text-decoration: underline dashed var(--sa-color-red) 2px;
+    text-underline-offset: 4px;
+}
+
+/* Overview Outline Styles */
+.sa-root .tm-overview-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.sa-root .overview-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.sa-root .overview-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: var(--sa-bg-panel);
+    border: 1px solid var(--sa-border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sa-root .overview-item:hover {
+    background-color: var(--sa-bg-main);
+    border-color: var(--sa-primary-color);
+    transform: translateX(4px);
+}
+
+.sa-root .overview-item.active {
+    background-color: rgba(11, 110, 219, 0.05);
+    border-color: var(--sa-primary-color);
+    border-left-width: 4px;
+}
+
+.sa-root .overview-item .idx {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--sa-text-muted);
+    background-color: var(--sa-bg-main);
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 28px;
+    text-align: center;
+}
+
+.sa-root .overview-item .label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--sa-text-main);
+}
+
+/* Notice card of the configurator for a role that is not beheerder (AdminDashboard.svelte) */
+.sa-root .sa-stub-view {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 24px;
+}
+
+.sa-root .sa-stub-card {
+    background: var(--sa-bg-panel);
+    border: 1px dashed var(--sa-border-color);
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 520px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.sa-root .sa-stub-icon {
+    font-size: 2.5rem;
+    color: var(--sa-primary-text);
+}
+
+.sa-root .sa-stub-meta {
+    font-size: 0.875rem;
+    color: var(--sa-text-muted);
+}
+
+/* The `w-full` of the sidebar buttons of the configurator, as a scoped rule (Tailwind is not part of the bundle) */
+.sa-root .sa-w-full {
+    width: 100%;
+}

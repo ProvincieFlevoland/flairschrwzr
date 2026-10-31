@@ -1,0 +1,19 @@
+# Build context for admin/Dockerfile is the repository root; keep the context small.
+.git
+node_modules
+**/node_modules
+**/dist
+**/.svelte-kit
+docs
+.github
+.azuredevops
+.vscode
+*.md
+.env
+.env.*
+**/.env
+**/.env.*
+admin/defaults/apps
+schrijfassistent/backend/.venv
+schrijfassistent/backend/__pycache__
+schrijfassistent/backend/**/__pycache__

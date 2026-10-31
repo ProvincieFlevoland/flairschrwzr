@@ -1,0 +1,15 @@
+// log-tokens: Conflict on nota
+// 409 answers of PUT /notas/{id}: the embedded app saved on a stale base because somebody else (for example in another tab) saved first.
+// The log carries the nota id and nothing else. A few are normal; a steady stream means several people edit the same nota.
+// Workspace: the Log Analytics workspace of the Container Apps environment. Table of the classic schema shown;
+// the resource-specific schema is ContainerAppConsoleLogs with the columns Log and ContainerAppName (swap the two names in the first lines).
+let appName = "aca-flair-schrijfassistent-api-dev-schrwzr";   // the name of the backend Container App (see schrijfassistent/OPERATIONS.md); change it to the name in your environment
+let window = 7d;                                              // the period to look back
+let logs = ContainerAppConsoleLogs_CL
+    | where ContainerAppName_s == appName and TimeGenerated > ago(window)
+    | extend Line = tostring(Log_s);
+logs
+| where Line has "Conflict on nota"
+| extend Day = bin(TimeGenerated, 1d), NotaId = extract(@"Conflict on nota '([^']*)'", 1, Line)
+| summarize Conflicts = count(), Notas = dcount(NotaId) by Day
+| order by Day desc

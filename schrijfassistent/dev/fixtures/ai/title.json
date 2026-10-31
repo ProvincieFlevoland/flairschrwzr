@@ -1,0 +1,6 @@
+{
+  "assignment": "title",
+  "raw": "“Parkeergarage onder het provinciehuis Flevoland bouwen.”",
+  "expected": "Parkeergarage onder het provinciehuis Flevoland",
+  "note": "The title clamp strips a quote pair whose ends differ (“ ”), keeps at most five words and drops trailing punctuation."
+}

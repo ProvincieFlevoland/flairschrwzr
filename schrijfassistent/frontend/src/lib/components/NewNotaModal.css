@@ -1,0 +1,164 @@
+.sa-root .sa-new-nota-modal-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+.sa-root .sa-new-nota-modal-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+.sa-root .sa-new-nota-modal-modal-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--sa-border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.sa-root .sa-new-nota-modal-modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--sa-primary-text);
+}
+.sa-root .sa-new-nota-modal-btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--sa-text-muted);
+}
+.sa-root .sa-new-nota-modal-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+}
+.sa-root .sa-new-nota-modal-config-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+.sa-root .sa-new-nota-modal-config-card {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    background: white;
+    font-family: inherit;
+    gap: 20px;
+    padding: 16px;
+    border: 2px solid var(--sa-border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+.sa-root .sa-new-nota-modal-config-card:hover {
+    border-color: var(--sa-primary-color);
+    background: rgba(30, 58, 138, 0.02);
+}
+.sa-root .sa-new-nota-modal-config-card.sa-new-nota-modal-active {
+    border-color: var(--sa-primary-color);
+    background: rgba(30, 58, 138, 0.05);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+}
+.sa-root .sa-new-nota-modal-config-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--sa-bg-main);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--sa-primary-text);
+}
+.sa-root .sa-new-nota-modal-config-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+}
+.sa-root .sa-new-nota-modal-config-info p {
+    margin: 0;
+    color: var(--sa-text-muted);
+    font-size: 0.9rem;
+}
+.sa-root .sa-new-nota-modal-config-check {
+    color: var(--sa-primary-text);
+    font-size: 1.25rem;
+}
+.sa-root .sa-new-nota-modal-version-badge {
+    background: var(--sa-bg-main);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--sa-primary-text);
+    border: 1px solid var(--sa-border-color);
+}
+.sa-root .sa-new-nota-modal-config-card.sa-new-nota-modal-active .sa-new-nota-modal-version-badge {
+    background: var(--sa-primary-color);
+    color: white;
+    border-color: white;
+}
+.sa-root .sa-new-nota-modal-config-details-panel {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--sa-bg-main);
+    border-radius: 12px;
+    border: 1px solid var(--sa-border-color);
+}
+.sa-root .sa-new-nota-modal-config-details-panel h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sa-text-muted);
+}
+.sa-root .sa-new-nota-modal-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.sa-root .sa-new-nota-modal-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.sa-root .sa-new-nota-modal-detail-item .sa-new-nota-modal-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--sa-text-muted);
+}
+.sa-root .sa-new-nota-modal-detail-item .sa-new-nota-modal-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.sa-root .sa-new-nota-modal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.sa-root .sa-new-nota-modal-tag {
+    background: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    border: 1px solid var(--sa-border-color);
+    font-weight: 600;
+}
+.sa-root .sa-new-nota-modal-modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--sa-border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}

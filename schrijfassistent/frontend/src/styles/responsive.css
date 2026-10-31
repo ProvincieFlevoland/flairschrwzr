@@ -1,0 +1,355 @@
+/*
+ * Responsive layout of the Schrijfassistent. Loaded last (main.js), so these rules win over the component styles at
+ * equal specificity. Layout only: no colours here, the dark twins live in dark.css. Breakpoints are viewport widths,
+ * because the app is a full-viewport overlay (#sa-container is fixed, inset 0):
+ *   wide     >= 1200  side by side as designed, with the overflows fixed
+ *   laptop   < 1200   narrower sidebar pane and paddings
+ *   tablet   < 1024   editor above the sidebar pane; configurator stacked
+ *   narrow   <  900   dashboard list above the detail panel
+ *   compact  <  768   configurator menu as a bar on top
+ *   phone    <  640   compact header and toolbar
+ */
+
+/* ── Always: the overflows that showed at every width ───────────────────────────────────────────── */
+
+/* The header grows with its content instead of clipping it. */
+.sa-root .app-header {
+    height: auto;
+    min-height: 60px;
+    flex-wrap: wrap;
+    row-gap: 4px;
+}
+.sa-root .header-left {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+.sa-root .header-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.sa-root .header-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: 6px;
+}
+.sa-root .header-right .sa-btn,
+.sa-root .editor-toolbar .sa-btn {
+    white-space: nowrap;
+}
+.sa-root .sa-header-conflict {
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+/* The views below the header fill the rest of the container; no `100vh - header` arithmetic. */
+.sa-root .dashboard-layout,
+.sa-root .sa-admin-dashboard-admin-dashboard {
+    height: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.sa-root .dashboard-list {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+.sa-root .nota-list {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+}
+.sa-root .dashboard-sidebar {
+    min-width: 0;
+    overflow-y: auto;
+}
+
+/* The editor section may shrink below its content (a flex item's default min-width is its content), otherwise a long
+   toolbar pushes the sidebar pane out of the viewport. */
+.sa-root .editor-section {
+    min-width: 0;
+}
+
+/* Editor toolbar: one row; the title shrinks and truncates, the status and the copy button keep their width. */
+.sa-root .editor-toolbar {
+    height: auto;
+    min-height: 48px;
+    flex-wrap: nowrap;
+    row-gap: 4px;
+    padding: 4px 16px;
+}
+.sa-root .editor-toolbar > div:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+.sa-root .editor-toolbar > div:last-child {
+    flex: 0 0 auto;
+}
+.sa-root .sa-workspace-title-wrap {
+    min-width: 0;
+    max-width: 100%;
+}
+.sa-root .sa-workspace-title-display-btn {
+    max-width: 100%;
+    min-width: 0;
+}
+.sa-root .sa-workspace-title-text {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.sa-root .sa-workspace-title-edit-input {
+    max-width: 100%;
+}
+
+/* Sidebar tabs: they wrap onto a second row instead of being clipped. Below 1600px the labels go without their icons:
+   five tabs with icons and count badges need more than the pane's 450 to 500px. The tooltips stay. */
+.sa-root .pane-tabs {
+    flex-wrap: wrap;
+    overflow-x: hidden;
+}
+.sa-root .pane-tab {
+    padding: 11px 6px;
+    min-width: 0;
+}
+@media (max-width: 1599px) {
+    .sa-root .pane-tab i {
+        display: none;
+    }
+}
+
+/* Configurator header: the name, version and buttons wrap; the tabs wrap. */
+.sa-root .sa-admin-dashboard-title-group {
+    flex-wrap: wrap;
+    row-gap: 8px;
+}
+.sa-root .sa-admin-dashboard-title-input {
+    min-width: 0;
+    flex: 1 1 220px;
+    max-width: 100%;
+}
+.sa-root .sa-admin-dashboard-config-tabs {
+    flex-wrap: wrap;
+}
+.sa-root .sa-admin-dashboard-editor-header .header-main {
+    min-width: 0;
+}
+
+/* Modals never exceed the viewport. */
+.sa-root .sa-new-nota-modal-modal-content,
+.sa-root .sa-delete-config-modal-modal-content {
+    width: calc(100% - 32px);
+    margin: 0 16px;
+}
+
+/* ── Laptop (< 1200): a narrower sidebar pane and less desk padding ─────────────────────────────── */
+@media (max-width: 1199px) {
+    .sa-root .right-pane-section {
+        min-width: 360px;
+        max-width: 420px;
+    }
+    .sa-root .editor-blocks-container {
+        padding: 32px 20px;
+    }
+    .sa-root .cell-header {
+        padding: 12px 20px 4px;
+    }
+    .sa-root .cell-content {
+        padding: 20px 32px 40px;
+    }
+    .sa-root .cell-content[data-placeholder]:empty::before,
+    .sa-root .cell-content[data-placeholder][data-isempty="true"]::before {
+        left: 32px;
+    }
+    .sa-root .sa-admin-dashboard-admin-sidebar {
+        width: 220px;
+    }
+    .sa-root .sa-admin-dashboard-admin-content {
+        padding: 20px;
+    }
+    .sa-root .sa-admin-dashboard-config-selector {
+        width: 300px;
+    }
+}
+
+/* ── Below 1100: the header keeps the logo, not the long product name ───────────────────────────── */
+@media (max-width: 1099px) {
+    .sa-root .header-title {
+        display: none;
+    }
+    .sa-root .app-header {
+        padding: 0 16px;
+    }
+}
+
+/* ── Tablet (< 1024): the editor above the sidebar pane; the configurator stacked ───────────────── */
+@media (max-width: 1023px) {
+    .sa-root .main-content {
+        flex-direction: column;
+    }
+    .sa-root .editor-section {
+        flex: 1 1 58%;
+        min-height: 0;
+        border-right: 0;
+    }
+    .sa-root .right-pane-section {
+        flex: 0 0 42%;
+        min-height: 0;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        border-left: 0;
+        border-top: 1px solid var(--sa-border-color);
+    }
+    .sa-root .editor-blocks-container {
+        padding: 24px 16px;
+    }
+    .sa-root .cell-content {
+        padding: 16px 24px 32px;
+    }
+    .sa-root .cell-content[data-placeholder]:empty::before,
+    .sa-root .cell-content[data-placeholder][data-isempty="true"]::before {
+        left: 24px;
+    }
+    .sa-root .cell-header {
+        padding: 12px 16px 4px;
+    }
+    .sa-root .sa-admin-dashboard-configurator-layout {
+        flex-direction: column;
+        gap: 16px;
+    }
+    .sa-root .sa-admin-dashboard-config-selector {
+        width: 100%;
+        flex: 0 0 auto;
+        max-height: 240px;
+    }
+    .sa-root .sa-admin-dashboard-config-editor {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+}
+
+/* ── Full-screen writing mode on a small screen ─────────────────────────────────────────────────── */
+@media (max-width: 899px) {
+    .sa-root .editor-cell.expanded .cell-header {
+        padding: 16px 20px;
+    }
+    .sa-root .editor-cell.expanded .cell-content {
+        padding: 24px 20px;
+    }
+    /* Dashboard: the list above the detail panel */
+    .sa-root .dashboard-layout {
+        flex-direction: column;
+    }
+    .sa-root .dashboard-list {
+        flex: 1 1 55%;
+        border-right: 0;
+        border-bottom: 1px solid var(--sa-border-color);
+    }
+    .sa-root .dashboard-sidebar {
+        flex: 0 0 45%;
+    }
+}
+
+/* ── Compact (< 768): the configurator menu as a bar on top ─────────────────────────────────────── */
+@media (max-width: 767px) {
+    .sa-root .sa-admin-dashboard-admin-dashboard {
+        flex-direction: column;
+    }
+    .sa-root .sa-admin-dashboard-admin-sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        border-right: 0;
+        border-bottom: 1px solid var(--sa-border-color);
+    }
+    .sa-root .sa-admin-dashboard-admin-sidebar-header {
+        padding: 10px 16px;
+        font-size: 1rem;
+    }
+    .sa-root .sa-admin-dashboard-admin-nav {
+        flex-direction: row;
+        padding: 6px 8px;
+        flex: 1 1 auto;
+    }
+    .sa-root .sa-admin-dashboard-admin-nav-item {
+        padding: 8px 12px;
+    }
+    .sa-root .sa-admin-dashboard-admin-content {
+        padding: 12px;
+    }
+    .sa-root .sa-admin-dashboard-editor-header,
+    .sa-root .sa-admin-dashboard-editor-body {
+        padding: 16px;
+    }
+}
+
+/* ── Phone (< 640): compact header, toolbar and desk ───────────────────────────────────────────── */
+@media (max-width: 639px) {
+    .sa-root .app-header {
+        padding: 0 10px;
+    }
+    .sa-root .header-right {
+        gap: 8px;
+    }
+    .sa-root .user-badge {
+        padding: 6px 10px;
+    }
+    .sa-root .user-badge > span:nth-of-type(2) {
+        display: none;
+    }
+    .sa-root .editor-toolbar {
+        padding: 6px 10px;
+        flex-wrap: wrap;
+    }
+    .sa-root .editor-toolbar > div:last-child {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+    .sa-root .nota-list-item [class*="sa-badge-"] {
+        white-space: nowrap;
+    }
+    .sa-root .editor-section {
+        flex-basis: 55%;
+    }
+    .sa-root .right-pane-section {
+        flex-basis: 45%;
+    }
+    .sa-root .editor-blocks-container {
+        padding: 12px 6px;
+    }
+    .sa-root .editor-desk-row {
+        gap: 6px;
+    }
+    .sa-root .wf-slot {
+        flex-basis: 40px;
+        width: 40px;
+    }
+    .sa-root .cell-header {
+        padding: 10px 12px 4px;
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+    .sa-root .cell-content {
+        padding: 12px 16px 24px;
+        font-size: 0.95rem;
+    }
+    .sa-root .cell-content[data-placeholder]:empty::before,
+    .sa-root .cell-content[data-placeholder][data-isempty="true"]::before {
+        left: 16px;
+    }
+    .sa-root .pane-list {
+        padding: 10px;
+    }
+    .sa-root .pane-tab {
+        padding: 9px 6px;
+        font-size: 0.74rem;
+    }
+    .sa-root .sa-header-settings-dropdown {
+        min-width: min(300px, calc(100vw - 24px));
+    }
+}

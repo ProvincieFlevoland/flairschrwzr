@@ -1,0 +1,5 @@
+{
+  "assignment": "summary",
+  "raw": "GS besluit een parkeergarage onder het provinciehuis te bouwen.\n\nDe dekking is € 500.000 uit het Economisch Programma.\nHet college vraagt PS om een krediet.\nDeze regel valt weg.",
+  "expected": "GS besluit een parkeergarage onder het provinciehuis te bouwen.\nDe dekking is € 500.000 uit het Economisch Programma.\nHet college vraagt PS om een krediet."
+}

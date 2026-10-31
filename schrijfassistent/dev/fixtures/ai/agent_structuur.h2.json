@@ -1,0 +1,9 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h2",
+  "template_broken_in_v5": true,
+  "raw": "{\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

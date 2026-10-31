@@ -1,0 +1,15 @@
+// log-tokens: config-write
+// The audit line of every successful configuration write (PATCH metadata, upload-configuration, delete): who, what, how many blobs; never a body.
+// Check: only beheerders appear.
+// Workspace: the Log Analytics workspace of the Container Apps environment. Table of the classic schema shown;
+// the resource-specific schema is ContainerAppConsoleLogs with the columns Log and ContainerAppName (swap the two names in the first lines).
+let appName = "aca-flair-schrijfassistent-api-dev-schrwzr";   // the name of the backend Container App (see schrijfassistent/OPERATIONS.md); change it to the name in your environment
+let window = 7d;                                              // the period to look back
+let logs = ContainerAppConsoleLogs_CL
+    | where ContainerAppName_s == appName and TimeGenerated > ago(window)
+    | extend Line = tostring(Log_s);
+logs
+| where Line has "config-write"
+| extend Day = bin(TimeGenerated, 1d), Action = extract(@"action=(\w+)", 1, Line), UserId = extract(@"user_id=(\S+)", 1, Line), ConfigId = extract(@"id='([^']*)'", 1, Line), Deleted = toint(extract(@"deleted=(\d+)", 1, Line)), Created = toint(extract(@"created=(\d+)", 1, Line))
+| project TimeGenerated, Action, UserId, ConfigId, Deleted, Created
+| order by TimeGenerated desc

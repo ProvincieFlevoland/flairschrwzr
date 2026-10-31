@@ -1,0 +1,90 @@
+.sa-root .sa-block-workflow-control-wf-dots {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+}
+
+.sa-root .sa-block-workflow-control-wf-dot {
+    margin: 0;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+    flex-shrink: 0;
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        transform 0.12s ease,
+        box-shadow 0.16s ease;
+}
+
+.sa-root .sa-block-workflow-control-wf-dot i {
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+.sa-root .sa-block-workflow-control-wf-dot:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.sa-root .sa-block-workflow-control-wf-concept {
+    background: rgba(203, 213, 225, 0.65);
+    border-color: rgba(148, 163, 184, 0.45);
+    color: rgba(71, 85, 105, 0.85);
+}
+
+.sa-root .sa-block-workflow-control-wf-review {
+    background: rgba(254, 243, 199, 0.85);
+    border-color: rgba(250, 204, 21, 0.4);
+    color: rgba(161, 98, 7, 0.88);
+}
+
+.sa-root .sa-block-workflow-control-wf-done {
+    background: rgba(209, 250, 229, 0.85);
+    border-color: rgba(74, 222, 128, 0.45);
+    color: rgba(21, 128, 61, 0.88);
+}
+
+.sa-root .sa-block-workflow-control-wf-dot:not(.sa-block-workflow-control-is-selected):not(:disabled):hover {
+    transform: scale(1.06);
+    filter: brightness(1.02);
+}
+
+.sa-root .sa-block-workflow-control-is-selected {
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.95),
+        0 2px 6px rgba(15, 23, 42, 0.12);
+}
+
+.sa-root .sa-block-workflow-control-wf-concept.sa-block-workflow-control-is-selected {
+    background: rgba(148, 163, 184, 0.95);
+    border-color: rgba(100, 116, 139, 0.65);
+    color: rgba(30, 41, 59, 0.95);
+}
+
+.sa-root .sa-block-workflow-control-wf-review.sa-block-workflow-control-is-selected {
+    background: rgba(253, 224, 71, 0.95);
+    border-color: rgba(234, 179, 8, 0.65);
+    color: rgba(133, 77, 14, 0.95);
+}
+
+.sa-root .sa-block-workflow-control-wf-done.sa-block-workflow-control-is-selected {
+    background: rgba(134, 239, 172, 0.95);
+    border-color: rgba(34, 197, 94, 0.55);
+    color: rgba(20, 83, 45, 0.95);
+}

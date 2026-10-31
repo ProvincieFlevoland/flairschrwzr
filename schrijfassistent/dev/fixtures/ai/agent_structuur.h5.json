@@ -1,0 +1,15 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h5",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Cursief\": \"Regel 'Cursief': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Zinslengte\": \"Regel 'Zinslengte': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Volgorde\": \"Regel 'Volgorde': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Relevantie\": \"Regel 'Relevantie': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Dekking\": \"Regel 'Dekking': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Nummering\": \"Regel 'Nummering': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Cursief": "Regel 'Cursief': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Zinslengte": "Regel 'Zinslengte': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Volgorde": "Regel 'Volgorde': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Relevantie": "Regel 'Relevantie': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Dekking": "Regel 'Dekking': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Nummering": "Regel 'Nummering': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

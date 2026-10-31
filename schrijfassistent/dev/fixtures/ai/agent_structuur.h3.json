@@ -1,0 +1,19 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h3",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Aanleiding\": \"Regel 'Aanleiding': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Referentie\": \"Regel 'Referentie': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"VijfWs\": \"Regel 'VijfWs': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"RolProvincie\": \"Regel 'RolProvincie': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Effect\": \"Regel 'Effect': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"MaatschappelijkDoel\": \"Regel 'MaatschappelijkDoel': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Taalgebruik\": \"Regel 'Taalgebruik': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Hoofdlijnen\": \"Regel 'Hoofdlijnen': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Regellimiet\": \"Regel 'Regellimiet': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Woordenlimiet\": \"Regel 'Woordenlimiet': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Aanleiding": "Regel 'Aanleiding': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Referentie": "Regel 'Referentie': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "VijfWs": "Regel 'VijfWs': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "RolProvincie": "Regel 'RolProvincie': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Effect": "Regel 'Effect': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "MaatschappelijkDoel": "Regel 'MaatschappelijkDoel': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Taalgebruik": "Regel 'Taalgebruik': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Hoofdlijnen": "Regel 'Hoofdlijnen': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Regellimiet": "Regel 'Regellimiet': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Woordenlimiet": "Regel 'Woordenlimiet': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h9",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Afstemming\": \"Regel 'Afstemming': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Formatie\": \"Regel 'Formatie': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Duur\": \"Regel 'Duur': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Financiering\": \"Regel 'Financiering': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Medezeggenschap\": \"Regel 'Medezeggenschap': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Opleiding\": \"Regel 'Opleiding': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Kennis\": \"Regel 'Kennis': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Vaardigheden\": \"Regel 'Vaardigheden': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Afstemming": "Regel 'Afstemming': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Formatie": "Regel 'Formatie': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Duur": "Regel 'Duur': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Financiering": "Regel 'Financiering': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Medezeggenschap": "Regel 'Medezeggenschap': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Opleiding": "Regel 'Opleiding': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Kennis": "Regel 'Kennis': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Vaardigheden": "Regel 'Vaardigheden': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

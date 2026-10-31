@@ -22,6 +22,19 @@
                 "default_level": "B1",
                 "webhook_token": "s92uvLWZDFHe2VV6UVNq0ew128wY3g9r5HsC9NLS"
             }
+        },
+        {
+            "id": "schrijfassistent",
+            "name": "Schrijfassistent",
+            "icon": "✍️",
+            "description": "Schrijf en controleer GS-nota's",
+            "url": "/",
+            "target": "schrijfassistent",
+            "config": {
+                "api_base_url": "/apps/schrijfassistent",
+                "asset_base_url": "/static/apps/schrijfassistent",
+                "b1_metrics_doc_url": ""
+            }
         }
     ]
 }

@@ -1,0 +1,84 @@
+.sa-root .sa-toast-container-toast-container {
+    position: fixed !important;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000 !important; /* capped at the container's 10000; still above the modals (9998) */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    pointer-events: none;
+    max-width: 400px;
+    width: 100%;
+}
+
+.sa-root .sa-toast-container-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+}
+
+.sa-root .sa-toast-container-toast:hover {
+    transform: translateY(-2px);
+}
+
+.sa-root .sa-toast-container-toast-success {
+    background: rgba(4, 120, 87, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sa-root .sa-toast-container-toast-error {
+    background: rgba(185, 28, 28, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sa-root .sa-toast-container-toast-warning {
+    background: rgba(180, 83, 9, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sa-root .sa-toast-container-toast-info {
+    background: rgba(29, 78, 216, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sa-root .sa-toast-container-toast-icon {
+    font-size: 1.25rem;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.sa-root .sa-toast-container-toast-content {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.sa-root .sa-toast-container-toast-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+.sa-root .sa-toast-container-toast-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #fff;
+}

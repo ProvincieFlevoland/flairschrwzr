@@ -1,0 +1,20 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h12",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Status\": \"Regel 'Status': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Vindplaats\": \"Regel 'Vindplaats': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Verwerking\": \"Regel 'Verwerking': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Omgevingswet\": \"Regel 'Omgevingswet': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Motiveringsplicht\": \"Regel 'Motiveringsplicht': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Projectbesluit\": \"Regel 'Projectbesluit': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Participatieadviseur\": \"Regel 'Participatieadviseur': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Communicatieadviseur\": \"Regel 'Communicatieadviseur': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Stappenplan\": \"Regel 'Stappenplan': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Planning\": \"Regel 'Planning': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Beslispunt\": \"Regel 'Beslispunt': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Status": "Regel 'Status': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Vindplaats": "Regel 'Vindplaats': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Verwerking": "Regel 'Verwerking': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Omgevingswet": "Regel 'Omgevingswet': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Motiveringsplicht": "Regel 'Motiveringsplicht': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Projectbesluit": "Regel 'Projectbesluit': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Participatieadviseur": "Regel 'Participatieadviseur': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Communicatieadviseur": "Regel 'Communicatieadviseur': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Stappenplan": "Regel 'Stappenplan': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Planning": "Regel 'Planning': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Beslispunt": "Regel 'Beslispunt': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

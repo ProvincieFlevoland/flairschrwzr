@@ -32,7 +32,8 @@ jobs:
       - name: Build and push admin image
         uses: docker/build-push-action@v6
         with:
-          context: ./admin
+          context: .
+          file: ./admin/Dockerfile
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-admin:latest
