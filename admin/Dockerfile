@@ -4,8 +4,8 @@
 #
 #   docker build -f admin/Dockerfile --build-arg VERSION=1.2.3 .
 #
-# Stage 1 builds the Schrijfassistent bundle from schrijfassistent/frontend (npm ci, svelte-check,
-# the node tests, vite build, the CSS scope check). Stage 2 is the admin image,
+# Stage 1 builds the Schrijfassistent bundle from schrijfassistent/frontend (npm ci, vite build);
+# the `test` target (docker build --target test) runs svelte-check, the node tests and the CSS checks. Stage 2 is the admin image,
 # plus the bundle output copied into defaults/apps/schrijfassistent/, which publishAll() copies to
 # PUBLISH_DIR/apps/ so Open WebUI serves it at /static/apps/schrijfassistent/.
 
@@ -35,10 +35,13 @@ RUN if [ ! -f package-lock.json ]; then \
  && npm ci --no-audit --no-fund
 
 COPY schrijfassistent/frontend/ ./
-# svelte-check (checkJs is off), the frontend node tests, the library build, the build-time CSS scope check and the dark twin tie check.
+RUN node node_modules/vite/bin/vite.js build
+
+# ---- test target: not part of the release build ---------------------------------------
+FROM bundle AS test
+# svelte-check (checkJs is off), the frontend node tests, the build-time CSS scope check and the dark twin tie check.
 RUN npm run check \
  && node --test tests/*.test.mjs \
- && node node_modules/vite/bin/vite.js build \
  && node scripts/check-css-scope.mjs \
  && node scripts/check-dark-twins.mjs
 
