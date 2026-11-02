@@ -6,6 +6,7 @@ name: Container images
 #   manual run on a branch same as a pull request (Actions -> Run workflow)
 #   push tag vX.Y.Z        verify tag, build once, push to ghcr.io with tag vX.Y.Z
 #                          (+ latest when it is the highest released version)
+#                          then notify Azure DevOps (job notify-ado) to roll out vX.Y.Z
 #
 # Images: ghcr.io/<owner>/<repo>-<name>:vX.Y.Z
 # Promotion to the Azure Container Registry happens afterwards from this exact image
@@ -185,3 +186,35 @@ jobs:
             echo "- Digest: \`${{ steps.build.outputs.digest }}\`"
             echo "- Commit: \`${GITHUB_SHA}\`"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------------------------
+  # Version tags: after every image was pushed, tell Azure DevOps to roll out this version.
+  # Sends {"tag":"vX.Y.Z"} to the incoming webhook 'gh-schrijfassistent-webhook'
+  # (service connection 'sc-schrijfassistent-webhook'), signed with X-Hub-Signature
+  # (HMAC-SHA1 of the body with the repo secret ADO_WEBHOOK_SECRET). Runs only when the
+  # release job succeeded, so never for pull requests or for a version that already existed.
+  # ---------------------------------------------------------------------------------------
+  notify-ado:
+    needs: [verify-tag, release]
+    runs-on: ubuntu-latest
+    permissions: {}
+    env:
+      VERSION: ${{ needs.verify-tag.outputs.version }}
+      ADO_WEBHOOK_URL: https://dev.azure.com/flevoland/_apis/public/distributedtask/webhooks/gh-schrijfassistent-webhook?api-version=6.0-preview
+      ADO_WEBHOOK_SECRET: ${{ secrets.ADO_WEBHOOK_SECRET }}
+    steps:
+      - name: Trigger Azure DevOps rollout for ${{ env.VERSION }}
+        run: |
+          set -euo pipefail
+          [ -n "$ADO_WEBHOOK_SECRET" ] || { echo "::error::Secret ADO_WEBHOOK_SECRET is not set"; exit 1; }
+          BODY=$(jq -cn --arg t "$VERSION" '{tag: $t}')
+          SIG="sha1=$(printf '%s' "$BODY" | openssl dgst -sha1 -hmac "$ADO_WEBHOOK_SECRET" | awk '{print $NF}')"
+          HTTP=$(curl -sS -o response.txt -w '%{http_code}' -X POST "$ADO_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' -H "X-Hub-Signature: $SIG" --data-binary "$BODY")
+          if [ "$HTTP" -lt 200 ] || [ "$HTTP" -ge 300 ]; then
+            echo "::error::Azure DevOps webhook failed (HTTP $HTTP)"
+            cat response.txt || true
+            exit 1
+          fi
+          echo "Azure DevOps rollout triggered for $VERSION"
+          echo "- Azure DevOps rollout triggered for \`$VERSION\`" >> "$GITHUB_STEP_SUMMARY"
