@@ -50,8 +50,10 @@ Elke versie levert precies één vast image op. De workflow staat in
 |---|---|---|
 | `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z` | `admin/Dockerfile` | `admin/` |
 
-Het admin-image is `node:20-alpine` met `npm install --omit=dev`, daarna worden
-`server.js`, `views/` en `defaults/` gekopieerd. De container luistert op poort 3002.
+Het admin-image is `node:20-alpine`. Dependencies worden in een aparte stage geïnstalleerd met
+`npm ci --omit=dev` (volgens `package-lock.json`). In het uiteindelijke image staan alleen node,
+`node_modules`, `server.js`, `views/` en `defaults/`; npm, corepack en yarn zijn eruit gehaald.
+De container luistert op poort 3002.
 Een nieuw image voeg je toe als extra regel in de `matrix` van zowel `pr-build` als `release`.
 
 **Buildstappen bij een versietag**
