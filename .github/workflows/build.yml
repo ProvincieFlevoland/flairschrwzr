@@ -43,10 +43,9 @@ jobs:
           - name: admin
             context: ./admin
             dockerfile: ./admin/Dockerfile
-          # Add further images here, e.g. once the schrijfassistent backend is on main:
-          # - name: schrijfassistent-api
-          #   context: ./schrijfassistent/backend
-          #   dockerfile: ./schrijfassistent/backend/Dockerfile
+          - name: schrijfassistent-api
+            context: ./schrijfassistent/backend
+            dockerfile: ./schrijfassistent/backend/Dockerfile
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -125,9 +124,9 @@ jobs:
             context: ./admin
             dockerfile: ./admin/Dockerfile
           # Keep in sync with the pr-build matrix above.
-          # - name: schrijfassistent-api
-          #   context: ./schrijfassistent/backend
-          #   dockerfile: ./schrijfassistent/backend/Dockerfile
+          - name: schrijfassistent-api
+            context: ./schrijfassistent/backend
+            dockerfile: ./schrijfassistent/backend/Dockerfile
     env:
       VERSION: ${{ needs.verify-tag.outputs.version }}
     steps:
