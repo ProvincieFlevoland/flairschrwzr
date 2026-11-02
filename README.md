@@ -33,6 +33,54 @@ GovChat-NL project documentation and still describes how the overlay itself work
 The GitHub fork (`BvO-Flevoland/GovChat-AdminOverlay`) is left in place for now as a historical
 reference; this repo is what the pipeline actually builds from going forward.
 
+### Releases en container-images
+
+Elke versie levert precies één vast image op. De workflow staat in
+`.github/workflows/build.yml`.
+
+| Gebeurtenis | Wat er gebeurt |
+|---|---|
+| Pull request naar `main` (ook uit forks) | Image bouwen en scannen met Trivy. Geen login, geen secrets, niets gepubliceerd. |
+| Tag `vX.Y.Z` op een commit in `main` | Tag controleren, één keer bouwen en pushen naar ghcr.io. |
+
+**Images**
+
+| Image | Dockerfile | Build context |
+|---|---|---|
+| `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z` | `admin/Dockerfile` | `admin/` |
+
+Het admin-image is `node:20-alpine` met `npm install --omit=dev`, daarna worden
+`server.js`, `views/` en `defaults/` gekopieerd. De container luistert op poort 3002.
+Een nieuw image voeg je toe als extra regel in de `matrix` van zowel `pr-build` als `release`.
+
+**Buildstappen bij een versietag**
+
+1. `verify-tag` controleert dat de tag de vorm `vX.Y.Z` heeft en dat de commit op `main` staat.
+2. De build stopt als `vX.Y.Z` al op ghcr.io staat: een versie wordt nooit opnieuw gebouwd.
+   Nieuwe wijziging betekent een nieuwe tag.
+3. Het image wordt gebouwd met build-args `VERSION` en `GIT_COMMIT` en gepusht als `vX.Y.Z`.
+   `latest` schuift alleen mee als dit de hoogste versie is (een hotfix op een oudere lijn
+   verschuift `latest` dus niet).
+4. Het digest staat in de samenvatting van de run. Omgevingen (dev/test/prod) krijgen later
+   precies dit image, op digest, en bouwen niet opnieuw.
+
+**Een release maken**
+
+```bash
+git checkout main && git pull
+git tag v1.2.0
+git push origin v1.2.0
+```
+
+Of via GitHub: *Releases → Draft a new release → Choose a tag → `v1.2.0`* op `main`.
+
+**Lokaal dezelfde build draaien**
+
+```bash
+docker build -f admin/Dockerfile -t flairschrwzr-admin:dev admin
+docker run --rm -p 3002:3002 flairschrwzr-admin:dev
+```
+
 ---
 
 ## Doel van publicatie
