@@ -21,14 +21,10 @@ GovChat-NL project documentation and still describes how the overlay itself work
 - The App Launcher is a sidebar entry (next to Notes/Workspace), not a top-navbar button —
   a deliberate deviation from upstream to avoid colliding with Open WebUI's own sidebar toggle.
 
-**To roll out a change:**
-1. Push to this repo's `main`.
-2. Run the `pipeline-dev-docker-build` pipeline in `tf-azure-ai-govchat`
-   (`.azuredevops/dev/pipeline-dev-docker-build.yaml`) — rebuilds
-   `acrflvaidev01.azurecr.io/govchat-adminoverlay`.
-3. Force a new Container Apps revision so the rebuilt image actually gets pulled — a same-tag
-   rebuild alone is not picked up automatically (yet):
-   `az containerapp update --name aca-flair-govchat-admin-dev --resource-group rg-flair-dev-001 --revision-suffix <unique>`
+**To roll out a change:** push a release tag `vX.Y.Z` on `main` (see *Releases en
+container-images* below). GitHub Actions builds the image once and publishes it to ghcr.io; the
+Azure DevOps pipeline then copies exactly that image to ACR and rolls it out to dev/test.
+Azure DevOps no longer builds the image itself.
 
 The GitHub fork (`BvO-Flevoland/GovChat-AdminOverlay`) is left in place for now as a historical
 reference; this repo is what the pipeline actually builds from going forward.
@@ -64,8 +60,42 @@ Een nieuw image voeg je toe als extra regel in de `matrix` van zowel `pr-build` 
 3. Het image wordt gebouwd met build-args `VERSION` en `GIT_COMMIT` en gepusht als `vX.Y.Z`.
    `latest` schuift alleen mee als dit de hoogste versie is (een hotfix op een oudere lijn
    verschuift `latest` dus niet).
-4. Het digest staat in de samenvatting van de run. Omgevingen (dev/test/prod) krijgen later
+4. Het digest staat in de samenvatting van de run. Omgevingen (dev/test/prod) krijgen
    precies dit image, op digest, en bouwen niet opnieuw.
+
+**Uitrol naar Azure (dev/test)**
+
+De Azure DevOps-pipeline `.azuredevops/dev/azure-pipelines.yml` start via een GitHub-webhook.
+Zodra er een tag van het package `flairschrwzr-admin` op ghcr.io is gepubliceerd, stuurt GitHub een
+*Registry packages*-event (`published`) naar de ADO-webhook `gh-schrijfassistent-webhook`
+(service connection `sc-schrijfassistent-webhook`). De pipeline heeft zelf geen triggers (geen branches, pull requests
+of schema), bouwt niets en wacht niet op GitHub. GitHub stuurt per tag een event. Events voor
+`latest`, `sha256-*` of andere tags die niet `vX.Y.Z` zijn, worden na een paar seconden
+overgeslagen (de run krijgt de tag `skipped`):
+
+1. Leest de versie uit het event (`registry_package.package_version.container_metadata.tag.name`)
+   en controleert de vorm `vX.Y.Z`. De tag is ook het versienummer.
+2. Logt in op ghcr.io via de service connection `sc-ghcr-pull` (alleen als `ghcrLogin` op
+   `'true'` staat; is het package publiek, zet het dan op `'false'`) en doet
+   `docker pull ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z`, met hooguit drie korte
+   pogingen.
+3. `docker tag` en `docker push` van alleen die ene tag naar
+   `acrflvaidev01.azurecr.io/govchat-adminoverlay:vX.Y.Z` (via het private endpoint, op de
+   agentpool `devcenter-devops-agents`). Daarna wordt de tag in ACR op alleen-lezen gezet.
+4. Controleert dat het digest in ACR gelijk is aan het digest op ghcr.io. Anders stopt de run.
+5. Rolt dat digest uit naar `aca-flair-admin-dev-schrwzr` (`rg-flairschrwzr-dev-001`), wacht tot
+   de nieuwe revisie gezond is, doet een smoke test en zet de tag `:test` op dit image.
+
+Je kunt de ADO-pipeline ook met de hand starten (*Run pipeline*, parameter `version` invullen),
+bijvoorbeeld als de webhook niet aankwam of om een eerdere versie opnieuw uit te rollen. Opnieuw
+draaien voor dezelfde versie is veilig: staat de tag al in ACR, dan wordt alleen het digest
+gecontroleerd en opnieuw uitgerold.
+
+Benodigd: in ADO de *Incoming WebHook*-service connection `sc-schrijfassistent-webhook` met
+WebHook-naam `gh-schrijfassistent-webhook` (header
+`X-Hub-Signature`, met een secret), en in GitHub (*Settings → Webhooks*) een webhook naar
+`https://dev.azure.com/flevoland/_apis/public/distributedtask/webhooks/gh-schrijfassistent-webhook?api-version=6.0-preview`
+met content type `application/json`, hetzelfde secret en alleen het event *Registry packages*.
 
 **Versienummers (semantic versioning)**
 
