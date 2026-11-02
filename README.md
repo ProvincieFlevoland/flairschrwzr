@@ -3,7 +3,8 @@
 > [!WARNING]
 > **Status: niet productierijp / niet gegarandeerd werkend.**
 > Deze repository wordt gedeeld als **inspiratie en referentie-implementatie** voor leveranciers en mede-overheden.
-> Gebruik dit niet als kant-en-klare productieoplossing zonder eigen validatie, security review, hardening en acceptatietesten.
+> Gebruik dit niet als kant-en-klare productieoplossing zonder eigen validatie, security review, hardening en acceptatietesten
+> gebruik is op eigen risico 
 
 ## Provincie Flevoland deployment (this repo)
 
