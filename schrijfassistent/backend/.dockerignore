@@ -1,0 +1,12 @@
+.venv/
+antenv/
+__pycache__/
+*.pyc
+.pytest_cache/
+static/
+.env
+.env.*
+tests/
+Dockerfile
+.dockerignore
+*.md
