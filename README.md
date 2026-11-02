@@ -67,6 +67,25 @@ Een nieuw image voeg je toe als extra regel in de `matrix` van zowel `pr-build` 
 4. Het digest staat in de samenvatting van de run. Omgevingen (dev/test/prod) krijgen later
    precies dit image, op digest, en bouwen niet opnieuw.
 
+**Versienummers (semantic versioning)**
+
+Versies hebben de vorm `vMAJOR.MINOR.PATCH`. Bij een nieuwe release verhoog je één deel:
+
+| Deel | Wanneer verhogen | Voorbeeld |
+|---|---|---|
+| `MAJOR` | Wijziging die niet terugwaarts compatibel is (breaking), bijvoorbeeld een verwijderde of hernoemde configuratie-optie | `v1.4.2` → `v2.0.0` |
+| `MINOR` | Nieuwe functionaliteit die bestaande installaties niet breekt | `v1.4.2` → `v1.5.0` |
+| `PATCH` | Alleen bugfixes, geen nieuwe functionaliteit | `v1.4.2` → `v1.4.3` |
+
+Verhoog je een deel, dan gaan de delen erachter terug naar 0. Een verloop kan er zo uitzien:
+`v0.1.0` (eerste release) → `v0.1.1` (bugfix) → `v0.2.0` (nieuwe feature) → `v1.0.0`
+(eerste stabiele versie, of een breaking change). Zolang de versie met `v0.` begint, geldt
+de software als nog niet stabiel.
+
+Tags zet je altijd op een commit in `main`; een tag op een andere branch wordt door
+`verify-tag` geweigerd. `latest` schuift alleen mee bij de hoogste versie: een patch op een
+oudere lijn (bijvoorbeeld `v1.4.3` terwijl `v2.0.0` al bestaat) verplaatst `latest` niet.
+
 **Een release maken**
 
 ```bash
