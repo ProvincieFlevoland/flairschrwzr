@@ -22,14 +22,10 @@ GovChat-NL project documentation and still describes how the overlay itself work
 - The App Launcher is a sidebar entry (next to Notes/Workspace), not a top-navbar button —
   a deliberate deviation from upstream to avoid colliding with Open WebUI's own sidebar toggle.
 
-**To roll out a change:**
-1. Push to this repo's `main`.
-2. Run the `pipeline-dev-docker-build` pipeline in `tf-azure-ai-govchat`
-   (`.azuredevops/dev/pipeline-dev-docker-build.yaml`) — rebuilds
-   `acrflvaidev01.azurecr.io/govchat-adminoverlay`.
-3. Force a new Container Apps revision so the rebuilt image actually gets pulled — a same-tag
-   rebuild alone is not picked up automatically (yet):
-   `az containerapp update --name aca-flair-govchat-admin-dev --resource-group rg-flair-dev-001 --revision-suffix <unique>`
+**To roll out a change:** push a release tag `vX.Y.Z` on `main` (see *Releases en
+container-images* below). GitHub Actions builds the image once, publishes it to ghcr.io and then
+notifies Azure DevOps, which points the TEST container app at that exact ghcr.io image.
+Azure DevOps no longer builds the image, and no ACR is involved.
 
 The GitHub fork (`BvO-Flevoland/GovChat-AdminOverlay`) is left in place for now as a historical
 reference; this repo is what the pipeline actually builds from going forward.
@@ -65,8 +61,32 @@ Een nieuw image voeg je toe als extra regel in de `matrix` van zowel `pr-build` 
 3. Het image wordt gebouwd met build-args `VERSION` en `GIT_COMMIT` en gepusht als `vX.Y.Z`.
    `latest` schuift alleen mee als dit de hoogste versie is (een hotfix op een oudere lijn
    verschuift `latest` dus niet).
-4. Het digest staat in de samenvatting van de run. Omgevingen (dev/test/prod) krijgen later
+4. Het digest staat in de samenvatting van de run. Omgevingen (dev/test/prod) krijgen
    precies dit image, op digest, en bouwen niet opnieuw.
+
+**Uitrol naar Azure (dev/test)**
+
+De uitrol loopt zonder ACR: de Container App haalt het image direct van ghcr.io.
+
+1. Na een geslaagde push van alle images start de job `notify-ado` in
+   `.github/workflows/build.yml`. Die stuurt `{"tag":"vX.Y.Z"}` naar de ADO-webhook
+   `gh-schrijfassistent-webhook`, ondertekend met de header `X-Hub-Signature` (HMAC-SHA1 met het
+   secret `ADO_WEBHOOK_SECRET`). Bestond de versie al, of is het een pull request, dan wordt ADO
+   niet aangeroepen. Geeft ADO geen 2xx terug, dan faalt de GitHub-run.
+2. De ADO-pipeline (Incoming WebHook-service connection `sc-schrijfassistent-webhook`) leest
+   `tag` uit de payload en zet de Container App `aca-flair-admin-dev-schrwzr`
+   (`rg-flairschrwzr-dev-001`) op `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z`.
+3. ADO wacht tot de nieuwe revisie gezond is en doet een smoke test.
+
+GitHub stuurt alleen versie-tags `vX.Y.Z`, nooit `latest`.
+
+Benodigd:
+- In GitHub het repository-secret `ADO_WEBHOOK_SECRET`, met dezelfde waarde als het secret in
+  `sc-schrijfassistent-webhook`. Er is geen aparte GitHub-webhook voor *Registry packages* nodig;
+  die zou ADO meerdere keren per release starten.
+- Is het ghcr-package privé, dan heeft de Container App eenmalig een ghcr-login nodig (token met
+  alleen `read:packages`):
+  `az containerapp registry set -n aca-flair-admin-dev-schrwzr -g rg-flairschrwzr-dev-001 --server ghcr.io --username <github-user> --password <token>`
 
 **Versienummers (semantic versioning)**
 
