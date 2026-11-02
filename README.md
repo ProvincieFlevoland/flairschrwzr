@@ -41,6 +41,7 @@ Elke versie levert precies één vast image op. De workflow staat in
 | Gebeurtenis | Wat er gebeurt |
 |---|---|
 | Pull request naar `main` (ook uit forks) | Image bouwen en scannen met Trivy. Geen login, geen secrets, niets gepubliceerd. |
+| Handmatig: *Actions → Container images → Run workflow* op een branch | Hetzelfde als een pull request: bouwen en scannen, niets gepubliceerd. |
 | Tag `vX.Y.Z` op een commit in `main` | Tag controleren, één keer bouwen en pushen naar ghcr.io. |
 
 **Images**
