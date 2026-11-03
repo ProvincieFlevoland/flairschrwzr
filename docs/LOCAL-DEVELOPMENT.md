@@ -19,7 +19,7 @@ Dit document beschrijft hoe je de volledige stack lokaal draait en welke environ
 | [`uv`](https://docs.astral.sh/uv/) | Backend-venv aanmaken (`make-venv.sh`) | Installeren binnen WSL. |
 | Python 3.13 | Backend-venv | `uv` haalt deze zelf op. |
 | Node.js en npm | Alleen voor losse frontend-ontwikkeling (`npm`, harness) | Voor de normale route niet nodig: de bundle wordt in de admin-image gebouwd. |
-| Azure CLI (`az login`) en toegang tot het Foundry-project | Alleen voor echte AI (backend met `.env`) | Niet nodig in demo-modus. |
+| Azure CLI (`az login`) en toegang tot het Foundry-project | Alleen voor echte AI (backend met `.env`) | Niet nodig in demo-modus. Zie "Azure-login en rollen" in sectie 3. |
 | Vrije poorten 3000, 3002, 8011, 10001 | | Aanpasbaar, zie de overrides in sectie 3. |
 
 Shell-scripts (`*.sh`) moeten LF-regeleindes hebben; `.gitattributes` dwingt dat af.
@@ -86,6 +86,25 @@ bash schrijfassistent/dev/run-local-dev.sh stop   # stoppen
 > **De backend moet vanuit Linux of macOS gestart worden.** Het script is bash en gebruikt o.a. `/dev/tcp`, `nohup`, `pkill` en de venv-map `.venv/bin/python`. Op Windows draai je alles (venv aanmaken en het script) dus vanuit **WSL**, niet vanuit PowerShell of Git Bash. Houd de repository bij voorkeur in het WSL-bestandssysteem (`~/...`) of gebruik `/mnt/c/...`; Docker Desktop bereikt de backend op `localhost:8011` doordat WSL poorten naar Windows doorstuurt.
 >
 > Shell-scripts (`*.sh`) moeten LF-regeleindes hebben; `.gitattributes` dwingt dat af. Zie je `\r: command not found`, dan heeft het bestand CRLF: `git add --renormalize .` en check het bestand opnieuw uit.
+
+### Azure-login en rollen (alleen voor echte AI)
+
+De backend gebruikt lokaal `DefaultAzureCredential`, dus de identiteit van `az login`. Log in **binnen WSL** (de Azure CLI in Windows wordt niet gezien door WSL) met een **persoonlijk gebruikersaccount** dat in het juiste tenant/abonnement toegang heeft:
+
+```bash
+az login            # eventueel: az login --use-device-code --tenant <tenant-id>
+az account set --subscription <subscription-id>
+az account show     # controleer account en abonnement
+```
+
+Dit account heeft dezelfde rollen nodig als de managed identity van de backend in Azure (zie `schrijfassistent/OPERATIONS.md` en `backend/README.md`):
+
+| Rol | Scope | Waarvoor |
+|---|---|---|
+| `Azure AI User` (of gelijkwaardig) | AI Foundry-project | Het project-endpoint (`PROJECT_ENDPOINT`) aanroepen. |
+| `Cognitive Services OpenAI User` | Azure OpenAI / AI Services-resource achter het project | De `chat-agent`-deployment aanroepen. |
+
+Vraag de rolwijziging aan bij de beheerder van het Foundry-project; een nieuwe roltoewijzing kan enkele minuten duren en vereist opnieuw inloggen (`az logout && az login`). Zonder deze rollen krijgt de backend een `401`/`403` bij AI-aanroepen. Voor echte opslag (`AZURE_STORAGE_CONNECTION_STRING`) is geen rol nodig; de connection string geeft toegang.
 
 ### Modi
 
