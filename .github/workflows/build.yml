@@ -1,26 +1,143 @@
-name: Build and push Docker images
+name: Container images
+
+# Release flow: one immutable image per version tag.
+#
+#   pull_request -> main   build + scan only; no registry login, no push, no secrets
+#   manual run on a branch same as a pull request (Actions -> Run workflow)
+#   push tag vX.Y.Z        verify tag, build once, push to ghcr.io with tag vX.Y.Z
+#                          (+ latest when it is the highest released version)
+#                          then notify Azure DevOps (job notify-ado) to roll out vX.Y.Z
+#
+# Images: ghcr.io/<owner>/<repo>-<name>:vX.Y.Z
+# Promotion to the Azure Container Registry happens afterwards from this exact image
+# (by digest); it is never rebuilt per environment.
 
 on:
   push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
     branches: [main]
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-admin:
+  # ---------------------------------------------------------------------------------------
+  # Pull requests (including forks) and manual branch runs: build and scan, nothing is published.
+  # ---------------------------------------------------------------------------------------
+  pr-build:
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: admin
+            context: .   # repo root: the admin image also builds the Schrijfassistent frontend
+            dockerfile: ./admin/Dockerfile
+          - name: schrijfassistent-api
+            context: ./schrijfassistent/backend
+            dockerfile: ./schrijfassistent/backend/Dockerfile
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Lowercase image name
-        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build ${{ matrix.name }} (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: false
+          load: true
+          tags: check-${{ matrix.name }}:${{ github.run_id }}
+
+      - name: Trivy scan (fail on fixable CRITICAL)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:0.56.2 image --exit-code 1 --severity CRITICAL --ignore-unfixed \
+            "check-${{ matrix.name }}:${{ github.run_id }}"
+
+  # ---------------------------------------------------------------------------------------
+  # Version tags: guard rails before anything is built.
+  # ---------------------------------------------------------------------------------------
+  verify-tag:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      latest: ${{ steps.check.outputs.latest }}
+    steps:
+      - name: Checkout (full history and tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check tag format, branch and latest
+        id: check
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          if ! [[ "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::Tag '$TAG' is not of the form vX.Y.Z"
+            exit 1
+          fi
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag '$TAG' points to a commit that is not on main"
+            exit 1
+          fi
+          HIGHEST=$(git tag -l 'v*.*.*' --sort=-v:refname \
+            | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
+          LATEST=false
+          [ "$TAG" = "$HIGHEST" ] && LATEST=true
+          echo "version=$TAG" >> "$GITHUB_OUTPUT"
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "Release $TAG (latest: $LATEST)"
+
+  # ---------------------------------------------------------------------------------------
+  # Version tags: build once and publish to ghcr.io.
+  # ---------------------------------------------------------------------------------------
+  release:
+    needs: verify-tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: admin
+            context: .   # repo root: the admin image also builds the Schrijfassistent frontend
+            dockerfile: ./admin/Dockerfile
+          # Keep in sync with the pr-build matrix above.
+          - name: schrijfassistent-api
+            context: ./schrijfassistent/backend
+            dockerfile: ./schrijfassistent/backend/Dockerfile
+    env:
+      VERSION: ${{ needs.verify-tag.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Image name
+        run: echo "IMAGE=${REGISTRY}/${GITHUB_REPOSITORY,,}-${{ matrix.name }}" >> "$GITHUB_ENV"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -29,12 +146,74 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push admin image
+      - name: Refuse to overwrite an existing version
+        run: |
+          if docker buildx imagetools inspect "$IMAGE:$VERSION" > /dev/null 2>&1; then
+            echo "::error::$IMAGE:$VERSION already exists; versions are built only once. Create a new tag instead."
+            exit 1
+          fi
+
+      - name: Image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          flavor: latest=false
+          tags: |
+            type=raw,value=${{ env.VERSION }}
+            type=raw,value=latest,enable=${{ needs.verify-tag.outputs.latest == 'true' }}
+
+      - name: Build and push ${{ matrix.name }}
+        id: build
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./admin/Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-admin:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-admin:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            GIT_COMMIT=${{ github.sha }}
+
+      - name: Summary
+        run: |
+          {
+            echo "### ${{ matrix.name }} ${VERSION}"
+            echo ""
+            echo "- Image: \`${IMAGE}:${VERSION}\`"
+            echo "- Digest: \`${{ steps.build.outputs.digest }}\`"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------------------------
+  # Version tags: after every image was pushed, tell Azure DevOps to roll out this version.
+  # Sends {"tag":"vX.Y.Z"} to the incoming webhook 'gh-schrijfassistent-webhook'
+  # (service connection 'sc-schrijfassistent-webhook'), signed with X-Hub-Signature
+  # (HMAC-SHA1 of the body with the repo secret ADO_WEBHOOK_SECRET). Runs only when the
+  # release job succeeded, so never for pull requests or for a version that already existed.
+  # ---------------------------------------------------------------------------------------
+  notify-ado:
+    needs: [verify-tag, release]
+    runs-on: ubuntu-latest
+    permissions: {}
+    env:
+      VERSION: ${{ needs.verify-tag.outputs.version }}
+      ADO_WEBHOOK_URL: https://dev.azure.com/flevoland/_apis/public/distributedtask/webhooks/gh-schrijfassistent-webhook?api-version=6.0-preview
+      ADO_WEBHOOK_SECRET: ${{ secrets.ADO_WEBHOOK_SECRET }}
+    steps:
+      - name: Trigger Azure DevOps rollout for ${{ env.VERSION }}
+        run: |
+          set -euo pipefail
+          [ -n "$ADO_WEBHOOK_SECRET" ] || { echo "::error::Secret ADO_WEBHOOK_SECRET is not set"; exit 1; }
+          BODY=$(jq -cn --arg t "$VERSION" '{tag: $t}')
+          SIG="sha1=$(printf '%s' "$BODY" | openssl dgst -sha1 -hmac "$ADO_WEBHOOK_SECRET" | awk '{print $NF}')"
+          HTTP=$(curl -sS -o response.txt -w '%{http_code}' -X POST "$ADO_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' -H "X-Hub-Signature: $SIG" --data-binary "$BODY")
+          if [ "$HTTP" -lt 200 ] || [ "$HTTP" -ge 300 ]; then
+            echo "::error::Azure DevOps webhook failed (HTTP $HTTP)"
+            cat response.txt || true
+            exit 1
+          fi
+          echo "Azure DevOps rollout triggered for $VERSION"
+          echo "- Azure DevOps rollout triggered for \`$VERSION\`" >> "$GITHUB_STEP_SUMMARY"
