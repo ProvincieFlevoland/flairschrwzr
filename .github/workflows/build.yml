@@ -41,7 +41,7 @@ jobs:
       matrix:
         include:
           - name: admin
-            context: ./admin
+            context: .   # repo root: the admin image also builds the Schrijfassistent frontend
             dockerfile: ./admin/Dockerfile
           - name: schrijfassistent-api
             context: ./schrijfassistent/backend
@@ -121,7 +121,7 @@ jobs:
       matrix:
         include:
           - name: admin
-            context: ./admin
+            context: .   # repo root: the admin image also builds the Schrijfassistent frontend
             dockerfile: ./admin/Dockerfile
           # Keep in sync with the pr-build matrix above.
           - name: schrijfassistent-api

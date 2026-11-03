@@ -385,17 +385,23 @@ ${html}
     const anchor = findSidebarAnchor();
     if (!anchor) return;
 
+    // Copy the row and button classes from Open WebUI's own "Search" entry
+    // when it is present, so the launcher matches the native sidebar look of
+    // whatever Open WebUI version is running; fall back to the classes of
+    // recent builds otherwise.
+    const nativeBtn = document.getElementById("sidebar-search-button");
+    const nativeRow = nativeBtn?.closest('[class*="px-1"]') || nativeBtn?.parentElement;
+
     const wrapper = document.createElement("div");
-    wrapper.className = "px-1 flex justify-center text-gray-700 dark:text-gray-300";
+    wrapper.className =
+      nativeRow?.className || "px-1 flex justify-center text-gray-700 dark:text-gray-300";
     wrapper.setAttribute("data-id", "app-launcher");
 
     const btn = document.createElement("button");
     btn.type = "button";
     btn.id = "al-sidebar-btn";
-    // Reuse Open WebUI's own pinned-menu-item classes (the same ones on
-    // "Notes"/"Workspace") so this entry matches the native sidebar look
-    // -- spacing, hover state and dark mode -- with no custom CSS needed.
     btn.className =
+      nativeBtn?.className ||
       "grow flex items-center space-x-2 rounded-xl px-2 py-1.5 transition hover:bg-gray-100 dark:hover:bg-gray-900";
     btn.setAttribute("aria-label", "App Launcher");
     btn.innerHTML = `
@@ -426,8 +432,11 @@ ${html}
 
     // Strategy 2: Fall back to inserting right after the "Search" row, in
     // case a future build renames/removes the pinned-items list container.
+    // The row's utility classes differ per Open WebUI version (px-1 in
+    // recent builds, px-[0.4375rem] in v0.8.x), so match on the class first
+    // and otherwise take the button's direct parent row.
     const searchBtn = document.getElementById("sidebar-search-button");
-    const searchRow = searchBtn?.closest('[class*="px-1"]');
+    const searchRow = searchBtn?.closest('[class*="px-1"]') || searchBtn?.parentElement;
     if (searchRow?.parentElement) {
       return {
         appendChild: (el) => searchRow.insertAdjacentElement("afterend", el),
@@ -438,13 +447,37 @@ ${html}
   }
 
   // Re-inject when SvelteKit re-renders the sidebar (e.g. navigation)
+  // The observer watches the whole body, and the Schrijfassistent re-renders parts of its
+  // own DOM on every keystroke, so it is paused while #sa-container is open and resumed when the container is removed.
+  let sidebarObserver = null;
+  let sidebarObserverPaused = false;
+
   function observeSidebarChanges() {
-    const observer = new MutationObserver(() => {
+    if (sidebarObserver) return;
+    sidebarObserver = new MutationObserver(() => {
       if (!document.getElementById("al-sidebar-btn")) {
         tryInjectSidebarItem();
       }
     });
-    observer.observe(document.body, { childList: true, subtree: true });
+    if (document.getElementById("sa-container")) {
+      sidebarObserverPaused = true; // created while the app is open: resumed by removeSchrijfassistentContainer
+      return;
+    }
+    sidebarObserver.observe(document.body, { childList: true, subtree: true });
+  }
+
+  function pauseSidebarObserver() {
+    if (!sidebarObserver || sidebarObserverPaused) return;
+    sidebarObserver.disconnect();
+    sidebarObserverPaused = true;
+  }
+
+  function resumeSidebarObserver() {
+    if (!sidebarObserver || !sidebarObserverPaused) return;
+    sidebarObserverPaused = false;
+    sidebarObserver.observe(document.body, { childList: true, subtree: true });
+    // the sidebar may have been re-rendered while the observer was paused
+    if (!document.getElementById("al-sidebar-btn")) tryInjectSidebarItem();
   }
 
   // ── App launcher modal ─────────────────────────────────────────────
@@ -513,6 +546,8 @@ ${html}
 
         if (target === "versimpelaar") {
           openVersimpelaar(appConfig || { url: url });
+        } else if (target === "schrijfassistent") {
+          openSchrijfassistent(appConfig || { url: url });
         } else if (target === "iframe") {
           openIframeViewer(url, card.querySelector(".al-card-name")?.textContent || "App");
         } else if (target === "navigate") {
@@ -898,6 +933,286 @@ ${html}
   function countWords(text) {
     if (!text || !text.trim()) return 0;
     return text.trim().split(/\s+/).length;
+  }
+
+  // =====================================================================
+  //  SCHRIJFASSISTENT (GS-nota editor)
+  // =====================================================================
+  //
+  // The card `target: "schrijfassistent"` loads the Svelte bundle from
+  // config.asset_base_url and mounts it in a full-screen container, for every
+  // authenticated user. The user comes from Open WebUI (GET /api/v1/auths/).
+
+  const SA_LOAD_ERROR_TEXT = "De Schrijfassistent kan niet geladen worden. Probeer het later opnieuw.";
+  const SA_LOAD_TIMEOUT_MS = 20000;
+  const SA_DEFAULT_ASSET_BASE = "/static/apps/schrijfassistent";
+  const SA_DEFAULT_API_BASE = "/apps/schrijfassistent";
+
+  // Pure: checks the card's URLs. asset_base_url must be a
+  // same-origin path; api_base_url a path or an https URL; b1_metrics_doc_url
+  // an http(s) URL or a path. Violations fall back to the design defaults, or
+  // to "" for the metrics link. Returns { assetBase, apiBase, b1MetricsDocUrl, warnings }.
+  //
+  // Local development only: api_base_url may be
+  // http://localhost[:port] or http://127.0.0.1[:port] when the card carries
+  // `allow_local_api: true` AND the page itself is served from localhost or
+  // 127.0.0.1. The admin server writes that field only when its environment
+  // variable SCHRIJFASSISTENT_ALLOW_LOCAL_API is set (docker-compose.local.yaml,
+  // never the pipeline) and removes it from every other published card, so on a
+  // real host neither condition holds and the https rule above stays absolute.
+  // `hostname` is a parameter for the unit test; the default is location.hostname.
+  function sanitizeSchrijfassistentConfig(app, hostname) {
+    const cfg = (app && app.config) || {};
+    const warnings = [];
+    const isPath = (v) => /^\/(?!\/)/.test(v);
+    const isHttps = (v) => /^https:\/\/[^\s/]+/i.test(v);
+    const isHttp = (v) => /^https?:\/\/[^\s/]+/i.test(v);
+    const isLocalHttp = (v) => /^http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?(\/[^\s]*)?$/i.test(v);
+    const pageHost = typeof hostname === "string" ? hostname : typeof location !== "undefined" ? String(location.hostname || "") : "";
+    const pageIsLocal = pageHost === "localhost" || pageHost === "127.0.0.1";
+    const allowLocal = cfg.allow_local_api === true && pageIsLocal;
+    if (cfg.allow_local_api === true && !pageIsLocal) warnings.push("allow_local_api genegeerd: de pagina draait niet op localhost");
+
+    let assetBase = String(cfg.asset_base_url || "").trim();
+    if (!assetBase) assetBase = SA_DEFAULT_ASSET_BASE;
+    if (!isPath(assetBase)) {
+      warnings.push("asset_base_url is geen pad op dezelfde origin; standaard gebruikt");
+      assetBase = SA_DEFAULT_ASSET_BASE;
+    }
+    assetBase = assetBase.replace(/\/+$/, "");
+
+    let apiBase = String(cfg.api_base_url || "").trim();
+    if (!apiBase) apiBase = SA_DEFAULT_API_BASE;
+    if (!isPath(apiBase) && !isHttps(apiBase) && !(allowLocal && isLocalHttp(apiBase))) {
+      warnings.push("api_base_url is geen pad en geen https-URL; standaard gebruikt");
+      apiBase = SA_DEFAULT_API_BASE;
+    }
+    apiBase = apiBase.replace(/\/+$/, "");
+
+    let b1MetricsDocUrl = String(cfg.b1_metrics_doc_url || "").trim();
+    if (b1MetricsDocUrl && !isPath(b1MetricsDocUrl) && !isHttp(b1MetricsDocUrl)) {
+      warnings.push("b1_metrics_doc_url is geen http(s)-URL en geen pad; link weggelaten");
+      b1MetricsDocUrl = "";
+    }
+    return { assetBase, apiBase, b1MetricsDocUrl, warnings };
+  }
+
+  function readOpenWebUIToken() {
+    try {
+      return localStorage.getItem("token") || "";
+    } catch (err) {
+      return "";
+    }
+  }
+
+  // Identity from Open WebUI: same-origin GET /api/v1/auths/ with
+  // the bearer token from localStorage. Any failure yields null (unknown user).
+  async function fetchOpenWebUIUser() {
+    const token = readOpenWebUIToken();
+    if (!token) {
+      console.warn("[Schrijfassistent] Geen Open WebUI token in localStorage; gebruiker onbekend.");
+      return null;
+    }
+    try {
+      const resp = await fetch("/api/v1/auths/", {
+        method: "GET",
+        headers: { Authorization: "Bearer " + token },
+        credentials: "same-origin",
+      });
+      if (!resp.ok) throw new Error("status " + resp.status);
+      const data = await resp.json();
+      return {
+        id: data.id || "",
+        email: data.email || "",
+        name: data.name || "",
+        role: data.role || "",
+      };
+    } catch (err) {
+      console.warn("[Schrijfassistent] Gebruiker kon niet worden opgehaald via /api/v1/auths/:", err);
+      return null;
+    }
+  }
+
+  async function openSchrijfassistent(app) {
+    const safe = sanitizeSchrijfassistentConfig(app);
+    for (const w of safe.warnings) console.warn("[Schrijfassistent] " + w);
+    // No identity, no app (Open WebUI is the only identity source and the bundle
+    // requires `user` as a prop).
+    const user = await fetchOpenWebUIUser();
+    if (!user) {
+      console.warn("[Schrijfassistent] Geen identiteit beschikbaar; de app wordt niet geopend.");
+      return;
+    }
+    mountSchrijfassistent(app, user, safe);
+  }
+
+  function fetchSchrijfassistentManifest(assetBase) {
+    return fetch(assetBase + "/manifest.json", { cache: "no-cache", credentials: "same-origin" }).then((resp) => {
+      if (!resp.ok) throw new Error("manifest status " + resp.status);
+      return resp.json();
+    });
+  }
+
+  // Resolves the bundle file names from the manifest.
+  // The build writes the hash into manifest.json. Accepted: { hash }
+  // giving schrijfassistent.{hash}.js/.css, optionally overridden by explicit
+  // { js, css } file names (plain file names, no path).
+  function schrijfassistentBundleFiles(manifest, assetBase) {
+    const m = manifest || {};
+    const hash = String(m.hash || "").trim();
+    const js = String(m.js || (hash ? "schrijfassistent." + hash + ".js" : "")).trim();
+    const css = String(m.css || (hash ? "schrijfassistent." + hash + ".css" : "")).trim();
+    if (!js || !css || /[\/\\:]/.test(js) || /[\/\\:]/.test(css)) throw new Error("manifest zonder bruikbare bestandsnamen");
+    return { js: assetBase + "/" + js, css: assetBase + "/" + css };
+  }
+
+  // Inserts the stylesheet and the script once; resolves when the script has
+  // loaded (or immediately when the IIFE global already exists). A stale
+  // script element without the global is replaced.
+  function loadSchrijfassistentBundle(files) {
+    return new Promise((resolve, reject) => {
+      if (!document.getElementById("sa-bundle-css")) {
+        const link = document.createElement("link");
+        link.id = "sa-bundle-css";
+        link.rel = "stylesheet";
+        link.href = files.css;
+        document.head.appendChild(link);
+      }
+      if (window.SchrijfassistentApp && typeof window.SchrijfassistentApp.mount === "function") {
+        resolve();
+        return;
+      }
+      const existing = document.getElementById("sa-bundle-js");
+      if (existing) existing.remove();
+      const script = document.createElement("script");
+      script.id = "sa-bundle-js";
+      script.src = files.js;
+      script.async = true;
+      script.addEventListener("load", () => resolve(), { once: true });
+      script.addEventListener("error", () => {
+        script.remove();
+        reject(new Error("script error"));
+      }, { once: true });
+      document.head.appendChild(script);
+    });
+  }
+
+  function withTimeout(promise, ms, label) {
+    let timer = null;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(label + " duurde langer dan " + ms + " ms")), ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
+  function removeSchrijfassistentContainer() {
+    const el = document.getElementById("sa-container");
+    if (el) el.remove();
+    resumeSidebarObserver();
+  }
+
+  function schrijfassistentCloseButton() {
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "vs-btn-secondary sa-loading-close";
+    closeBtn.textContent = "Sluiten";
+    // closeSchrijfassistent unmounts a bundle instance when one exists (also after a failed mount()), then removes the container.
+    closeBtn.addEventListener("click", closeSchrijfassistent);
+    return closeBtn;
+  }
+
+  // Mount sequence: container -> manifest -> css + js -> mount().
+  // The container is created first so the status line gives feedback during
+  // the manifest fetch.
+  async function mountSchrijfassistent(app, user, safe) {
+    if (document.getElementById("sa-container")) return;
+    const assetBase = safe.assetBase;
+
+    const container = document.createElement("div");
+    container.id = "sa-container";
+    container.className = "sa-root";
+    const status = document.createElement("div");
+    status.className = "sa-loading";
+    const statusText = document.createElement("div");
+    statusText.className = "sa-loading-text";
+    statusText.textContent = "Schrijfassistent wordt geladen...";
+    status.appendChild(statusText);
+    status.appendChild(schrijfassistentCloseButton());
+    container.appendChild(status);
+    document.body.appendChild(container);
+    pauseSidebarObserver();
+
+    try {
+      await withTimeout(
+        (async () => {
+          const manifest = await fetchSchrijfassistentManifest(assetBase);
+          const files = schrijfassistentBundleFiles(manifest, assetBase);
+          await loadSchrijfassistentBundle(files);
+        })(),
+        SA_LOAD_TIMEOUT_MS,
+        "laden van de bundle",
+      );
+      if (!window.SchrijfassistentApp || typeof window.SchrijfassistentApp.mount !== "function") {
+        throw new Error("window.SchrijfassistentApp.mount ontbreekt");
+      }
+    } catch (err) {
+      console.error("[Schrijfassistent] Laden mislukt:", err);
+      if (document.getElementById("sa-container")) showSchrijfassistentLoadError(container, safe);
+      return;
+    }
+    // The user closed the loading state while the bundle was loading.
+    if (!document.getElementById("sa-container")) return;
+
+    const mountConfig = {
+      api_base_url: safe.apiBase,
+      asset_base_url: assetBase,
+      b1_metrics_doc_url: safe.b1MetricsDocUrl,
+    };
+    // The bundle reads its configuration from this mount prop only (no window global is set).
+
+    // Remove the status line; the bundle owns the container from here on.
+    container.textContent = "";
+    try {
+      window.SchrijfassistentApp.mount(container, {
+        getToken: readOpenWebUIToken,
+        user: user,
+        config: mountConfig,
+        onClose: closeSchrijfassistent,
+      });
+    } catch (err) {
+      console.error("[Schrijfassistent] mount() mislukt:", err);
+      showSchrijfassistentLoadError(container, safe);
+    }
+    // No Esc listener for this surface (see the close sequence): Esc only
+    // closes modals inside the app.
+  }
+
+  // Failure handling: a status line and a close button so the user
+  // can leave the full-screen container.
+  function showSchrijfassistentLoadError(container, safe) {
+    container.textContent = "";
+    const status = document.createElement("div");
+    status.className = "sa-loading sa-loading-error";
+    const text = document.createElement("div");
+    text.className = "sa-loading-text";
+    text.textContent = SA_LOAD_ERROR_TEXT;
+    status.appendChild(text);
+
+    status.appendChild(schrijfassistentCloseButton());
+    container.appendChild(status);
+  }
+
+  // Close sequence: called by the app as onClose after its own
+  // save/cleanup; loader.js unmounts, awaits, and removes the container.
+  async function closeSchrijfassistent() {
+    try {
+      if (window.SchrijfassistentApp && typeof window.SchrijfassistentApp.unmount === "function") {
+        await window.SchrijfassistentApp.unmount();
+      }
+    } catch (err) {
+      console.error("[Schrijfassistent] unmount() mislukt:", err);
+    }
+    removeSchrijfassistentContainer();
   }
 
   // ── Utility ────────────────────────────────────────────────────────

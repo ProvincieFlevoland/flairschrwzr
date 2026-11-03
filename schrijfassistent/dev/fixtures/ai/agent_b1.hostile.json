@@ -1,0 +1,22 @@
+{
+  "assignment": "agent_b1",
+  "raw": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"Wij verzoeken u dit te accorderen.\",\n      \"Herschrijvingen\": [\n        {\n          \"Tekst\": \"Wij vragen u dit goed te keuren.<img src='http://canary.invalid/b1-sug.png' onerror=\\\"window.__pwned=(window.__pwned||[]).concat('b1-sug')\\\"><script>window.__pwned=(window.__pwned||[]).concat('b1-sug-script')</script><svg onload=\\\"window.__pwned=(window.__pwned||[]).concat('b1-sug-svg')\\\"></svg>\",\n          \"Uitleg\": \"<svg onload=\\\"window.__pwned=(window.__pwned||[]).concat('b1-expl')\\\"></svg>Uitleg met <b>markup</b> <a href='javascript:window.__pwned=1'>klik</a>\"\n        },\n        {\n          \"Tekst\": \"Keur dit voorstel goed.<iframe src='javascript:window.parent.__pwned=1'></iframe>\",\n          \"Uitleg\": \"Directe aanspreekvorm (B1).\"\n        }\n      ]\n    }\n  ]\n}",
+  "expected": {
+    "Suggesties": [
+      {
+        "Origineel": "Wij verzoeken u dit te accorderen.",
+        "Herschrijvingen": [
+          {
+            "Tekst": "Wij vragen u dit goed te keuren.<img src='http://canary.invalid/b1-sug.png' onerror=\"window.__pwned=(window.__pwned||[]).concat('b1-sug')\"><script>window.__pwned=(window.__pwned||[]).concat('b1-sug-script')</script><svg onload=\"window.__pwned=(window.__pwned||[]).concat('b1-sug-svg')\"></svg>",
+            "Uitleg": "<svg onload=\"window.__pwned=(window.__pwned||[]).concat('b1-expl')\"></svg>Uitleg met <b>markup</b> <a href='javascript:window.__pwned=1'>klik</a>"
+          },
+          {
+            "Tekst": "Keur dit voorstel goed.<iframe src='javascript:window.parent.__pwned=1'></iframe>",
+            "Uitleg": "Directe aanspreekvorm (B1)."
+          }
+        ]
+      }
+    ]
+  },
+  "note": "Hostile variant: selected with [[mock:hostile]] in user_message. The backend passes the model text through unchanged; the browser must neutralise every payload on its way into the editor (setContent, the suggestion text lookup) and render the rest as text. Canary host canary.invalid, sentinel window.__pwned. Origineel stays plain text: an Origineel with markup is never found in the plain text of the cell and its row is dropped, so the payload sits in Tekst, Suggestie, Categorie and Uitleg."
+}

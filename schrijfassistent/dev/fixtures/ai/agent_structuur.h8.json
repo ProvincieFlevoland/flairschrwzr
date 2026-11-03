@@ -1,0 +1,17 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h8",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Afstemming\": \"Regel 'Afstemming': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Dekking\": \"Regel 'Dekking': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Volledigheid\": \"Regel 'Volledigheid': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Risico\": \"Regel 'Risico': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Beheersing\": \"Regel 'Beheersing': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Budgetrecht\": \"Regel 'Budgetrecht': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Parafering\": \"Regel 'Parafering': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"ManagerParafering\": \"Regel 'ManagerParafering': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Afstemming": "Regel 'Afstemming': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Dekking": "Regel 'Dekking': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Volledigheid": "Regel 'Volledigheid': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Risico": "Regel 'Risico': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Beheersing": "Regel 'Beheersing': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Budgetrecht": "Regel 'Budgetrecht': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Parafering": "Regel 'Parafering': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "ManagerParafering": "Regel 'ManagerParafering': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

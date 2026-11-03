@@ -1,0 +1,302 @@
+.sa-root .sa-b1-metrics-panel-b1-metrics-panel {
+    background: rgba(11, 110, 219, 0.04);
+    border: 1px solid rgba(11, 110, 219, 0.15);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-metrics-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-metrics-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--sa-text-main);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-metrics-sub {
+    font-size: 0.72rem;
+    color: var(--sa-text-muted);
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-preset-line {
+    font-size: 0.65rem;
+    color: var(--sa-text-muted);
+    margin-top: 2px;
+    font-weight: 600;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-wordcount {
+    margin-left: auto;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--sa-primary-text);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-wordcount span {
+    font-weight: 500;
+    font-size: 0.7rem;
+    color: var(--sa-text-muted);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(11, 110, 219, 0.35);
+    background: #fff;
+    color: var(--sa-primary-text);
+    cursor: pointer;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-toggle:hover {
+    background: rgba(11, 110, 219, 0.06);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-toggle--open {
+    background: rgba(11, 110, 219, 0.1);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-doc-link {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--sa-primary-text);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-drawer {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--sa-text-main);
+    border: 1px solid var(--sa-border-color);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    background: #fff;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-doc-callout {
+    margin: 0 0 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: rgba(11, 110, 219, 0.08);
+    font-size: 0.72rem;
+    line-height: 1.4;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-doc-callout a {
+    word-break: break-all;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-doc-hint {
+    color: var(--sa-text-muted);
+    font-weight: 500;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-intro {
+    margin: 0 0 10px;
+    color: var(--sa-text-muted);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-sub {
+    margin: 0 0 4px;
+    font-weight: 700;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sa-text-muted);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-metric {
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-metric-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-metric-body {
+    color: var(--sa-text-muted);
+    margin-bottom: 6px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-help-band {
+    font-size: 0.68rem;
+    margin-bottom: 6px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-source-list {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-source-list--compact {
+    font-size: 0.68rem;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-src-note {
+    color: var(--sa-text-muted);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-no-src {
+    margin: 0;
+    font-size: 0.65rem;
+    color: var(--sa-text-muted);
+    font-style: italic;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-bar-wrap {
+    margin-bottom: 12px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-pct {
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-track {
+    position: relative;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.07);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sa-root .sa-b1-metrics-panel-b1-score-zones {
+    display: flex;
+    font-size: 0.58rem;
+    color: var(--sa-text-muted);
+    margin-top: 3px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-metrics-disclaimer {
+    font-size: 0.65rem;
+    color: var(--sa-text-muted);
+    line-height: 1.35;
+    margin: 0 0 10px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-chip {
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--sa-border-color);
+    border-left-width: 3px;
+    cursor: default;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-chip--info {
+    border-left-color: var(--sa-border-color) !important;
+    background: #fff !important;
+}
+
+.sa-root .sa-b1-metrics-panel-chip-label {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sa-text-muted);
+    margin-bottom: 2px;
+}
+
+.sa-root .sa-b1-metrics-panel-chip-value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.sa-root .sa-b1-metrics-panel-b1-chip--info .sa-b1-metrics-panel-chip-value {
+    color: var(--sa-text-main) !important;
+}
+
+.sa-root .sa-b1-metrics-panel-chip-meta-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sa-root .sa-b1-metrics-panel-chip-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.sa-root .sa-b1-metrics-panel-chip-band {
+    font-size: 0.52rem;
+    color: var(--sa-text-muted);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.sa-root .sa-b1-metrics-panel-chip-target {
+    font-size: 0.58rem;
+    color: var(--sa-text-muted);
+    font-weight: 600;
+}
+
+.sa-root .sa-b1-metrics-panel-chip-status {
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-align: right;
+}

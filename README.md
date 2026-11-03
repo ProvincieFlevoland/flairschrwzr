@@ -17,7 +17,7 @@ GovChat-NL project documentation and still describes how the overlay itself work
 - **Live app**: https://flair-dev.ai.flevoland.nl (Open WebUI + this overlay)
 - **Versimpelaar / n8n**: https://n8n-dev.ai.flevoland.nl (webhook + n8n UI, reachable via
   Front Door + Private Link; the underlying Container Apps environment is internal-only)
-- The App Launcher here only exposes **Chat** and **Versimpelaar** — Beleidskompas and Live
+- The App Launcher here exposes **Chat**, **Versimpelaar** and **Schrijfassistent** — Beleidskompas and Live
   transcriptie were intentionally removed for this deployment.
 - The App Launcher is a sidebar entry (next to Notes/Workspace), not a top-navbar button —
   a deliberate deviation from upstream to avoid colliding with Open WebUI's own sidebar toggle.
@@ -144,6 +144,7 @@ Ontwikkeld als onderdeel van [GovChat-NL](https://govchat-nl.nl), het open-sourc
 | **App Launcher** | Grid met apps rechtsboven in de navbar (Versimpelaar, externe tools, etc.) |
 | **Admin Panel** | Webinterface om handleiding en apps te beheren — zonder herbouw van het Docker image |
 | **Versimpelaar** | Ingebouwde tekstvereenvoudiger (B1/B2 taalniveau) via n8n webhook |
+| **Schrijfassistent** | Editor voor GS-nota's met AI-agent, als kaart in de App Launcher. Zie [schrijfassistent/README.md](schrijfassistent/README.md) |
 
 ## Architectuur
 
@@ -203,10 +204,13 @@ open-webui-help-overlay/
 ├── custom.css                    # Alle styling (dark mode, responsive)
 ├── help-content.json             # Standaard handleiding (fallback)
 ├── apps.json                     # Standaard apps config (fallback)
-├── docker-compose.yaml           # Basis compose (ontwikkeling)
 ├── docker-compose.govchat.yaml   # Productie config (volledig voorbeeld)
+├── docker-compose.local.yaml     # Lokale ontwikkelomgeving (Open WebUI + admin)
+├── schrijfassistent/             # Schrijfassistent: frontend/, backend/, dev/, tests/, ops/, API.md, OPERATIONS.md
+├── docs/                         # Ontwerp- en ontwikkelaarsdocumentatie
+├── .azuredevops/dev/             # Build- en uitrolpipeline
 └── admin/
-    ├── Dockerfile                # Admin panel image (node:20-alpine)
+    ├── Dockerfile                # Admin panel image (bouwt ook de Schrijfassistent-bundle)
     ├── package.json
     ├── server.js                 # Express server met API + admin UI
     ├── views/
@@ -254,6 +258,30 @@ Beveiligd met een wachtwoord via de `GOVCHAT_ADMIN_PASSWORD` environment variabl
 | `WEBUI_NAME` | Naam van de applicatie | `GovChat` |
 
 **Let op**: `STATIC_DIR=/app/backend/static` is vereist in de Open WebUI container zodat de overlay-bestanden correct worden geserveerd.
+
+## Lokaal draaien
+
+```bash
+# Open WebUI + admin container (Schrijfassistent-bundle wordt in het image gebouwd)
+docker compose -f docker-compose.local.yaml up --build
+
+# Schrijfassistent-backend op http://localhost:8011 (zie schrijfassistent/README.md)
+bash schrijfassistent/dev/run-local-dev.sh
+```
+
+Open WebUI draait dan op http://localhost:3000 en het admin panel op http://localhost:3002.
+
+## Tests en build
+
+```bash
+cd admin && npm test                                     # admin overlay
+cd schrijfassistent/frontend && npm test                 # bundle (ook: npm run build, check:css-scope, check:dark-twins)
+cd schrijfassistent/backend && python -m pytest          # backend
+bash schrijfassistent/tests/contract/run.sh              # contracttests tegen een draaiende backend
+node schrijfassistent/tests/e2e/run.mjs                  # end-to-end (Playwright)
+```
+
+Het admin-image bouw je vanaf de repository-root: `docker build -f admin/Dockerfile .`. Het backend-image: `docker build -f schrijfassistent/backend/Dockerfile schrijfassistent/backend`. De opstelling van de testomgeving staat in [schrijfassistent/README.md](schrijfassistent/README.md); uitrol en beheer in [schrijfassistent/OPERATIONS.md](schrijfassistent/OPERATIONS.md).
 
 ## Updaten naar nieuwe Open WebUI versie
 

@@ -23,8 +23,10 @@
   .container { max-width: 1000px; margin: 0.75rem auto 2rem; padding: 0 1rem; }
   .form-group { margin-bottom: 0.75rem; }
   label { display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.375rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  input[type="text"], select { width: 100%; padding: 0.5rem 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.8125rem; font-family: inherit; outline: none; transition: all 0.15s; background: #fff; }
-  input[type="text"]:focus, select:focus { border-color: #1a365d; box-shadow: 0 0 0 3px rgba(26,54,93,0.08); }
+  input[type="text"], select, textarea { width: 100%; padding: 0.5rem 0.75rem; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.8125rem; font-family: inherit; outline: none; transition: all 0.15s; background: #fff; }
+  input[type="text"]:focus, select:focus, textarea:focus { border-color: #1a365d; box-shadow: 0 0 0 3px rgba(26,54,93,0.08); }
+  textarea { min-height: 72px; resize: vertical; }
+  textarea[readonly] { background: #f8fafc; color: #64748b; }
   .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #e2e8f0; }
   .card h2 { font-size: 1rem; color: #1a365d; font-weight: 700; }
   .app-card { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; transition: border-color 0.15s; }
@@ -79,6 +81,7 @@
   .target-versimpelaar { background: #fce7f3; color: #9d174d; }
   .target-transcriptie { background: #ede9fe; color: #5b21b6; }
   .target-beleidskompas { background: #e0f2fe; color: #075985; }
+  .target-schrijfassistent { background: #ffedd5; color: #9a3412; }
 </style>
 </head>
 <body>
@@ -238,6 +241,7 @@ const TARGET_TYPES = [
   { value: "versimpelaar", label: "Versimpelaar" },
   { value: "transcriptie", label: "Live transcriptie" },
   { value: "beleidskompas", label: "Beleidskompas" },
+  { value: "schrijfassistent", label: "Schrijfassistent" },
 ];
 
 const TARGET_BADGES = {
@@ -247,7 +251,9 @@ const TARGET_BADGES = {
   versimpelaar: "target-versimpelaar",
   transcriptie: "target-transcriptie",
   beleidskompas: "target-beleidskompas",
+  schrijfassistent: "target-schrijfassistent",
 };
+
 
 function render() {
   document.getElementById("apps-title").value = data.title || "";
@@ -407,6 +413,35 @@ function renderApps() {
           </div>
           <div class="help-text" style="margin-top:0.25rem;"><strong>Sprekerlabels:</strong> momenteel niet gebruikt in de vereenvoudigde transcript-UI. Uit laten voor consistente output.<br><strong>Timestamps:</strong> aan = beter terugzoeken in transcript; uit = rustiger tekstbeeld.</div>
         </div>`;
+    } else if (app.target === "schrijfassistent") {
+      const cfg = app.config || {};
+      configHTML = `
+        <div class="config-section">
+          <div class="config-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/></svg>
+            Schrijfassistent instellingen
+          </div>
+          <div class="inline-row">
+            <div class="form-group">
+              <label>API base URL</label>
+              <input type="text" value="${escAttr(cfg.api_base_url || "")}" onchange="updateConfig(${ai}, 'api_base_url', this.value)">
+              <div class="help-text">Bijv. /apps/schrijfassistent (de bundle voegt /api/v1/... toe)</div>
+            </div>
+          </div>
+          <div class="inline-row">
+            <div class="form-group">
+              <label>Asset base URL</label>
+              <input type="text" value="${escAttr(cfg.asset_base_url || "")}" onchange="updateConfig(${ai}, 'asset_base_url', this.value)">
+              <div class="help-text">Bijv. /static/apps/schrijfassistent (manifest.json, bundle, fonts, logo)</div>
+            </div>
+            <div class="form-group">
+              <label>B1-metrics document URL</label>
+              <input type="text" value="${escAttr(cfg.b1_metrics_doc_url || "")}" onchange="updateConfig(${ai}, 'b1_metrics_doc_url', this.value)">
+              <div class="help-text">Leeg laten als er geen document is</div>
+            </div>
+          </div>
+          </div>
+        </div>`;
     }
 
     div.innerHTML = `
@@ -442,7 +477,7 @@ function renderApps() {
         <div class="form-group" style="flex:2;">
           <label>URL</label>
           <input type="text" value="${escAttr(app.url || "")}" onchange="updateApp(${ai}, 'url', this.value)">
-          <div class="help-text">Voor versimpelaar: de n8n webhook URL</div>
+          <div class="help-text">Voor versimpelaar: de n8n webhook URL. Voor schrijfassistent: "/" (de kaart opent de ingebedde app).</div>
         </div>
         <div class="form-group" style="flex:1;">
           <label>Target type</label>
@@ -463,6 +498,15 @@ function updateTarget(ai, value) {
   data.apps[ai].target = value;
   if (value === "versimpelaar" && !data.apps[ai].config) {
     data.apps[ai].config = { language_levels: ["B1", "B2"], default_level: "B1" };
+  }
+  if (value === "schrijfassistent") {
+    // Fill the defaults for keys that are missing; keep whatever the card already has.
+    data.apps[ai].config = {
+      api_base_url: "/apps/schrijfassistent",
+      asset_base_url: "/static/apps/schrijfassistent",
+      b1_metrics_doc_url: "",
+      ...(data.apps[ai].config || {}),
+    };
   }
   if (value === "transcriptie" && !data.apps[ai].config) {
     data.apps[ai].config = {

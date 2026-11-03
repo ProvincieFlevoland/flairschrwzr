@@ -1,0 +1,8 @@
+{
+  "assignment": "agent_b1",
+  "variant": "violates",
+  "raw": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"Kennis te nemen van het voorstel om een parkeergarage te bouwen onder het provinciehuis.\",\n      \"Herschrijvingen\": [\n        {\n          \"Tekst\": \"Een parkeergarage te bouwen onder het provinciehuis.\",\n          \"Uitleg\": \"Woordkeuze: 'kennis te nemen van' is geen besluit; de actieve handeling staat voorop.\"\n        },\n        {\n          \"Tekst\": \"Opdracht te geven voor een parkeergarage onder het provinciehuis.\",\n          \"Uitleg\": \"Zinslengte: korter en direct (B1).\"\n        }\n      ]\n    },\n    {\n      \"Origineel\": \"Wij verzoeken u dit te accorderen.\",\n      \"Herschrijvingen\": [\n        {\n          \"Tekst\": \"Wij vragen u dit goed te keuren.\",\n          \"Uitleg\": \"Formaliteit: 'accorderen' is geen B1-woord; 'goedkeuren' wel.\"\n        },\n        {\n          \"Tekst\": \"Keur dit voorstel goed.\",\n          \"Uitleg\": \"Directe aanspreekvorm (B1).\"\n        }\n      ]\n    }\n  ],\n  \"Analyse\": \"De tekst is formeel en bevat ambtelijk jargon.\"\n}",
+  "expected_status": 422,
+  "expected_detail_error": "AI Response did not match the required format.",
+  "expected_details_contains": "Veld 'Analyse' is niet toegestaan in het template"
+}

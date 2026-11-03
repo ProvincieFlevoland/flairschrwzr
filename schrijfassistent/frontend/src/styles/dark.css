@@ -1,0 +1,299 @@
+/*
+ * Dark mode twins: driven by Open WebUI's `.dark` class on <html>, read by the bundle
+ * through hostBridge.js. The app's own colours come from the custom properties on .sa-root, so the
+ * twin set below re-declares them and adds twins for the hard-coded colours of the dashboard screen
+ * (header, nota list, badges, buttons, the two modals, the settings menu) and of the editor
+ * view (desk, paper, cells, workflow strip and controls, the suggestion popup).
+ *
+ * `scripts/check-dark-twins.mjs --coverage` lists no light colour rule without a dark
+ * treatment (a twin below, or a custom property that this file redefines for dark). Looking at the result in the real
+ * Open WebUI stays a manual check.
+ */
+.dark .sa-root {
+    --sa-bg-main: #111827;
+    --sa-bg-panel: #1f2937;
+    --sa-text-main: #e5e7eb;
+    --sa-text-muted: #a9b1bd;
+    --sa-border-color: #374151;
+    --sa-color-green-bg: rgba(16, 185, 129, 0.15);
+    --sa-color-yellow-bg: rgba(245, 158, 11, 0.15);
+    --sa-color-red-bg: rgba(239, 68, 68, 0.15);
+    --sa-color-purple-bg: rgba(139, 92, 246, 0.15);
+    --sa-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --sa-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+    /* Custom properties that the light rules read with a light fallback (or, `--sa-bg-sidebar`, without one) */
+    --sa-preflight-border: #374151;
+    --sa-placeholder-color: #6b7280;
+    --sa-highlight-bg: rgba(248, 113, 113, 0.3);
+    --sa-bg-secondary: #273244;
+    --sa-bg-hover: #273244;
+    --sa-bg-sidebar: #1f2937;
+    --sa-color-danger: #fca5a5;
+    --sa-primary-text: #7dc4ee;
+    /* Native controls (select, input, textarea, scrollbars) render in their dark form */
+    color-scheme: dark;
+    /* Status badge text, lighter on the dark panel */
+    --sa-color-green-text: #6ee7b7;
+    --sa-color-yellow-text: #fcd34d;
+    --sa-color-red-text: #fca5a5;
+    --sa-color-purple-text: #c4b5fd;
+    /* Sidebar accents and feedback boxes (app.css lists the light values) */
+    --sa-structuur-text: #fcd34d;
+    --sa-spelling-text: #34d399;
+    --sa-b1-text: #7dc4ee;
+    --sa-woordenlijst-text: #c084fc;
+    --sa-ok-bg: rgba(16, 185, 129, 0.12);
+    --sa-ok-border: rgba(16, 185, 129, 0.35);
+    --sa-ok-text: #6ee7b7;
+    --sa-ok-accent: #34d399;
+    --sa-warn-border: rgba(245, 158, 11, 0.4);
+    --sa-warn-text: #fcd34d;
+    --sa-purple-border: rgba(139, 92, 246, 0.4);
+}
+
+/* The logo is a PNG on white: a small white plate makes that deliberate on the dark header */
+.dark .sa-root .header-left img { background: #fff; border-radius: 8px; padding: 3px 8px; }
+
+.dark .sa-root .sa-badge-draft { border-color: rgba(245, 158, 11, 0.4); }
+.dark .sa-root .sa-badge-review { border-color: rgba(139, 92, 246, 0.4); }
+.dark .sa-root .sa-badge-success { border-color: rgba(16, 185, 129, 0.4); }
+.dark .sa-root .sa-btn-danger { background-color: var(--sa-bg-panel); }
+/* .nota-list-item:hover: twin lives in NotaDashboard.svelte next to the scoped base rule (same Svelte hash class) */
+.dark .sa-root .version-badge { background-color: #374151; color: #d1d5db; }
+
+/* Header settings menu (Header.css) */
+.dark .sa-root .sa-header-settings-dropdown { background: var(--sa-bg-panel); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
+.dark .sa-root .sa-header-settings-toggle-knob { background: #e5e7eb; }
+
+/* New nota modal (NewNotaModal.css) */
+.dark .sa-root .sa-new-nota-modal-modal-content { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-new-nota-modal-config-card { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-new-nota-modal-config-card:hover { background: rgba(255, 255, 255, 0.03); }
+.dark .sa-root .sa-new-nota-modal-config-card.sa-new-nota-modal-active { background: rgba(92, 180, 230, 0.12); }
+.dark .sa-root .sa-new-nota-modal-tag { background: var(--sa-bg-main); }
+
+/* Delete confirmation and close confirmation (DeleteConfigModal.css) */
+.dark .sa-root .sa-delete-config-modal-modal-content { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-delete-config-modal-modal-header h2 { color: #fca5a5; }
+.dark .sa-root .sa-delete-config-modal-btn-close { background: #374151; color: #d1d5db; }
+.dark .sa-root .sa-delete-config-modal-btn-close:hover { background: #4b5563; color: #f9fafb; }
+.dark .sa-root .sa-delete-config-modal-alert-box.sa-delete-config-modal-danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
+.dark .sa-root .sa-delete-config-modal-alert-box { background: rgba(92, 180, 230, 0.12); color: var(--sa-text-main); }
+.dark .sa-root .sa-delete-config-modal-instruction { color: var(--sa-text-main); }
+.dark .sa-root .sa-delete-config-modal-form-input { border-color: var(--sa-border-color); background: var(--sa-bg-main); color: var(--sa-text-main); }
+.dark .sa-root .sa-delete-config-modal-input-hint { color: var(--sa-text-muted); }
+.dark .sa-root .sa-delete-config-modal-name-confirm { background: #374151; color: #f9fafb; }
+.dark .sa-root .sa-delete-config-modal-modal-footer { background: var(--sa-bg-main); }
+.dark .sa-root .sa-delete-config-modal-btn-secondary { background: var(--sa-bg-panel); color: var(--sa-text-muted); border-color: var(--sa-border-color); }
+.dark .sa-root .sa-delete-config-modal-btn-secondary:hover { background: #374151; border-color: #4b5563; }
+
+/* Editor view: desk, paper, cells, workflow strip and controls, suggestion popup, toasts */
+.dark .sa-root .editor-section.read-only { background-color: var(--sa-bg-main); }
+.dark .sa-root .editor-blocks-container { background-color: #0b1220; background-image: radial-gradient(#1f2937 1px, transparent 1px); }
+.dark .sa-root .editor-paper { background-color: var(--sa-bg-panel); }
+.dark .sa-root .editor-paper-seg { background-color: var(--sa-bg-panel); }
+.dark .sa-root .editor-cell.focused { background-color: rgba(92, 180, 230, 0.05); }
+.dark .sa-root .metadata-header { background-color: rgba(255, 255, 255, 0.03); }
+.dark .sa-root .cell-footer-hint { background-color: var(--sa-bg-main); }
+.dark .sa-root .editor-cell.expanded { background-color: var(--sa-bg-panel) !important; }
+.dark .sa-root .editor-cell.expanded .cell-header { background: linear-gradient(135deg, #1f2937, #111827); }
+.dark .sa-root .editor-cell.expanded .cell-footer-hint { background-color: var(--sa-bg-main); }
+.dark .sa-root .cell-expand-btn,
+.dark .sa-root .cell-copy-btn,
+.dark .sa-root .cell-ai-btn { background-color: var(--sa-bg-panel); }
+.dark .sa-root .cell-expand-btn:hover,
+.dark .sa-root .cell-copy-btn:hover,
+.dark .sa-root .cell-ai-btn:hover { background-color: #374151; }
+.dark .sa-root .cell-ai-btn { background-color: rgba(92, 180, 230, 0.12); border-color: rgba(92, 180, 230, 0.35); }
+.dark .sa-root .cell-ai-btn:hover { background-color: rgba(92, 180, 230, 0.2) !important; }
+.dark .sa-root .cell-ai-btn--analyzing { background: rgba(92, 180, 230, 0.25); border-color: rgba(92, 180, 230, 0.5); }
+.dark .sa-root .editor-cell.expanded .cell-expand-btn { background-color: rgba(92, 180, 230, 0.1); }
+.dark .sa-root .dynamic-chapter:hover { background-color: #374151; }
+.dark .sa-root .editor-cell.sa-block-editor-analyzing { box-shadow: 0 0 0 2px rgba(92, 180, 230, 0.2); }
+.dark .sa-root .suggestion-highlight-active { background-color: rgba(92, 180, 230, 0.22) !important; }
+.dark .sa-root .cell-content .non-b1-word { color: #fca5a5; }
+
+.dark .sa-root .sa-workspace-wf-strip-seg.sa-workspace-wf-strip-concept { background: #374151; border-color: rgba(148, 163, 184, 0.45); }
+.dark .sa-root .sa-workspace-wf-strip-seg.sa-workspace-wf-strip-ai { background: rgba(59, 130, 246, 0.55); border-color: rgba(147, 197, 253, 0.4); }
+.dark .sa-root .sa-workspace-wf-strip-seg.sa-workspace-wf-strip-review { background: rgba(234, 179, 8, 0.45); border-color: rgba(250, 204, 21, 0.4); }
+.dark .sa-root .sa-workspace-wf-strip-seg.sa-workspace-wf-strip-done { background: rgba(34, 197, 94, 0.45); border-color: rgba(74, 222, 128, 0.45); }
+.dark .sa-root .sa-workspace-wf-strip-seg.sa-workspace-is-active { box-shadow: 0 0 0 2px var(--sa-bg-panel, #1f2937), 0 0 0 4px #e5e7eb; }
+.dark .sa-root .sa-workspace-wf-strip-ai-badge { color: #f9fafb; }
+.dark .sa-root .sa-workspace-wf-strip-seg:focus-visible { outline-color: #5cb4e6; }
+.dark .sa-root .sa-block-editor-editor-overlay { background: rgba(17, 24, 39, 0.45); }
+.dark .sa-root .sa-block-editor-editor-overlay-readonly { background: rgba(17, 24, 39, 0.22); }
+.dark .sa-root .sa-block-editor-agent-pending-track { background: rgba(92, 180, 230, 0.12); }
+.dark .sa-root .sa-block-editor-agent-pending-fill { background: rgba(92, 180, 230, 0.6); }
+.dark .sa-root .sa-block-editor-wf-done-pill { background: rgba(16, 185, 129, 0.15); border-color: rgba(52, 211, 153, 0.3); color: #a7f3d0; }
+.dark .sa-root .sa-block-workflow-control-wf-concept { background: rgba(148, 163, 184, 0.25); border-color: rgba(148, 163, 184, 0.45); color: #cbd5e1; }
+.dark .sa-root .sa-block-workflow-control-wf-review { background: rgba(234, 179, 8, 0.2); border-color: rgba(250, 204, 21, 0.4); color: #fde68a; }
+.dark .sa-root .sa-block-workflow-control-wf-done { background: rgba(16, 185, 129, 0.2); border-color: rgba(74, 222, 128, 0.45); color: #86efac; }
+.dark .sa-root .sa-block-workflow-control-is-selected { box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.95), 0 2px 6px rgba(0, 0, 0, 0.4); }
+.dark .sa-root .sa-block-workflow-control-wf-concept.sa-block-workflow-control-is-selected { background: rgba(148, 163, 184, 0.5); border-color: rgba(203, 213, 225, 0.6); color: #f1f5f9; }
+.dark .sa-root .sa-block-workflow-control-wf-review.sa-block-workflow-control-is-selected { background: rgba(234, 179, 8, 0.45); border-color: rgba(250, 204, 21, 0.7); color: #fef9c3; }
+.dark .sa-root .sa-block-workflow-control-wf-done.sa-block-workflow-control-is-selected { background: rgba(34, 197, 94, 0.45); border-color: rgba(74, 222, 128, 0.7); color: #dcfce7; }
+
+/* Suggestion popup (SuggestionModal.svelte) */
+.dark .sa-root .sa-suggestion-modal-popup-content { background: var(--sa-bg-panel); border-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-popup-content:focus-visible { box-shadow: 0 0 0 2px #1f2937, 0 0 0 4px #5cb4e6; }
+.dark .sa-root .sa-suggestion-modal-popup-header { border-bottom-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-suggestion-proposal { border-top-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-actions-footer { border-top-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-auto-advance-toggle { color: var(--sa-text-muted); }
+.dark .sa-root .sa-suggestion-modal-handbook-snippet { color: var(--sa-text-muted); border-left-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-reference-link { color: #7dc4ee; }
+.dark .sa-root .sa-suggestion-modal-btn-header-close { color: var(--sa-text-muted); }
+.dark .sa-root .sa-suggestion-modal-btn-header-close:hover { background: #374151; color: #f9fafb; }
+.dark .sa-root .sa-suggestion-modal-suggestion-line .sa-suggestion-modal-text { color: var(--sa-text-main); }
+.dark .sa-root .sa-suggestion-modal-no-replace-hint,
+.dark .sa-root .sa-suggestion-modal-manual-replace-hint,
+.dark .sa-root .sa-suggestion-modal-alt-option-label { color: var(--sa-text-muted); }
+.dark .sa-root .sa-suggestion-modal-incomplete-alts-hint { color: #fcd34d; background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.35); }
+.dark .sa-root .sa-suggestion-modal-alt-option { border-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-alt-option--selected { border-color: #5cb4e6; background: rgba(92, 180, 230, 0.12); }
+.dark .sa-root .sa-suggestion-modal-alt-option-text { color: var(--sa-text-main); }
+.dark .sa-root .sa-suggestion-modal-btn-deny { background: #374151; color: #d1d5db; }
+.dark .sa-root .sa-suggestion-modal-btn-deny:hover { background: #4b5563; color: #f9fafb; }
+.dark .sa-root .sa-suggestion-modal-shortcut-hints kbd { background: var(--sa-bg-main); border-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-arrow { background: var(--sa-bg-panel); border-right-color: var(--sa-border-color); border-bottom-color: var(--sa-border-color); }
+.dark .sa-root .sa-suggestion-modal-popup-below .sa-suggestion-modal-arrow { border-left-color: var(--sa-border-color); border-top-color: var(--sa-border-color); }
+
+/* Sidebar (AuteurPane, B1MetricsPanel), selection bubble, toasts and the rest of the suggestion popup */
+.dark .sa-root .stats-badge { background-color: var(--sa-primary-color); color: #fff; }
+.dark .sa-root .review-checklist-card.active { background-color: rgba(92, 180, 230, 0.1); box-shadow: 0 0 0 2px rgba(92, 180, 230, 0.3); }
+.dark .sa-root .ai-explain { background-color: var(--sa-bg-main); }
+.dark .sa-root .admin-nav-item.active { background-color: rgba(92, 180, 230, 0.15); }
+.dark .sa-root .admin-card { background: var(--sa-bg-panel); }
+.dark .sa-root .chart-container { background: var(--sa-bg-panel); }
+.dark .sa-root .guideline-card:hover { border-color: #4b5563; }
+.dark .sa-root .guideline-expand-btn { background: rgba(92, 180, 230, 0.12); border-color: rgba(92, 180, 230, 0.3); }
+.dark .sa-root .guideline-expand-btn:hover { background: rgba(92, 180, 230, 0.2); }
+.dark .sa-root .structuur-instructions-pane .guideline-card.active .guideline-title { color: #fcd34d; }
+.dark .sa-root .structuur-instructions-pane .guideline-expand-btn { color: #fcd34d; background: rgba(241, 196, 64, 0.14); border-color: rgba(214, 158, 12, 0.5); }
+.dark .sa-root .structuur-instructions-pane .guideline-expand-btn:hover { background: rgba(241, 196, 64, 0.26); border-color: #d69e0c; }
+.dark .sa-root .selection-bubble { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35); }
+.dark .sa-root .bubble-type-btn:hover { color: #fff; }
+.dark .sa-root .bubble-textarea:focus { box-shadow: 0 0 0 3px rgba(92, 180, 230, 0.25); }
+.dark .sa-root .bubble-ok-btn { color: #fff; }
+.dark .sa-root .tm-dashboard { background: linear-gradient(135deg, #1f2937, #111827); border-color: var(--sa-border-color); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35); }
+.dark .sa-root .tm-metric-card { background: var(--sa-bg-panel); }
+.dark .sa-root .tm-metric-card:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); }
+.dark .sa-root .tm-sugg-count { color: #fff; }
+.dark .sa-root .overview-item.active { background-color: rgba(92, 180, 230, 0.1); }
+.dark .sa-root .sa-auteur-pane-handled-label { background: rgba(148, 163, 184, 0.15); }
+.dark .sa-root .sa-auteur-pane-handled-text { text-decoration-color: rgba(148, 163, 184, 0.5); }
+.dark .sa-root .sa-auteur-pane-diff-text--removed { background: rgba(239, 68, 68, 0.14); color: #fca5a5; text-decoration-color: rgba(252, 165, 165, 0.5); }
+.dark .sa-root .sa-auteur-pane-diff-text--added { background: rgba(16, 185, 129, 0.14); color: #6ee7b7; }
+.dark .sa-root .sa-auteur-pane-btn-undo-suggestion { background: var(--sa-bg-panel); color: #7dc4ee; }
+.dark .sa-root .sa-auteur-pane-btn-undo-suggestion:hover { background: var(--sa-primary-color); color: #fff; }
+.dark .sa-root .sa-b1-metrics-panel-b1-metrics-panel { background: rgba(92, 180, 230, 0.07); border-color: rgba(92, 180, 230, 0.25); }
+.dark .sa-root .sa-b1-metrics-panel-b1-wordcount { color: #7dc4ee; }
+.dark .sa-root .sa-b1-metrics-panel-b1-help-toggle { background: var(--sa-bg-panel); color: #7dc4ee; border-color: rgba(92, 180, 230, 0.4); }
+.dark .sa-root .sa-b1-metrics-panel-b1-help-toggle:hover { background: rgba(92, 180, 230, 0.12); }
+.dark .sa-root .sa-b1-metrics-panel-b1-help-toggle--open { background: rgba(92, 180, 230, 0.2); }
+.dark .sa-root .sa-b1-metrics-panel-b1-doc-link { color: #7dc4ee; }
+.dark .sa-root .sa-b1-metrics-panel-b1-help-drawer { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-b1-metrics-panel-b1-help-doc-callout { background: rgba(92, 180, 230, 0.12); }
+.dark .sa-root .sa-b1-metrics-panel-b1-help-metric { border-top-color: rgba(255, 255, 255, 0.08); }
+.dark .sa-root .sa-b1-metrics-panel-b1-score-track { background: rgba(255, 255, 255, 0.1); }
+.dark .sa-root .sa-b1-metrics-panel-b1-score-line { background: rgba(255, 255, 255, 0.3); }
+.dark .sa-root .sa-b1-metrics-panel-b1-chip { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-b1-metrics-panel-b1-chip--info { background: var(--sa-bg-panel) !important; }
+
+.dark .sa-root .sa-suggestion-modal-handbook-snippet-prefix,
+.dark .sa-root .sa-suggestion-modal-sugg-label,
+.dark .sa-root .sa-suggestion-modal-kbd-hint,
+.dark .sa-root .sa-suggestion-modal-rationale,
+.dark .sa-root .sa-suggestion-modal-rationale-prefix,
+.dark .sa-root .sa-suggestion-modal-shortcut-hints { color: #9ca3af; }
+.dark .sa-root .sa-suggestion-modal-btn-accept { color: var(--sa-bg-panel); }
+.dark .sa-root .suggestion-highlight-active.source-structuur { background-color: rgba(246, 224, 94, 0.3) !important; }
+.dark .sa-root .suggestion-highlight-active.source-spelling { background-color: rgba(16, 185, 129, 0.3) !important; }
+.dark .sa-root .suggestion-highlight-active.source-woordenlijst { background-color: rgba(155, 89, 182, 0.35) !important; }
+.dark .sa-root .cell-content .suggestion-highlight.source-b1:hover { background-color: rgba(92, 180, 230, 0.2); }
+.dark .sa-root .cell-content .suggestion-highlight.source-b1.hovered-from-sidebar { background-color: rgba(92, 180, 230, 0.28); }
+
+/* Toasts keep their colours in the dark theme (white text on a saturated background); the twins state that on purpose */
+.dark .sa-root .sa-toast-container-toast { color: #fff; }
+.dark .sa-root .sa-toast-container-toast-success { background: rgba(4, 120, 87, 0.95); }
+.dark .sa-root .sa-toast-container-toast-error { background: rgba(185, 28, 28, 0.95); }
+.dark .sa-root .sa-toast-container-toast-warning { background: rgba(180, 83, 9, 0.95); }
+.dark .sa-root .sa-toast-container-toast-info { background: rgba(29, 78, 216, 0.95); }
+.dark .sa-root .sa-toast-container-toast-close { color: rgba(255, 255, 255, 0.7); }
+.dark .sa-root .sa-toast-container-toast-close:hover { color: #fff; }
+
+/* Conflict indicator (Header.css) */
+.dark .sa-root .sa-header-conflict { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border-color: rgba(245, 158, 11, 0.5); }
+.dark .sa-root .sa-header-conflict-btn { background: var(--sa-bg-panel); color: #fcd34d; border-color: rgba(245, 158, 11, 0.5); }
+.dark .sa-root .sa-header-conflict-btn:hover { background: rgba(245, 158, 11, 0.25); }
+
+/* Buttons and form states that were left without a twin (app.css) */
+.dark .sa-root .sa-btn-primary { background-color: var(--sa-primary-color); color: #fff; }
+.dark .sa-root .sa-btn-success { background-color: #059669; color: #fff; }
+.dark .sa-root .sa-btn-success:hover { background-color: #047857; }
+.dark .sa-root .alternative-btn:hover { background-color: var(--sa-primary-color); color: #fff; border-color: var(--sa-primary-color); }
+.dark .sa-root .structuur-instructions-pane .guideline-card.active { border-left-color: #fcd34d; border-top-color: rgba(252, 211, 77, 0.45); border-right-color: rgba(252, 211, 77, 0.45); border-bottom-color: rgba(252, 211, 77, 0.35); }
+.dark .sa-root .tm-detail-chip { background-color: color-mix(in srgb, var(--sa-chip-color, var(--sa-border-color)) 22%, var(--sa-bg-panel)); border-color: color-mix(in srgb, var(--sa-chip-color, var(--sa-border-color)) 40%, var(--sa-bg-panel)); }
+
+/* The paper segments: a deeper shadow on the dark desk */
+.dark .sa-root .editor-desk-row:first-child .editor-paper-seg { box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45); }
+.dark .sa-root .editor-desk-row:last-child .editor-paper-seg { box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 1px 6px rgba(0, 0, 0, 0.3); }
+.dark .sa-root .editor-desk-row:only-child .editor-paper-seg { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 1px 8px rgba(0, 0, 0, 0.3); }
+
+/* Hover states of the highlights in the cell (translucent accents, a little stronger on the dark paper) */
+.dark .sa-root .cell-content-wrapper.has-structuur-highlight .cell-content:hover { text-decoration-color: #f6ad55; }
+.dark .sa-root .cell-content .suggestion-highlight.source-structuur:hover { background-color: rgba(246, 224, 94, 0.32); }
+.dark .sa-root .cell-content .suggestion-highlight.source-spelling:hover { background-color: rgba(16, 185, 129, 0.3); }
+.dark .sa-root .cell-content .suggestion-highlight.source-woordenlijst:hover { background-color: rgba(155, 89, 182, 0.35); }
+.dark .sa-root .cell-content .suggestion-highlight.source-structuur.hovered-from-sidebar { background-color: rgba(246, 224, 94, 0.42); }
+.dark .sa-root .cell-content .suggestion-highlight.source-spelling.hovered-from-sidebar { background-color: rgba(16, 185, 129, 0.42); }
+.dark .sa-root .cell-content .suggestion-highlight.source-woordenlijst.hovered-from-sidebar { background-color: rgba(155, 89, 182, 0.48); }
+
+/* Header settings switch, modals and the accept button */
+.dark .sa-root .sa-header-settings-toggle.sa-header-on { background: #818cf8; }
+.dark .sa-root .sa-new-nota-modal-modal-backdrop { background: rgba(0, 0, 0, 0.65); }
+.dark .sa-root .sa-new-nota-modal-config-card.sa-new-nota-modal-active .sa-new-nota-modal-version-badge { background: var(--sa-primary-color); color: #fff; border-color: #e5e7eb; }
+.dark .sa-root .sa-delete-config-modal-modal-backdrop { background: rgba(0, 0, 0, 0.7); }
+.dark .sa-root .sa-delete-config-modal-form-input:focus { border-color: #f87171; box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.2); }
+.dark .sa-root .sa-delete-config-modal-btn-danger-solid { background: #dc2626; color: #fff; }
+.dark .sa-root .sa-delete-config-modal-btn-danger-solid:hover:not(:disabled) { background: #b91c1c; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
+.dark .sa-root .sa-delete-config-modal-btn-danger-solid:disabled { background: rgba(239, 68, 68, 0.3); color: rgba(255, 255, 255, 0.6); }
+.dark .sa-root .sa-suggestion-modal-btn-accept:hover { background: #1a78e0; }
+
+/* Configurator (AdminDashboard.css): panels follow the panel colour, accents and borders read on dark */
+.dark .sa-root .sa-admin-dashboard-admin-sidebar { background-color: var(--sa-bg-panel); }
+.dark .sa-root .sa-admin-dashboard-admin-nav-item.sa-admin-dashboard-active { background: var(--sa-primary-color); color: #fff; }
+/* Form controls of the configurator: the user agent would draw them white */
+.dark .sa-root .sa-admin-dashboard-word-input,
+.dark .sa-root .sa-admin-dashboard-json-import-textarea,
+.dark .sa-root .sa-admin-dashboard-b1-field input,
+.dark .sa-root .sa-admin-dashboard-b1-field select,
+.dark .sa-root .sa-admin-dashboard-b1-textarea-sm { background: var(--sa-bg-main); color: var(--sa-text-main); border-color: var(--sa-border-color); }
+.dark .sa-root .sa-admin-dashboard-config-selector { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-admin-dashboard-config-editor { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-admin-dashboard-divider-text { color: #9ca3af; }
+.dark .sa-root .sa-admin-dashboard-config-item-local { color: #9ca3af; }
+.dark .sa-root .sa-admin-dashboard-config-item-local .sa-admin-dashboard-name { color: #9ca3af; }
+.dark .sa-root .sa-admin-dashboard-config-item-local.sa-admin-dashboard-active { color: #e5e7eb; }
+.dark .sa-root .sa-admin-dashboard-config-item-local.sa-admin-dashboard-active .sa-admin-dashboard-name { color: #e5e7eb; }
+.dark .sa-root .sa-admin-dashboard-config-selection-item.sa-admin-dashboard-active { background: rgba(92, 180, 230, 0.14); border-color: var(--sa-primary-color); }
+.dark .sa-root .sa-admin-dashboard-btn-item-toggle { border-color: rgba(255, 255, 255, 0.2); }
+.dark .sa-root .sa-admin-dashboard-btn-item-toggle:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.4); }
+.dark .sa-root .sa-admin-dashboard-btn-item-toggle.sa-admin-dashboard-toggle-active { background: rgba(34, 197, 94, 0.2); border-color: rgba(74, 222, 128, 0.4); }
+.dark .sa-root .sa-admin-dashboard-btn-item-toggle.sa-admin-dashboard-toggle-inactive { background: rgba(239, 68, 68, 0.2); border-color: rgba(248, 113, 113, 0.4); }
+.dark .sa-root .sa-admin-dashboard-btn-item-del:hover { background: rgba(255, 255, 255, 0.1); }
+.dark .sa-root .sa-admin-dashboard-version-tag { background: var(--sa-bg-main); }
+.dark .sa-root .sa-admin-dashboard-tab-btn.sa-admin-dashboard-active { background: var(--sa-bg-panel); color: #7dc4ee; border-color: var(--sa-border-color); }
+/* `!important` because the light rule of the same property carries it (AdminDashboard.css, the output template fields) */
+.dark .sa-root .sa-admin-dashboard-template-textarea { background: var(--sa-bg-main) !important; }
+.dark .sa-root .sa-admin-dashboard-b1-guidelines-panel { background: rgba(92, 180, 230, 0.06); }
+.dark .sa-root .sa-admin-dashboard-b1-form-section { border-bottom-color: rgba(255, 255, 255, 0.08); }
+.dark .sa-root .sa-admin-dashboard-b1-metric-card { background: var(--sa-bg-panel); }
+.dark .sa-root .sa-admin-dashboard-b1-metric-key { color: #7dc4ee; }
+.dark .sa-root .sa-admin-dashboard-b1-source-block { border-bottom-color: rgba(255, 255, 255, 0.12); }
+.dark .sa-root .sa-admin-dashboard-b1-guidelines-actions--footer { border-top-color: rgba(255, 255, 255, 0.1); }
+.dark .sa-root .sa-admin-dashboard-properties-form input[type=text]:focus,
+.dark .sa-root .sa-admin-dashboard-properties-form textarea:focus,
+.dark .sa-root .sa-admin-dashboard-properties-form select:focus { border-color: #5cb4e6; }
+.dark .sa-root .sa-admin-dashboard-properties-info { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.35); }
+.dark .sa-root .sa-admin-dashboard-properties-info i { color: #fbbf24; }

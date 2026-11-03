@@ -1,0 +1,22 @@
+{
+  "id": "n1760000000002",
+  "title": "Subsidieplafond 2026 vaststellen",
+  "titleManuallySet": true,
+  "status": "Final-draft",
+  "lastModified": "2026-10-21T10:00:00.000Z",
+  "configId": "GS-nota v5",
+  "configName": "GS-nota v5",
+  "templateVersion": "v5.0",
+  "toneOfVoice": "Zakelijk",
+  "allowedWords": [],
+  "authors": [
+    "Anna de Vries"
+  ],
+  "reviewers": [],
+  "content": "<h2 class=\"dynamic-chapter\" data-chapter-id=\"h1\">Onderwerp</h2>\n<p><i>Schrijf hier een korte, krachtige titel</i></p>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h2\">Beslispunten</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h3\">Kern voorstel (aanleiding en doel)</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h4\">Eerdere behandeling</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h5\">Argumenten voor beslispunten</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h6\">Kanttekeningen, risico’s en tegenargumenten</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h7\">Alternatieven</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h8\">Financiële impact – Korte samenvatting financiële aspecten</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h9\">Personele impact</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h10\">Bevoegdheden GS</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h11\">Externe afstemming</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h12\">Participatie</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h13\">Externe communicatie</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h14\">Samenvatting voor op de openbare besluitenlijst</h2>\n\n<h2 class=\"dynamic-chapter\" data-chapter-id=\"h15\">Bijlagen</h2>\n",
+  "notes": [],
+  "shortSummary": "",
+  "blockWorkflow": {
+    "block-h1": "done"
+  }
+}

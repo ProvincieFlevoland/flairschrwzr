@@ -1,0 +1,241 @@
+/*
+ * Reset rules the app's CSS was tuned against (Tailwind 3 Preflight), scoped under .sa-root.
+ * Tailwind itself is not part from the bundle; Open WebUI's own
+ * Preflight applies inside the container because it is light DOM, so these rules make the app
+ * independent of what the host resets. Source of the values: tailwindcss 3.4 preflight.css.
+ */
+
+.sa-root,
+.sa-root *,
+.sa-root ::before,
+.sa-root ::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    /* The colour comes from a custom property so the dark theme (`.dark .sa-root`, dark.css) changes it in one place */
+    border-color: var(--sa-preflight-border, #e5e7eb);
+}
+
+.sa-root ::before,
+.sa-root ::after {
+    --sa-tw-content: '';
+}
+
+.sa-root {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -moz-tab-size: 4;
+    tab-size: 4;
+    font-feature-settings: normal;
+    font-variation-settings: normal;
+    -webkit-tap-highlight-color: transparent;
+    margin: 0;
+}
+
+.sa-root hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+}
+
+.sa-root abbr:where([title]) {
+    text-decoration: underline dotted;
+}
+
+.sa-root h1,
+.sa-root h2,
+.sa-root h3,
+.sa-root h4,
+.sa-root h5,
+.sa-root h6 {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.sa-root a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.sa-root b,
+.sa-root strong {
+    font-weight: bolder;
+}
+
+.sa-root code,
+.sa-root kbd,
+.sa-root samp,
+.sa-root pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-feature-settings: normal;
+    font-variation-settings: normal;
+    font-size: 1em;
+}
+
+.sa-root small {
+    font-size: 80%;
+}
+
+.sa-root sub,
+.sa-root sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+.sa-root sub { bottom: -0.25em; }
+.sa-root sup { top: -0.5em; }
+
+.sa-root table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+}
+
+.sa-root button,
+.sa-root input,
+.sa-root optgroup,
+.sa-root select,
+.sa-root textarea {
+    font-family: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    font-size: 100%;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+.sa-root button,
+.sa-root select {
+    text-transform: none;
+}
+
+.sa-root button,
+.sa-root input:where([type='button']),
+.sa-root input:where([type='reset']),
+.sa-root input:where([type='submit']) {
+    -webkit-appearance: button;
+    background-color: transparent;
+    background-image: none;
+}
+
+.sa-root :-moz-focusring {
+    outline: auto;
+}
+
+.sa-root :-moz-ui-invalid {
+    box-shadow: none;
+}
+
+.sa-root progress {
+    vertical-align: baseline;
+}
+
+.sa-root ::-webkit-inner-spin-button,
+.sa-root ::-webkit-outer-spin-button {
+    height: auto;
+}
+
+.sa-root [type='search'] {
+    -webkit-appearance: textfield;
+    outline-offset: -2px;
+}
+
+.sa-root ::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+.sa-root ::-webkit-file-upload-button {
+    -webkit-appearance: button;
+    font: inherit;
+}
+
+.sa-root summary {
+    display: list-item;
+}
+
+.sa-root blockquote,
+.sa-root dl,
+.sa-root dd,
+.sa-root h1,
+.sa-root h2,
+.sa-root h3,
+.sa-root h4,
+.sa-root h5,
+.sa-root h6,
+.sa-root hr,
+.sa-root figure,
+.sa-root p,
+.sa-root pre {
+    margin: 0;
+}
+
+.sa-root fieldset {
+    margin: 0;
+    padding: 0;
+}
+
+.sa-root legend {
+    padding: 0;
+}
+
+/* With Tailwind Preflight in the host this reset makes bullets and numbers inside a cell
+   compute to `list-style-type: none`, so lists in a nota show no markers. If the markers should show, scope
+   `.cell-content ul/ol` back to disc and decimal (a CSS-only change). */
+.sa-root ol,
+.sa-root ul,
+.sa-root menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sa-root dialog {
+    padding: 0;
+}
+
+.sa-root textarea {
+    resize: vertical;
+}
+
+.sa-root input::placeholder,
+.sa-root textarea::placeholder {
+    opacity: 1;
+    color: var(--sa-placeholder-color, #9ca3af);
+}
+
+.sa-root button,
+.sa-root [role="button"] {
+    cursor: pointer;
+}
+
+.sa-root :disabled {
+    cursor: default;
+}
+
+.sa-root img,
+.sa-root svg,
+.sa-root video,
+.sa-root canvas,
+.sa-root audio,
+.sa-root iframe,
+.sa-root embed,
+.sa-root object {
+    display: block;
+    vertical-align: middle;
+}
+
+.sa-root img,
+.sa-root video {
+    max-width: 100%;
+    height: auto;
+}
+
+.sa-root [hidden] {
+    display: none;
+}

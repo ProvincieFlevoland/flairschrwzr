@@ -1,0 +1,15 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h1",
+  "raw": "{\n  \"Woordenlimiet\": \"Regel 'Woordenlimiet': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Werkwoorden\": \"Regel 'Werkwoorden': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"VerbodenTermen\": \"Regel 'VerbodenTermen': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Algemeenheid\": \"Regel 'Algemeenheid': <svg onload=\\\"window.__pwned=(window.__pwned||[]).concat('st-rule')\\\"></svg>zie de suggestie.\",\n  \"Specificiteit\": \"Regel 'Specificiteit': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Concretisering\": \"Regel 'Concretisering': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"<p>Opdracht te verlenen tot het bouwen van een parkeergarage.</p><img src='http://canary.invalid/st-sug.png' onerror=\\\"window.__pwned=(window.__pwned||[]).concat('st-sug')\\\"><script>window.__pwned=(window.__pwned||[]).concat('st-sug-script')</script><svg onload=\\\"window.__pwned=(window.__pwned||[]).concat('st-sug-svg')\\\"></svg><iframe src='javascript:window.parent.__pwned=1'></iframe><a href='javascript:window.__pwned=1'>klik</a><p>Het subsidieplafond 2026 vast te stellen.</p>\"\n}",
+  "expected": {
+    "Woordenlimiet": "Regel 'Woordenlimiet': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Werkwoorden": "Regel 'Werkwoorden': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "VerbodenTermen": "Regel 'VerbodenTermen': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Algemeenheid": "Regel 'Algemeenheid': <svg onload=\"window.__pwned=(window.__pwned||[]).concat('st-rule')\"></svg>zie de suggestie.",
+    "Specificiteit": "Regel 'Specificiteit': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Concretisering": "Regel 'Concretisering': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "<p>Opdracht te verlenen tot het bouwen van een parkeergarage.</p><img src='http://canary.invalid/st-sug.png' onerror=\"window.__pwned=(window.__pwned||[]).concat('st-sug')\"><script>window.__pwned=(window.__pwned||[]).concat('st-sug-script')</script><svg onload=\"window.__pwned=(window.__pwned||[]).concat('st-sug-svg')\"></svg><iframe src='javascript:window.parent.__pwned=1'></iframe><a href='javascript:window.__pwned=1'>klik</a><p>Het subsidieplafond 2026 vast te stellen.</p>"
+  },
+  "note": "Hostile variant: selected with [[mock:hostile]] in user_message. The backend passes the model text through unchanged; the browser must neutralise every payload on its way into the editor (setContent, the suggestion text lookup) and render the rest as text. Canary host canary.invalid, sentinel window.__pwned. Only chapter h1 (the keys of its template)."
+}

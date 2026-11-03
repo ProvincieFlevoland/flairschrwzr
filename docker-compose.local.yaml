@@ -1,0 +1,65 @@
+# docker-compose.local.yaml
+# Minimal local setup for the GovChat-NL overlay: stock Open WebUI plus the admin
+# container built from admin/Dockerfile, sharing one static volume.
+#
+#   docker compose -f docker-compose.local.yaml up --build
+#
+# Open WebUI: http://localhost:3000   (first visit creates the local admin account)
+# Admin panel: http://localhost:3002  (password: see ADMIN_PASSWORD below)
+#
+# Schrijfassistent in the local overlay. The Schrijfassistent backend runs on the
+# host, outside this compose file:
+#   1. bash schrijfassistent/dev/run-local-dev.sh     # backend on http://localhost:8011 (CORS allows http://localhost:3000)
+#   2. docker compose -f docker-compose.local.yaml up --build
+#   3. sign in at http://localhost:3000 with an Open WebUI account (use a non-admin account for the dashboard; an admin sees
+#      the "Als auteur werken" control); the card opens the embedded app for every signed-in user
+#   4. http://localhost:3000 -> App Launcher -> Schrijfassistent: the dashboard loads the nota list from :8011
+# The two SCHRIJFASSISTENT_* variables below are what lets the loader accept the http://localhost API URL. They
+# exist only in this file: the admin server publishes `allow_local_api` only when the variable is set, and
+# loader.js honours it only when the page itself is served from localhost, so the https-only rule
+# holds on every real host. The pipeline and the Terraform App Settings never set them.
+#
+# Start order matters: Open WebUI overwrites /static/loader.js on every start, and
+# the admin container republishes the overlay 15 seconds after its own start. The
+# depends_on below starts the admin container after Open WebUI. If the overlay is
+# missing after a restart of Open WebUI alone, restart the admin container too:
+#   docker compose -f docker-compose.local.yaml restart govchat-admin
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.8.10   # pin the tag that flair-dev runs
+    ports:
+      - "3000:8080"
+    environment:
+      STATIC_DIR: /app/backend/static      # required so the overlay files are served from /static
+      WEBUI_NAME: GovChat lokaal
+      CORS_ALLOW_ORIGIN: http://localhost:3000
+    volumes:
+      - govchat-static:/app/backend/static
+      - open-webui-data:/app/backend/data
+
+  govchat-admin:
+    build:
+      # repository root: admin/Dockerfile is multi-stage and builds schrijfassistent/frontend first
+      # (see schrijfassistent/README.md); the bundle ships inside the image, no extra volume
+      context: .
+      dockerfile: admin/Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      ADMIN_PASSWORD: lokaal123           # server.js reads ADMIN_PASSWORD (the README's GOVCHAT_ADMIN_PASSWORD is a doc error)
+      DATA_DIR: /data
+      PUBLISH_DIR: /publish
+      CORS_ORIGIN: http://localhost:3000
+      SCHRIJFASSISTENT_ALLOW_LOCAL_API: "1"                          # local development only, see the header of this file
+      SCHRIJFASSISTENT_LOCAL_API_BASE_URL: http://localhost:8011     # the backend of schrijfassistent/dev/run-local-dev.sh
+    volumes:
+      - govchat-admin-data:/data
+      - govchat-static:/publish            # same volume as Open WebUI's STATIC_DIR
+    depends_on:
+      - open-webui
+
+volumes:
+  govchat-static:
+  govchat-admin-data:
+  open-webui-data:

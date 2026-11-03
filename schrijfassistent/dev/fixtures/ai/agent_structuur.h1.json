@@ -1,0 +1,15 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h1",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Woordenlimiet\": \"Regel 'Woordenlimiet': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Werkwoorden\": \"Regel 'Werkwoorden': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"VerbodenTermen\": \"Regel 'VerbodenTermen': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Algemeenheid\": \"Regel 'Algemeenheid': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Specificiteit\": \"Regel 'Specificiteit': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Concretisering\": \"Regel 'Concretisering': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Woordenlimiet": "Regel 'Woordenlimiet': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Werkwoorden": "Regel 'Werkwoorden': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "VerbodenTermen": "Regel 'VerbodenTermen': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Algemeenheid": "Regel 'Algemeenheid': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Specificiteit": "Regel 'Specificiteit': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Concretisering": "Regel 'Concretisering': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

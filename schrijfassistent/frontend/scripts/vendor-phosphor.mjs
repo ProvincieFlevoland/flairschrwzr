@@ -1,0 +1,109 @@
+#!/usr/bin/env node
+// Vendors the Phosphor icon font into the bundle. Runs on a machine WITH registry access (a developer machine or CI);
+// without registry access the package cannot be fetched, which is why src/styles/phosphor.css is a placeholder until this has run once.
+//
+//   cd schrijfassistent/frontend
+//   node scripts/vendor-phosphor.mjs                 # dry run: prints what it would write
+//   node scripts/vendor-phosphor.mjs --write         # writes static/fonts/ and src/styles/phosphor.css
+//   node scripts/vendor-phosphor.mjs --write --all   # every icon of the package instead of the ones the source uses
+//   PHOSPHOR_VERSION=2.1.1 node scripts/vendor-phosphor.mjs --write
+//   PHOSPHOR_TARBALL=/path/to/phosphor-icons-web-2.1.1.tgz node scripts/vendor-phosphor.mjs --write     # no registry: a tarball you already have
+//
+// What it does:
+//   1. `npm pack @phosphor-icons/web@<version>` into a temporary directory (or reads PHOSPHOR_TARBALL) and extracts it.
+//   2. Copies src/regular/Phosphor.woff2 and src/bold/Phosphor-Bold.woff2 to static/fonts/Phosphor-<version>.woff2 and Phosphor-Bold-<version>.woff2
+//      (the version is part of the file name because the files are not content-hashed; Vite emits dist/fonts/ and the CSS url is relative).
+//   3. Reads the package's style.css of both weights and writes src/styles/phosphor.css: two @font-face blocks with a relative url("/fonts/...") (Vite
+//      rewrites it to ./fonts/...), and the icon rules with every selector scoped under `.sa-root` and no `!important`. Only the icons that
+//      occur as `ph-<name>` in src/ are kept unless --all is given (about 70 rules instead of about 3,000).
+//   4. Keeps the placeholder as src/styles/phosphor.placeholder.css.orig so the change is reversible.
+// Afterwards: `node node_modules/vite/bin/vite.js build` (check-css-scope accepts the @font-face because the family starts with Phosphor and the url is
+// relative), look at the icons in the dev harness, run `npm test`, commit static/fonts/ and src/styles/phosphor.css, delete the `.sa-header-close-icon::after`
+// word fallback in the CSS that carries it.
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(here, '..');
+const require = createRequire(import.meta.url);
+const postcss = require('postcss');
+
+const args = process.argv.slice(2);
+const WRITE = args.includes('--write');
+const ALL = args.includes('--all');
+const VERSION = process.env.PHOSPHOR_VERSION || '2.1.1';
+const WEIGHTS = [
+  { dir: 'regular', family: 'Phosphor', file: 'Phosphor.woff2', out: `Phosphor-${VERSION}.woff2` },
+  { dir: 'bold', family: 'Phosphor-Bold', file: 'Phosphor-Bold.woff2', out: `Phosphor-Bold-${VERSION}.woff2` },
+];
+
+function walk(dir, files = []) {
+  for (const n of readdirSync(dir)) {
+    const p = path.join(dir, n);
+    if (statSync(p).isDirectory()) { if (n !== 'node_modules' && n !== 'fonts') walk(p, files); } else if (/\.(svelte|js|css|html)$/.test(n)) files.push(p);
+  }
+  return files;
+}
+function usedIcons() {
+  const used = new Set();
+  for (const f of walk(path.join(root, 'src'))) {
+    if (f.endsWith(`${path.sep}phosphor.css`)) continue;
+    for (const m of readFileSync(f, 'utf8').matchAll(/\bph-([a-z0-9]+(?:-[a-z0-9]+)*)/g)) used.add(`ph-${m[1]}`);
+  }
+  used.delete('ph-bold');
+  return used;
+}
+
+function obtainPackage() {
+  const work = mkdtempSync(path.join(tmpdir(), 'phosphor-'));
+  let tgz = process.env.PHOSPHOR_TARBALL;
+  if (!tgz) {
+    const out = execFileSync('npm', ['pack', `@phosphor-icons/web@${VERSION}`, '--silent'], { cwd: work, encoding: 'utf8' }).trim().split('\n').pop();
+    tgz = path.join(work, out);
+  }
+  execFileSync('tar', ['-xzf', tgz, '-C', work]);
+  return path.join(work, 'package');
+}
+
+function scopedRules(css, family, keep) {
+  const out = [];
+  postcss.parse(css).walkRules((rule) => {
+    if (rule.parent && rule.parent.type === 'atrule') return;
+    const selectors = rule.selectors.filter((s) => {
+      if (ALL) return true;
+      const names = [...s.matchAll(/\.(ph-[a-z0-9-]+)/g)].map((m) => m[1]);
+      return names.length === 0 || names.some((n) => keep.has(n)) || /^\.ph(-bold)?$/.test(s.trim());
+    });
+    if (!selectors.length) return;
+    const decls = [];
+    rule.walkDecls((d) => decls.push(`    ${d.prop}: ${d.value};`));
+    out.push(`${selectors.map((s) => `.sa-root ${s.trim()}`).join(',\n')} {\n${decls.join('\n')}\n}`);
+  });
+  return out;
+}
+
+const pkg = obtainPackage();
+const keep = usedIcons();
+console.log(`@phosphor-icons/web ${VERSION}; ${ALL ? 'all icons' : `${keep.size} icons used in src/`}`);
+const blocks = [`/*\n * Phosphor icons ${VERSION} (generated by scripts/vendor-phosphor.mjs; do not edit by hand, run the script again to change the version).\n * The woff2 files live in static/fonts/ with the version in the name, Vite publishes them as dist/fonts/ next to the bundle.\n */`];
+for (const w of WEIGHTS) {
+  const src = path.join(pkg, 'src', w.dir, w.file);
+  if (!existsSync(src)) { console.error(`missing ${src} in the package`); process.exit(1); }
+  const css = readFileSync(path.join(pkg, 'src', w.dir, 'style.css'), 'utf8');
+  blocks.push(`@font-face {\n    font-family: "${w.family}";\n    src: url("/fonts/${w.out}") format("woff2");\n    font-weight: normal;\n    font-style: normal;\n    font-display: block;\n}`);
+  blocks.push(...scopedRules(css, w.family, keep));
+  console.log(`  ${w.dir}: ${src} -> static/fonts/${w.out}`);
+  if (WRITE) { mkdirSync(path.join(root, 'static', 'fonts'), { recursive: true }); copyFileSync(src, path.join(root, 'static', 'fonts', w.out)); }
+}
+const cssOut = blocks.join('\n\n') + '\n';
+const target = path.join(root, 'src', 'styles', 'phosphor.css');
+console.log(`  src/styles/phosphor.css: ${cssOut.split('\n').length} lines`);
+if (!WRITE) { console.log('dry run: nothing written (add --write)'); process.exit(0); }
+const orig = path.join(root, 'src', 'styles', 'phosphor.placeholder.css.orig');
+if (!existsSync(orig) && existsSync(target)) copyFileSync(target, orig);
+writeFileSync(target, cssOut);
+console.log('written. Next: node node_modules/vite/bin/vite.js build && npm test, then look at the icons in the dev harness and commit static/fonts/ and src/styles/phosphor.css.');

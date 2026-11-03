@@ -1,11 +1,27 @@
 # Dependencies
 admin/node_modules/
 
-# Local env files
+# Local env files (keep the .env.example templates)
 .env
+.env.*
+!.env.example
 admin/.env
 
 # OS / editor
 .DS_Store
 Thumbs.db
 
+
+# Schrijfassistent bundle output (built inside the admin image; never committed)
+admin/defaults/apps/
+schrijfassistent/frontend/dist/
+schrijfassistent/frontend/node_modules/
+
+# Local development and test state
+schrijfassistent/dev/.local-dev/
+schrijfassistent/dev/.running*
+schrijfassistent/dev/.ai-mock-calls.jsonl
+schrijfassistent/tests/e2e/reports/
+__pycache__/
+.pytest_cache/
+.venv/

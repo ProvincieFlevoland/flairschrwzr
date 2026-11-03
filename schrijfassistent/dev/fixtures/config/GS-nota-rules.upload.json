@@ -1,0 +1,797 @@
+{
+  "GS-nota rules": {
+    "name": "GS-nota rules",
+    "templateVersion": "v5.0",
+    "description": "GS-nota v5 met regels en terminologie (test fixture).",
+    "toneOfVoice": "Zakelijk",
+    "isActive": false,
+    "mappen": {
+      "hoofdstukken": [
+        {
+          "id": "h1",
+          "titel": "Onderwerp",
+          "doel": "De lezer begrijpt direct, zonder enige voorkennis, waar het GS-voorstel over gaat.",
+          "vereisten": [
+            "Hanteer een korte onderwerptitel (richtlijn: maximaal vijf woorden)",
+            "In het onderwerp geen werkwoord opnemen (zie laatste voorbeeld onder ‘hoe het niet moet’)",
+            "In het onderwerp niet de term ‘GS-voorstel’, ‘Nota’ of ‘Nota besluitvorming’ opnemen",
+            "Het onderwerp van het GS-voorstel moet gelijk zijn aan de documentnaam in e-Docs en het eventuele Statenvoorstel. In het e-Docs registratiescherm begint je onderwerp wel met ‘GS-voorstel’",
+            "Aan de hand van het onderwerp in e-Docs moet het GS-voorstel altijdterug te vinden zijn: het onderwerp mag dus niet té algemeen geformuleerd zijn"
+          ],
+          "voorbeelden": [
+            "Aanbesteding bouw parkeergarage provinciehuis",
+            "Benoeming leden en plaatsvervangende leden Algemeen Bestuur Omgevingsdienst Flevoland en Gooi & Vechtsteek",
+            "Subsidietoekenning 4-5 mei comité Flevoland voor 2024"
+          ],
+          "fout_voorbeelden": [
+            "Nota besluit over subsidieverlening 2024 – 2027 (want: subsidie aan wie? Nu lijkt het alsof het om een beleidsvoorstel subsidieverlening gaat",
+            "Kennisnemen van Evaluatierapport Horizon 2023",
+            "Toekennen subsidie 4-5 mei comité Flevoland voor 2024"
+          ],
+          "instructie": "Schrijf hier een korte, krachtige titel ",
+          "agent_structuur": "DOEL\nDe gebruiker geeft een omschrijving van een GS-voorstel titel. Geef een nieuwe verbeterde titel terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen, als de titel voldoet aan een specifieke regel, dan voer geen suggesties door voor deze specifieke regel. Alleen output voor verbeteringen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Maximaal 5 woorden\n• Geen werkwoorden\n• Niet gebruiken: “GS-voorstel”, “Nota”, “Nota besluitvorming Agendapunt”\n• Niet te algemeen\n• Concreet en specifiek (wie/wat/waar indien relevant)\n• Geef uitsluitend suggesties die ondubbelzinnig aan alle regels voldoen; laat twijfelgevallen weg.\n \nVOORBEELDEN GOED\n• Aanbesteding bouw parkeergarage provinciehuis\n• Subsidietoekenning 4-5 mei comité Flevoland 2024\n \nVOORBEELDEN SLECHT\n• Kennisnemen van Evaluatierapport Horizon 2023\n• Toekennen subsidie 4-5 mei comité Flevoland 2024\n \nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen (die suggesties nodig hebben) en niets anders. Geef nooit regels terug die “geen suggesties” nodig hebben.\n• Per suggestie:\n• key: 1 woord (regel Woordenlimiet / Werkwoorden / VerbodenTermen / Algemeenheid / Specificiteit / Concretisering / Suggestie)\n• value: 1 zin uitleg waarom deze formulering NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker\n• Gebruik altijd dubbele aanhalingstekens voor JSON-keys en stringwaarden\n \nVOORBEELD OUTPUT 1\n{\n“Woordenlimiet”: “Titel bevat meer dan vijf woorden; beperk tot maximaal vijf woorden, bv. \"Subsidietoekenning sportvereniging Rotterdam 2026\".”,\n“Werkwoorden”: “Titel bevat een werkwoordsvorm; gebruik alleen zelfstandige naamwoorden, bv. \"Aanbesteding onderhoud bruggen Zuid-Holland\".”,\n“VerbodenTermen”: “Titel bevat termen zoals GS-voorstel of Nota; verwijder deze en focus op inhoud, bv. \"Benoeming leden Raad Toezicht\".”,\n“Algemeenheid”: “Titel is te algemeen en niet herleidbaar; maak het concreet en specifiek, bv. \"Subsidietoekenning cultuurfonds Den Haag 2026\".”,\n“Specificiteit”: “Titel mist duidelijke aanduiding van onderwerp of doelgroep; voeg deze toe, bv. \"Aanbesteding IT-systeem provincie Zuid-Holland\".”,\n“Concretisering”: “Titel bevat onvoldoende context (wie/wat/waar); specificeer dit expliciet, bv. \"Subsidietoekenning jeugdorganisatie Delft 2026\".”,\n\"Suggestie\":\"Aanbesteding IT-systeem provincie Zuid-Holland\"\n}\n\nVOORBEELD OUTPUT 2\n{\n“Woordenlimiet”: “Titel bevat meer dan vijf woorden; beperk tot maximaal vijf woorden, bv. \"Subsidietoekenning sportvereniging Rotterdam 2026\".”,\n\"Suggestie\":\"Aanbesteding IT-systeem provincie Zuid-Holland\"\n}\n\nVOORBEELD OUTPUT 3\n{\n“Woordenlimiet”: “Titel bevat meer dan vijf woorden; beperk tot maximaal vijf woorden, bv. \"Subsidietoekenning sportvereniging Rotterdam 2026\".”,\n“Specificiteit”: “Titel mist duidelijke aanduiding van onderwerp of doelgroep; voeg deze toe, bv. \"Aanbesteding IT-systeem provincie Zuid-Holland\".”,\n“Concretisering”: “Titel bevat onvoldoende context (wie/wat/waar); specificeer dit expliciet, bv. \"Subsidietoekenning jeugdorganisatie Delft 2026\".”,\n\"Suggestie\":\"Aanbesteding IT-systeem provincie Zuid-Holland\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur_output_template": "{\n  \"Woordenlimiet\": \"Titel bevat meer dan vijf woorden; beperk tot maximaal vijf woorden, bv. \\\"Subsidietoekenning sportvereniging Rotterdam 2026\\\".\",\n  \"Werkwoorden\": \"Titel bevat een werkwoordsvorm; gebruik alleen zelfstandige naamwoorden, bv. \\\"Aanbesteding onderhoud bruggen Zuid-Holland\\\".\",\n  \"VerbodenTermen\": \"Titel bevat termen zoals GS-voorstel of Nota; verwijder deze en focus op inhoud, bv. \\\"Benoeming leden Raad Toezicht\\\".\",\n  \"Algemeenheid\": \"Titel is te algemeen en niet herleidbaar; maak het concreet en specifiek, bv. \\\"Subsidietoekenning cultuurfonds Den Haag 2026\\\".\",\n  \"Specificiteit\": \"Titel mist duidelijke aanduiding van onderwerp of doelgroep; voeg deze toe, bv. \\\"Aanbesteding IT-systeem provincie Zuid-Holland\\\".\",\n  \"Concretisering\": \"Titel bevat onvoldoende context (wie/wat/waar); specificeer dit expliciet, bv. \\\"Subsidietoekenning jeugdorganisatie Delft 2026\\\".\",\n  \"Suggestie\":\"Aanbesteding IT-systeem provincie Zuid-Holland\"\n}",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h2",
+          "titel": "Beslispunten",
+          "doel": "Gedeputeerde Staten kunnen bepalen voor of tegen het beslispunt / de beslispunten te stemmen.",
+          "vereisten": [
+            "Genummerd weergegeven",
+            "In ‘te + werkwoord’ vorm beschreven",
+            "Een beslispunt moet zelfstandig te begrijpen en leesbaar zijn",
+            "Een beslispunt kan alleen met ‘voor’ of ‘tegen’ beantwoord worden",
+            "Een beslispunt bevat niet ‘Kennis te nemen van’ maar verwoordt welke actieve handeling het college neemt (door te geleiden, te be- noemen, etc.).",
+            "In beginsel ‘in te stemmen’ vervangen door de actieve handeling. Dus niet: ’in te stemmen met afwijzen van het verzoek’ Maar ‘het verzoek af te wijzen’",
+            "Voorkom dat er twee of meer beslispunten in één beslispunt staan: ze moeten afzonderlijk opgenomen worden",
+            "De beslispunten (als er meer dan 1 is) moeten worden uitgesplitst zo- danig dat alle beslispunten afzonderlijk te amenderen zijn",
+            "Geef het aan als het beslispunt afwijkt van het bestaande beleid door ‘in afwijking van…’ te vermelden",
+            "Gebruik in het geval van in mandaat genomen begrotingswijzigingen een n-Office standaardtekst uit ‘Gemandateerde begrotingswijzigin- gen’",
+            "Een Statenvoorstel is een afzonderlijk beslispunt",
+            "Ook een PS-mededeling is een afzonderlijk beslispunt",
+            "Soms is er een afzonderlijk beslispunt nodig in geval van een vol- macht: als GS tekenbevoegd zijn neem je een beslispunt op voor de volmacht met de machtiging als bijlage. Als de bevoegdheid bij de CdK ligt neem je geen beslispunt op maar wel de betreffende volmacht als bijlage.",
+            "Neem bij een geheim stuk altijd het beslispunt van geheimhouding op en noem daarbij het artikel uit de Provinciewet op basis waarvan dit wordt gedaan. En ook de juridische grond uit de Wet open overheid (Woo). Noem ook wanneer de geheimhouding eindigt",
+            "In beginsel worden er geen personen bij naam genoemd in de beslis- punten. Bij bedrijven wordt de vestigingsplaats niet vermeld.",
+            "Betrek een P&C-medewerker voor de formulering van het beslispunt wanneer er financiële consequenties (een begrotingswijziging) zijn.",
+            "Als een stuk alleen ter kennisname wordt voorgelegd dien je het in bij de (plv.) bestuurssecretaris (via bestuur@flevoland.nl) zodat hij het doorgeleid naar het agendapunt ‘Ter kennisneming’"
+          ],
+          "voorbeelden": [
+            "Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis",
+            "Een parkeergarage te bouwen onder het provinciehuis.",
+            "Provinciale Staten voor te stellen een krediet van € 500.000 beschik- baar te stellen voor de bouw van de parkeergarage.",
+            "Het Economisch Programma; programmalijnen ‘toekomstbestendig be- drijfsleven’ en ‘ruimtelijk-economische ontwikkeling’ vast te stellen.",
+            "In afwijking van het geldende inkoopbeleid in te stemmen met de aan- besteding op basis van de meest duurzame in plaats van economisch meest voordelige aanbieding.",
+            "In te stemmen met het opleggen van geheimhouding op de nota Be- sluitvorming volgens artikel 84 Provinciewet, met gebruik making van artikel 5.1 Wet Open Overheid.",
+            "Provinciale Staten met bijgevoegde PS-mededeling te informeren.",
+            "De gemandateerde begrotingswijziging (categorie A; nr GS. ) vast te stel- len, wat inhoudt dat: de van ontvangen bijdrage ad. wordt geraamd; deze bijdrage beschikbaar wordt gesteld voor ; Provinciale Staten, via de vastgestelde GS-besluitenlijst, wor- den geïnformeerd over deze in mandaat genomen begrotings- wijziging.",
+            "De antwoordnota vast te stellen als reactie op de ingediende zienswij- zen ‘Begroting Veiligheidsregio Flevoland en Gooi- en Vechtstreek."
+          ],
+          "fout_voorbeelden": [
+            "Kennis te nemen van de ingediende zienswijzen naar aanleiding van de ter inzagelegging van de ontwerp nadere regels. (want kennisnemen van iets is geen besluit. Het gaat om de actie die vólgt op het kennisne- men)",
+            "In te stemmen met de benoeming van persoon x tot lid van verdienste (gebruik liever: ‘Persoon X te benoemen tot lid van verdienste).",
+            "In te stemmen met het voorstel -> gebruik : Het voorstel vast te stellen.",
+            "GS-besluit tot het versturen van een persbericht. (want dat maakt on- derdeel uit van externe communicatie)",
+            "Dubbelop besluittekst te ‘besluiten’ als werkwoord op te nemen in het beslispunt. (want het is al een beslispunt en daarmee een besluit)"
+          ],
+          "instructie": "",
+          "agent_structuur": "DOEL\nDe gebruiker geeft een omschrijving van een of meerdere beslispunten. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels, in de correcte format; wees EXACT. deze stap is CRITICAL zie json voorbeeld.). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen, als een beslispunt voldoet aan een specifieke regel, dan voer geen suggesties door voor deze specifieke regel. Alleen output voor verbeteringen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Genummerd weergegeven\n• In ‘te + werkwoord’ vorm\n• Zelfstandig leesbaar en begrijpelijk\n• Eenduidig met ‘voor’ of ‘tegen’ te beantwoorden\n• Geen gebruik van “kennis te nemen van” maar actieve handeling (door te geleiden, te benoemen, etc.)\n• ‘In te stemmen met’ vervangen door directe actieve handeling\n• Maximaal één besluit per beslispunt\n• Beslispunten afzonderlijk te amenderen\n• Afwijking van beleid expliciet benoemen met “in afwijking van …” (indien van toepassing)\n• Gebruik n-Office standaardtekst bij gemandateerde begrotingswijzigingen\n• Statenvoorstel als afzonderlijk beslispunt opnemen\n• PS-mededeling als afzonderlijk beslispunt opnemen\n• Volmacht: beslispunt bij GS-bevoegdheid, geen beslispunt bij CdK-bevoegdheid (wel bijlage)\n• Geheimhouding: expliciet beslispunt met artikel Provinciewet + Woo-grond + einddatum\n• Geen persoonsnamen; geen vestigingsplaatsen bij bedrijven\n• Betrek P&C bij financiële consequenties (begrotingswijziging)\n• Stukken alleen ter kennisname: geen beslispunt, via bestuurssecretaris naar ‘Ter kennisneming’\n\nVOORBEELDEN GOED\n• 1. Een parkeergarage te bouwen onder het provinciehuis.\n• 2. Provinciale Staten voor te stellen een krediet van € 500.000 beschikbaar te stellen.\n• 3. Het verzoek af te wijzen.\n\nVOORBEELDEN SLECHT\n• In te stemmen met het voorstel.\n• Kennis te nemen van het rapport.\n• Het voorstel vast te stellen en door te geleiden naar Provinciale Staten.\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen (die suggesties nodig hebben) en niets anders. Geef nooit regels terug die “geen suggesties” nodig hebben.\n• Per suggestie:\n• key: 1 woord (regel Nummering / Werkwoordsvorm / Zelfstandigheid / Beslisbaarheid / Kennisname / Actiegerichtheid / Enkelvoudigheid / Amendeerbaarheid / Afwijking / Begrotingswijziging / Statenvoorstel / PSMededeling / Volmacht / Geheimhouding / Neutraliteit / Financieel / Kennisneming )\n• value: 1 zin uitleg waarom deze formulering NIET voldoet aan de regel, wees exact + Geef suggestie.\n• Gebruik altijd dubbele aanhalingstekens voor JSON-keys en stringwaarden\n\nVOORBEELD OUTPUTS 1\n\n{\n“Nummering”: “Beslispunten zijn niet genummerd; nummer elk beslispunt afzonderlijk, bv. \"1. Het voorstel vast te stellen.\".”,\n“Werkwoordsvorm”: “Beslispunt is niet in ‘te + werkwoord’ vorm; herschrijf naar bv. \"het voorstel vast te stellen\".”,\n“Zelfstandigheid”: “Beslispunt is niet zelfstandig leesbaar; maak het volledig, bv. \"het subsidieplafond 2026 vast te stellen\".”,\n“Beslisbaarheid”: “Beslispunt is niet eenduidig besluitbaar; formuleer als concrete handeling, bv. \"het verzoek af te wijzen\".”,\n“Kennisname”: “Beslispunt bevat ‘kennis te nemen van’; vervang door actie, bv. \"de zienswijze door te geleiden naar Provinciale Staten\".”,\n“Actiegerichtheid”: “Formulering gebruikt ‘in te stemmen met’; vervang door directe handeling, bv. \"het verzoek af te wijzen\".”,\n“Enkelvoudigheid”: “Beslispunt bevat meerdere handelingen; splits dit op, bv. \"het voorstel vast te stellen\" en \"het voorstel door te geleiden\".”,\n“Amendeerbaarheid”: “Beslispunten zijn niet afzonderlijk te amenderen; splits in losse punten, bv. \"1. Het voorstel vast te stellen. 2. Het voorstel door te geleiden.\".”,\n“Afwijking”: “Afwijking van beleid ontbreekt; voeg toe \"in afwijking van het beleid …\", bv. \"in afwijking van het inkoopbeleid de opdracht te gunnen\".”,\n“Begrotingswijziging”: “Gemandateerde begrotingswijziging mist n-Office standaardtekst; gebruik de voorgeschreven formulering uit \"Gemandateerde begrotingswijzigingen\".”,\n“Statenvoorstel”: “Statenvoorstel is niet als afzonderlijk beslispunt opgenomen; voeg apart punt toe, bv. \"Provinciale Staten voor te stellen …\".”,\n“PSMededeling”: “PS-mededeling is niet als afzonderlijk beslispunt opgenomen; voeg apart punt toe, bv. \"Provinciale Staten met bijgevoegde PS-mededeling te informeren\".”,\n“Volmacht”: “Volmacht ontbreekt of is onjuist verwerkt; voeg beslispunt toe bij GS-bevoegdheid of alleen bijlage bij CdK-bevoegdheid.”,\n“Geheimhouding”: “Geheimhouding ontbreekt; voeg beslispunt toe met wettelijke grond, bv. \"geheimhouding op te leggen conform artikel 84 Provinciewet en artikel 5.1 Woo tot [einddatum]\".”,\n“Neutraliteit”: “Beslispunt bevat persoonsnaam of vestigingsplaats; verwijder deze, bv. \"een lid te benoemen tot voorzitter\".”,\n“Financieel”: “Financiële consequenties niet afgestemd met P&C; betrek P&C en verwerk correcte formulering van begrotingswijziging.”,\n“Kennisneming”: “Beslispunt betreft alleen kennisname; verwijder als beslispunt en leid via bestuurssecretaris naar ‘Ter kennisneming’.”,\n\"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis\\n2. Een parkeergarage te bouwen onder het provinciehuis.\"\n}\n\n\nVOORBEELD OUTPUTS 2\n\n{\n“Kennisneming”: “Beslispunt betreft alleen kennisname; verwijder als beslispunt en leid via bestuurssecretaris naar ‘Ter kennisneming’.”,\n\"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis\\n2. Een parkeergarage te bouwen onder het provinciehuis.\"\n}\n\n\nVOORBEELD OUTPUTS 3\n\n{\n“Financieel”: “Financiële consequenties niet afgestemd met P&C; betrek P&C en verwerk correcte formulering van begrotingswijziging.”,\n“Kennisneming”: “Beslispunt betreft alleen kennisname; verwijder als beslispunt en leid via bestuurssecretaris naar ‘Ter kennisneming’.”,\n\"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis\\n2. Een parkeergarage te bouwen onder het provinciehuis.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur_output_template": "{\n“Nummering”: “Beslispunten zijn niet genummerd; nummer elk beslispunt afzonderlijk, bv. \"1. Het voorstel vast te stellen.\".”,\n“Werkwoordsvorm”: “Beslispunt is niet in ‘te + werkwoord’ vorm; herschrijf naar bv. \"het voorstel vast te stellen\".”,\n“Zelfstandigheid”: “Beslispunt is niet zelfstandig leesbaar; maak het volledig, bv. \"het subsidieplafond 2026 vast te stellen\".”,\n“Beslisbaarheid”: “Beslispunt is niet eenduidig besluitbaar; formuleer als concrete handeling, bv. \"het verzoek af te wijzen\".”,\n“Kennisname”: “Beslispunt bevat ‘kennis te nemen van’; vervang door actie, bv. \"de zienswijze door te geleiden naar Provinciale Staten\".”,\n“Actiegerichtheid”: “Formulering gebruikt ‘in te stemmen met’; vervang door directe handeling, bv. \"het verzoek af te wijzen\".”,\n“Enkelvoudigheid”: “Beslispunt bevat meerdere handelingen; splits dit op, bv. \"het voorstel vast te stellen\" en \"het voorstel door te geleiden\".”,\n“Amendeerbaarheid”: “Beslispunten zijn niet afzonderlijk te amenderen; splits in losse punten, bv. \"1. Het voorstel vast te stellen. 2. Het voorstel door te geleiden.\".”,\n“Afwijking”: “Afwijking van beleid ontbreekt; voeg toe \"in afwijking van het beleid …\", bv. \"in afwijking van het inkoopbeleid de opdracht te gunnen\".”,\n“Begrotingswijziging”: “Gemandateerde begrotingswijziging mist n-Office standaardtekst; gebruik de voorgeschreven formulering uit \"Gemandateerde begrotingswijzigingen\".”,\n“Statenvoorstel”: “Statenvoorstel is niet als afzonderlijk beslispunt opgenomen; voeg apart punt toe, bv. \"Provinciale Staten voor te stellen …\".”,\n“PSMededeling”: “PS-mededeling is niet als afzonderlijk beslispunt opgenomen; voeg apart punt toe, bv. \"Provinciale Staten met bijgevoegde PS-mededeling te informeren\".”,\n“Volmacht”: “Volmacht ontbreekt of is onjuist verwerkt; voeg beslispunt toe bij GS-bevoegdheid of alleen bijlage bij CdK-bevoegdheid.”,\n“Geheimhouding”: “Geheimhouding ontbreekt; voeg beslispunt toe met wettelijke grond, bv. \"geheimhouding op te leggen conform artikel 84 Provinciewet en artikel 5.1 Woo tot [einddatum]\".”,\n“Neutraliteit”: “Beslispunt bevat persoonsnaam of vestigingsplaats; verwijder deze, bv. \"een lid te benoemen tot voorzitter\".”,\n“Financieel”: “Financiële consequenties niet afgestemd met P&C; betrek P&C en verwerk correcte formulering van begrotingswijziging.”,\n“Kennisneming”: “Beslispunt betreft alleen kennisname; verwijder als beslispunt en leid via bestuurssecretaris naar ‘Ter kennisneming’.”,\n\"Suggestie\": \"Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis\"\n}",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h3",
+          "titel": "Kern voorstel (aanleiding en doel)",
+          "doel": "De lezer begrijpt de context van het voorstel en de beslispunten. De tekst moet ook bruikbaar zijn voor communicatie.",
+          "vereisten": [
+            "Neem de concrete aanleiding op: waarom ligt dit voorstel nu voor?",
+            "Neem eerdere besluitvorming op als dat een directe aanleiding is: o\tmet hyperlink naar het PS-agendapunt op de PS-website o\tof met e-Docs nummer bij andere besluitvorming",
+            "Neem de 5 W’s op: wat, waarom, waar, wanneer, wie",
+            "Benoem ook: o\tde rol van de provincie o\thet beoogde effect o\teventueel het hogere maatschappelijke doel",
+            "Gebruik eenvoudige taal.",
+            "Neem alleen de hoofdlijnen op",
+            "Richtlijn: o\tmaximaal 12 regels o\tcirca 100 woorden"
+          ],
+          "voorbeelden": [
+            "Op 1 januari 2010 hebben Provinciale Staten uw college bij motie 123 (hyperlink naar Statenweb- site) opdracht gegeven een oplossing te vinden voor het parkeerprobleem rond het provinciehuis. Uit een inventarisatie van de mogelijke oplossingen is de bouw van een ondergrondse parkeerga- rage onder het provinciehuis naar voren gekomen. Het doel van dit voorstel is naar de volgende fase in dit traject te gaan om te komen tot een op- lossing van het parkeerprobleem, zodat de parkeerdruk rondom het station daalt. Een half jaar na realisatie van het project evalueert de provincie de parkeerproblematiek.",
+            "Provinciale Staten hebben het college met een motie (hyperlink naar Statenwebsite) de opdracht gegeven een oplossing te vinden voor het parkeerprobleem rondom het provinciehuis. Provinciale Staten vindt dat er te weinig parkeermogelijkheden zijn in de buurt. Het college heeft onderzoek gedaan naar mogelijke oplossingen. Daaruit komt als beste oplossing om een parkeergarage onder het provinciehuis te bouwen. Het college gaat met een brief Provinciale Staten informeren over de kosten en de mogelijke plek van een garage. Verder vraagt het college aan Provinciale Staten of die het ermee eens zijn om verder te gaan met het plan of dat zij toch een andere oplossing willen."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker geeft een kern voorstel omschrijving. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Concrete aanleiding vermelden (waarom nu?)\n• Bevat referentie naar eerdere besluitvorming (hyperlink of e-Docs nummer)\n• Bevat de 5 W’s (wie, wat, waar, wanneer, waarom)\n• Benoemt de rol van de provincie\n• Benoemt het beoogde effect\n• Benoemt het hogere maatschappelijke doel\n• Gebruik van eenvoudige taal\n• Focus op hoofdlijnen\n• Maximaal 12 regels\n• Maximaal 100 woorden\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Aanleiding / Referentie / VijfWs / RolProvincie / Effect / MaatschappelijkDoel / Taalgebruik / Hoofdlijnen / Regellimiet / Woordenlimiet / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Aanleiding\": \"De concrete aanleiding ontbreekt; vermeld expliciet waarom het voorstel nu voorligt, bv. \\\"Naar aanleiding van de motie 'Parkeerdruk' leggen wij u dit voorstel voor.\\\".\",\n\"Referentie\": \"De referentie naar eerdere besluitvorming mist een hyperlink of e-Docs nummer; voeg deze toe tussen haakjes.\",\n\"VijfWs\": \"Niet alle 5 W's zijn beantwoord; specificeer wie, wat, waar, wanneer en waarom, bv. \\\"Provincie Flevoland (wie) bouwt in 2025 (wanneer) een garage (wat)...\\\".\",\n\"RolProvincie\": \"De rol van de provincie is onvoldoende beschreven; verduidelijk wat de specifieke taak of positie van de provincie is.\",\n\"Effect\": \"Het beoogde effect van het voorstel ontbreekt; geef aan wat het directe resultaat van het besluit moet zijn.\",\n\"MaatschappelijkDoel\": \"Het hogere maatschappelijke doel is niet benoemd; beschrijf welke maatschappelijke waarde dit voorstel dient.\",\n\"Taalgebruik\": \"De tekst bevat te veel jargon; herschrijf in eenvoudige taal voor een breed publiek.\",\n\"Hoofdlijnen\": \"De tekst bevat te veel details; beperk de beschrijving tot de hoofdlijnen van het voorstel.\",\n\"Regellimiet\": \"De tekst is langer dan 12 regels; kort de tekst in om de leesbaarheid te vergroten.\",\n\"Woordenlimiet\": \"De tekst overschrijdt de grens van 100 woorden; kort de tekst in tot de essentie.\",\n\"Suggestie\": \"Op 1 januari 2010 hebben Provinciale Staten uw college bij motie 123 (hyperlink) opdracht gegeven een oplossing te vinden voor het parkeerprobleem...\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Hoofdlijnen\": \"De tekst bevat te veel details; beperk de beschrijving tot de hoofdlijnen van het voorstel.\",\n\"Regellimiet\": \"De tekst is langer dan 12 regels; kort de tekst in om de leesbaarheid te vergroten.\",\n\"Woordenlimiet\": \"De tekst overschrijdt de grens van 100 woorden; kort de tekst in tot de essentie.\",\n\"Suggestie\": \"Op 1 januari 2010 hebben Provinciale Staten uw college bij motie 123 (hyperlink) opdracht gegeven een oplossing te vinden voor het parkeerprobleem...\"\n}\n\nVOORBEELD OUTPUT 3\n{\n\"Woordenlimiet\": \"De tekst overschrijdt de grens van 100 woorden; kort de tekst in tot de essentie.\",\n\"Suggestie\": \"Op 1 januari 2010 hebben Provinciale Staten uw college bij motie 123 (hyperlink) opdracht gegeven een oplossing te vinden voor het parkeerprobleem...\"\n}",
+          "agent_structuur_output_template": "{\n  \"Aanleiding\": \"De concrete aanleiding ontbreekt; vermeld expliciet waarom het voorstel nu voorligt, bv. \\\"Naar aanleiding van de motie 'Parkeerdruk' leggen wij u dit voorstel voor.\\\".\",\n  \"Referentie\": \"De referentie naar eerdere besluitvorming mist een hyperlink of e-Docs nummer; voeg deze toe tussen haakjes.\",\n  \"VijfWs\": \"Niet alle 5 W's zijn beantwoord; specificeer wie, wat, waar, wanneer en waarom, bv. \\\"Provincie Flevoland (wie) bouwt in 2025 (wanneer) een garage (wat)...\\\".\",\n  \"RolProvincie\": \"De rol van de provincie is onvoldoende beschreven; verduidelijk wat de specifieke taak of positie van de provincie is.\",\n  \"Effect\": \"Het beoogde effect van het voorstel ontbreekt; geef aan wat het directe resultaat van het besluit moet zijn.\",\n  \"MaatschappelijkDoel\": \"Het hogere maatschappelijke doel is niet benoemd; beschrijf welke maatschappelijke waarde dit voorstel dient.\",\n  \"Taalgebruik\": \"De tekst bevat te veel jargon; herschrijf in eenvoudige taal voor een breed publiek.\",\n  \"Hoofdlijnen\": \"De tekst bevat te veel details; beperk de beschrijving tot de hoofdlijnen van het voorstel.\",\n  \"Regellimiet\": \"De tekst is langer dan 12 regels; kort de tekst in om de leesbaarheid te vergroten.\",\n  \"Woordenlimiet\": \"De tekst overschrijdt de grens van 100 woorden; kort de tekst in tot de essentie.\",\n  \"Suggestie\": \"Op 1 januari 2010 hebben Provinciale Staten uw college bij motie 123 (hyperlink) opdracht gegeven een oplossing te vinden voor het parkeerprobleem...\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h4",
+          "titel": "Eerdere behandeling",
+          "doel": "De bestuurder begrijpt de bestuurlijke voorgeschiedenis en de fase van het voorstel.",
+          "vereisten": [
+            "Geef aan welke eerdere besluiten verband houden met het voorstel.",
+            "Geef altijd aan of het voorstel uitvoering is van: o\thet coalitieakkoord o\tof een andere bestuurlijke afspraak",
+            "Geef aan in welke fase het voorstel zit, als sprake is van meerdere fases",
+            "Houd dit onderdeel beknopt.",
+            "Verwijs bij uitvoerige context naar een bijlage.",
+            "Noem bij eerdere GS-besluiten: o\tdatum GS-vergadering o\te-Docs nummer tussen haakjes",
+            "Voeg een URL toe van eerdere behandeling of besluitvorming in Provinciale Staten."
+          ],
+          "voorbeelden": [
+            "Dit voorstel vloeit voort uit motie 123 die op 1 februari 2010 is aangenomen door Provinci- ale Staten.",
+            "Dit voorstel vloeit voort uit programma 7 van de begroting 2024.",
+            "In het coalitieakkoord 2023-2027 staat de ambitie om de parkeergarage realiseren.",
+            "Eerder genomen GS-besluiten noemen, datum GS-vergadering + e-Docs nummer tussen haakjes vermelden."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker geeft de eerdere behandeling aan. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Vermeld verband met eerdere relevante besluiten\n• Vermeld of het uitvoering is van coalitieakkoord\n• Vermeld of het uitvoering is van een andere bestuurlijke afspraak\n• Geef actuele fase aan bij meerfasenprojecten\n• Houd het beknopt (geen details, verwijs voor context naar bijlage)\n• Noem bij GS-besluiten de datum van de GS-vergadering\n• Noem bij GS-besluiten het e-Docs nummer tussen haakjes\n• Voeg URL toe bij behandeling in Provinciale Staten\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (BesluitVerband / Coalitieakkoord / Bestuursafspraak / Fase / Beknoptheid / GSDatum / EDocsNummer / PSURL / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Coalitieakkoord\": \"Er wordt niet vermeld of dit uitvoering is van het coalitieakkoord; geef aan of dit het geval is, bv. \\\"Dit is conform ambitie X uit het coalitieakkoord 2023-2027.\\\".\",\n\"GSDatum\": \"De datum van de GS-vergadering ontbreekt; voeg deze toe bij de vermelding van het eerdere besluit.\",\n\"EDocsNummer\": \"Het e-Docs nummer ontbreekt; voeg het nummer tussen haakjes toe, bv. \\\"(e-Docs 12345)\\\".\",\n\"PSURL\": \"De URL naar de PS-website ontbreekt; voeg een directe link toe naar de eerdere PS-behandeling.\",\n\"Suggestie\": \"Dit voorstel vloeit voort uit motie 123 die op 1 februari 2010 is aangenomen door Provinciale Staten (URL).\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"EDocsNummer\": \"Het e-Docs nummer ontbreekt; voeg het nummer tussen haakjes toe, bv. \\\"(e-Docs 12345)\\\".\",\n\"PSURL\": \"De URL naar de PS-website ontbreekt; voeg een directe link toe naar de eerdere PS-behandeling.\",\n\"Suggestie\": \"Dit voorstel vloeit voort uit motie 123 die op 1 februari 2010 is aangenomen door Provinciale Staten (URL).\"\n}\n\nVOORBEELD OUTPUT 3\n{\n\"PSURL\": \"De URL naar de PS-website ontbreekt; voeg een directe link toe naar de eerdere PS-behandeling.\",\n\"Suggestie\": \"Dit voorstel vloeit voort uit motie 123 die op 1 februari 2010 is aangenomen door Provinciale Staten (URL).\"\n}",
+          "agent_structuur_output_template": "{\n  \"BesluitVerband\": \"Het verband met eerdere relevante besluiten is niet duidelijk verwoord; geef aan hoe dit voorstel zich verhoudt tot eerdere stappen.\",\n  \"Coalitieakkoord\": \"Er wordt niet vermeld of dit uitvoering is van het coalitieakkoord; geef aan of dit het geval is, bv. \\\"Dit is conform ambitie X uit het coalitieakkoord 2023-2027.\\\".\",\n  \"Bestuursafspraak\": \"Er wordt niet vermeld of dit uitvoering is van een andere bestuurlijke afspraak; specificeer dit conform de richtlijn.\",\n  \"Fase\": \"De huidige fase van het voorstel is niet benoemd; geef aan in welk stadium het project of proces zich bevindt.\",\n  \"Beknoptheid\": \"De tekst bevat te veel details; houd het beknopt en verwijs voor uitvoerige context naar een bijlage.\",\n  \"GSDatum\": \"Bij eerdere GS-besluiten ontbreekt de datum van de GS-vergadering; voeg deze toe.\",\n  \"EDocsNummer\": \"Bij eerdere GS-besluiten ontbreekt het e-Docs nummer tussen haakjes; voeg dit toe.\",\n  \"PSURL\": \"Een URL naar de eerdere behandeling in Provinciale Staten ontbreekt; voeg deze toe voor snelle raadpleging.\",\n  \"Suggestie\": \"Dit voorstel vloeit voort uit motie 123 die op 1 februari 2010 is aangenomen door Provinciale Staten (URL).\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h5",
+          "titel": "Argumenten voor beslispunten",
+          "doel": "De lezer begrijpt waarom de beslispunten worden voorgesteld.",
+          "vereisten": [
+            "•\tGeef elk argument cursief weer in één zin.",
+            "•\tBegin met positieve argumenten.",
+            "•\tLicht per argument toe waarom het relevant is voor: o\tde voorgestelde oplossing o\thet voorgestelde besluit",
+            "•\tBenoem voor elk beslispunt ten minste één argument.",
+            "•\tKoppel de nummering van het argument aan de nummering van het beslispunt."
+          ],
+          "voorbeelden": [
+            "1.1 Door het aanleggen van een parkeergarage wordt het mogelijk parkeerruimte aan te bieden aan derden Door het aanbieden van extra parkeerruimte aan derden kan de provincie haar maatschappelijke meerwaarde versterken.",
+            "1.2 Er is geen ruimte rondom het provinciehuis voor uitbreiding van het parkeerterrein De vijver dient als waterberging en ecologische zone en mag volgens het bestemmingsplan niet worden gedempt en bebouwd. Verder zijn de parkeerterreinen al uitgebreid tot aan de maximaal toegestane erfgrens. Buiten de erfgrens is ook geen ruimte meer. Hiermee is een parkeergarage de enige mogelijkheid.",
+            "2.1 Voldoen aan de wettelijke eisen Het college is verplicht om een RMV op te nemen in de jaarrekening. Met de vaststelling van het Interne Controleplan bepaalt het college de onderwerpen van onderzoek. Zij geeft daarmee uitvoering aan “artikel 23 Interne controle” van de door Provinciale Staten vastgestelde “Financiële verordening provincie Flevoland 2024”."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker geeft argumenten voor beslispunten. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Elk argument cursief weergegeven\n• Elk argument in één zin\n• Beginnen met positieve argumenten\n• Licht relevantie toe voor de oplossing/besluit\n• Minimaal één argument per beslispunt\n• Nummering koppelen aan beslispuntnummer (bv. 1.1, 1.2)\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Cursief / Zinslengte / Volgorde / Relevantie / Dekking / Nummering / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Cursief\": \"Het argument is niet cursief weergegeven; zet de kernzin in cursief.\",\n\"Zinslengte\": \"Het argument overschrijdt de lengte van één zin; formuleer het argument krachtiger in één volzin.\",\n\"Volgorde\": \"De argumenten beginnen niet met de positieve aspecten; verplaats positieve argumenten naar boven.\",\n\"Nummering\": \"De argumenten zijn niet correct gekoppeld aan de beslispunten; gebruik de notatie 1.1, 1.2 etc.\",\n\"Suggestie\": \"1.1 Door de parkeergarage wordt het mogelijk parkeerruimte aan derden aan te bieden. Hiermee versterkt de provincie haar maatschappelijke meerwaarde.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Nummering\": \"De argumenten zijn niet correct gekoppeld aan de beslispunten; gebruik de notatie 1.1, 1.2 etc.\",\n\"Suggestie\": \"1.1 Door de parkeergarage wordt het mogelijk parkeerruimte aan derden aan te bieden. Hiermee versterkt de provincie haar maatschappelijke meerwaarde.\"\n}\n\nVOORBEELD OUTPUT 3\n{\n\"Nummering\": \"De argumenten zijn niet correct gekoppeld aan de beslispunten; gebruik de notatie 1.1, 1.2 etc.\",\n\"Suggestie\": \"1.1 Door de parkeergarage wordt het mogelijk parkeerruimte aan derden aan te bieden. Hiermee versterkt de provincie haar maatschappelijke meerwaarde.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Cursief\": \"Het argument is niet cursief weergegeven; zet de leidende zin per argument in cursief.\",\n  \"Zinslengte\": \"Het argument overschrijdt de lengte van één zin; formuleer het argument krachtiger in één volzin.\",\n  \"Volgorde\": \"De argumenten starten niet met de positieve aspecten; herstructureer de argumentatie zodat positieve punten bovenaan staan.\",\n  \"Relevantie\": \"De toelichting per argument maakt onvoldoende duidelijk waarom het relevant is voor het besluit; verduidelijk de koppeling.\",\n  \"Dekking\": \"Niet elk beslispunt heeft minimaal één bijbehorend argument; voeg de ontbrekende argumenten toe.\",\n  \"Nummering\": \"De nummering van de argumenten is niet gekoppeld aan de beslispunten; gebruik de notatie 1.1, 1.2 conform het besluitnummer.\",\n  \"Suggestie\": \"1.1 Door het aanleggen van een parkeergarage wordt het mogelijk parkeerruimte aan te bieden aan derden. Door het aanbieden van extra parkeerruimte kan de provincie haar maatschappelijke meerwaarde versterken.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h6",
+          "titel": "Kanttekeningen, risico’s en tegenargumenten",
+          "doel": "De lezer weet met welke risico’s, kanttekeningen en gevoeligheden rekening moet worden gehouden.",
+          "vereisten": [
+            "Geef een risico of kanttekening cursief weer.",
+            "Koppel dit waar mogelijk aan het beslispuntnummer.",
+            "Benoem voorzienbare risico’s voor de eigen organisatie, zoals: o\tfinancieel o\tbestuurlijk o\tpolitiek o\tHRM",
+            "Benoem ook de beheersmaatregelen.",
+            "Betrek gevoeligheden in het krachtenveld van PS en/of externe partijen.",
+            "Benoem tegenargumenten en kanttekeningen.",
+            "Schrijf niet “n.v.t.”",
+            "Benoem ook wat er gebeurt als geen besluit wordt genomen."
+          ],
+          "voorbeelden": [
+            "1.1 Het risico van het bouwen van een ondergrondse parkeergarage is financieel gezien aanzienlijk. Beheermaatregel: De aanbesteding zal turn-key zijn waardoor tussentijdse risico’s voor reke- ning van de opdrachtnemer (aanbestede partij) blijven.",
+            "1.2 Het bouwen van een parkeergarage onder een bestaand gebouw is risicovol omdat het gebouw erboven kan gaan bewegen met nog onbekende gevolgen. Beheersmaatregel: een erkend bedrijf onderzoek laten doen naar de bouwconstructie en bij- voorbeeld grondwater en andere hinderende gevolgen van het bouwen van een dichte con- structie onder het gebouw.",
+            "1.3 Het bouwen van grote constructies kent risico’s bij de aanbesteding (meerkosten) en de uitvoe- ring (beschikbaarheid materialen en planning). Beheersmaatregel: Een extern suggestiebureau inschakelen bij het opstellen van de aanbeste- dingsvoorwaarden en bij het selecteren van de bouwcombinatie. Beheersmaatregel: Gunning vindt plaats aan aanbieders die bewezen hebben veilig te werken",
+            "1.4 Het risico bestaat dat de geraamde parkeerinkomsten (bij betaald openbaar parkeren in de garage) lager uitvallen dan geraamd. Beheersmaatregel: De exploitatie van de garage wordt uitbesteed tegen een vaste huurprijs. De commerciële exploitant is verantwoordelijk. Wél zijn afspraken nodig over de jaarlijkse ver- hoging van de parkeerkosten in relatie tot de gevraagde huurprijs.",
+            "1.5 De gemeenteraad van X heeft in haar laatste gemeenteraadsvergadering zich middels een motie uitgesproken tegen dit voorstel."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker vult risico's en kanttekeningen in. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Risico of kanttekening cursief weergeven\n• Koppelen aan beslispuntnummer\n• Benoem financiële risico's voor de organisatie\n• Benoem bestuurlijke of politieke risico's voor de organisatie\n• Benoem HRM risico's voor de organisatie\n• Altijd beheersmaatregelen benoemen\n• Benoem gevoeligheden bij PS of externe partijen\n• Benoem tegenargumenten en kanttekeningen\n• Nooit \"n.v.t.\" invullen\n• Benoem effect van niet besluiten\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Cursief / Nummering / FinancieelRisico / Bestuursrisico / HRMRisico / Beheersing / Gevoeligheid / Tegenargumenten / Invulplicht / ImpactNul / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Beheersing\": \"De beheersmaatregel voor het benoemde risico ontbreekt; geef specifiek aan hoe het risico wordt gemitigeerd.\",\n\"ImpactNul\": \"Er wordt niet vermeld wat er gebeurt als er geen besluit wordt genomen; voeg dit toe om de noodzaak te verduidelijken.\",\n\"Invulplicht\": \"Tekst bevat \\\"n.v.t.\\\"; specificeer risico's of kanttekeningen, aangezien deze altijd aanwezig kunnen zijn.\",\n\"Suggestie\": \"1.1 Het financieel risico van de bouw is aanzienlijk. Beheersmaatregel: De aanbesteding is turn-key.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"ImpactNul\": \"Er wordt niet vermeld wat er gebeurt als er geen besluit wordt genomen; voeg dit toe om de noodzaak te verduidelijken.\",\n\"Invulplicht\": \"Tekst bevat \\\"n.v.t.\\\"; specificeer risico's of kanttekeningen, aangezien deze altijd aanwezig kunnen zijn.\",\n\"Suggestie\": \"1.1 Het financieel risico van de bouw is aanzienlijk. Beheersmaatregel: De aanbesteding is turn-key.\"\n}\n\nVOORBEELD OUTPUT 3\n{\n\"Invulplicht\": \"Tekst bevat \\\"n.v.t.\\\"; specificeer risico's of kanttekeningen, aangezien deze altijd aanwezig kunnen zijn.\",\n\"Suggestie\": \"1.1 Het financieel risico van de bouw is aanzienlijk. Beheersmaatregel: De aanbesteding is turn-key.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Cursief\": \"Risico's of kanttekeningen zijn niet cursief weergegeven; zet deze in cursief.\",\n  \"Nummering\": \"De risico's zijn waar mogelijk niet gekoppeld aan het beslispuntnummer; voeg deze koppeling toe.\",\n  \"FinancieelRisico\": \"Financiële risico's voor de eigen organisatie ontbreken; benoem deze expliciet.\",\n  \"Bestuursrisico\": \"Bestuurlijke of politieke risico's voor de organisatie zijn niet benoemd; voeg deze context toe.\",\n  \"HRMRisico\": \"HRM risico's voor de organisatie zijn niet benoemd; voeg deze context toe.\",\n  \"Beheersing\": \"Beheersmaatregelen voor de genoemde risico's ontbreken; geef aan hoe the risico's worden gemitigeerd.\",\n  \"Gevoeligheid\": \"Gevoeligheid in het krachtenveld van PS of externe partijen is niet benoemd; voeg deze context toe.\",\n  \"Tegenargumenten\": \"Tegenargumenten en kanttekeningen ontbreken; benoem deze om een volledig beeld te schetsen.\",\n  \"Invulplicht\": \"De tekst bevat \\\"n.v.t.\\\"; vul risico's in of verklaar waarom deze er niet zouden zijn volgens de richtlijn.\",\n  \"ImpactNul\": \"De gevolgen van het niet nemen van een besluit ontbreken; beschrijf wat de consequentie is van uitstel of afstel.\",\n  \"Suggestie\": \"1.1 Het risico van het bouwen van een ondergrondse parkeergarage is financieel gezien aanzienlijk. Beheersmaatregel: De aanbesteding zal turn-key zijn.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h7",
+          "titel": "Alternatieven",
+          "doel": "De lezer heeft inzicht in welke alternatieven mogelijk zijn.",
+          "vereisten": [
+            "Benoem kort welke andere oplossingen mogelijk zijn.",
+            "De alternatieven moeten afwijken van het voorstel.",
+            "Geef in één of twee zinnen aan waarom het alternatief niet de voorkeur heeft.",
+            "Geef elk alternatief cursief weer."
+          ],
+          "voorbeelden": [
+            "Huren van parkeerplaatsen in garage X op 150 meter loopafstand Bezoekers en personeel moeten verder lopen. Huren van parkeerplaatsen is op termijn duurder dan zelf bouwen en exploiteren van een garage.",
+            "Verhogen van de OV/Fiets-vergoeding in combinatie met het beperken van het aantal uit te geven parkeerpassen aan medewerkers. Hierdoor zullen potentiële medewerkers die afhankelijk zijn van de auto mogelijk niet bij de provincie Flevoland willen werken. De arbeidsmarkt is zeer krap waardoor ambities van de provincie mogelijk niet kunnen worden uitgevoerd vanwege tekort aan personeel.",
+            "Bouwen van een parkeerdek op het achterterrein. Het bestemmingsplan staat bouwen op het terrein niet toe vanwege ondergrondse lei- dingen. Onder het terrein loopt een grote gasleiding waarvan verplaatsing duurder is dan het bouwen van een garage."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker somt alternatieven op. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Benoem korte alternatieve oplossingen (afwijkend van voorstel)\n• Alternatieven moeten wezenlijk afwijken van het voorstel\n• Toelichting in maximaal twee zinnen waarom het geen voorkeur heeft\n• Elk alternatief cursief weergeven\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Substantie / Afwijking / Onderbouwing / Opmaak / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Onderbouwing\": \"Uitleg waarom het alternatief niet de voorkeur heeft ontbreekt of is te lang; beperk tot maximaal twee zinnen.\",\n\"Opmaak\": \"Alternatieven zijn niet cursief weergegeven; zet de alternatieven in cursief.\",\n\"Suggestie\": \"Huren van parkeerplaatsen in garage X op afstand. Dit is op termijn duurder en minder klantvriendelijk.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Opmaak\": \"Alternatieven zijn niet cursief weergegeven; zet de alternatieven in cursief.\",\n\"Suggestie\": \"Huren van parkeerplaatsen in garage X op afstand. Dit is op termijn duurder en minder klantvriendelijk.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Substantie\": \"Er zijn geen alternatieve oplossingen benoemd; vermeld kort welke andere opties overwogen zijn.\",\n  \"Afwijking\": \"De benoemde alternatieven wijken onvoldoende af van het huidige voorstel; benoem wezenlijk andere routes.\",\n  \"Onderbouwing\": \"De toelichting waarom een alternatief niet de voorkeur heeft ontbreekt of overschrijdt de twee zinnen; houd het kort en krachtig.\",\n  \"Opmaak\": \"Alternatieven zijn niet cursief weergegeven; zet elk alternatief in cursief.\",\n  \"Suggestie\": \"Huren van parkeerplaatsen in garage X op 150 meter loopafstand. Bezoekers moeten verder lopen en huren is op termijn duurder dan zelf bouwen.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h8",
+          "titel": "Financiële impact – Korte samenvatting financiële aspecten",
+          "doel": "De lezer begrijpt de financiële consequenties, dekking en risico’s van het besluit.",
+          "vereisten": [
+            "Zoek vroegtijdig afstemming met een P&C-medewerker.",
+            "Als er financiële gevolgen zijn, geef dan ook de dekking aan.",
+            "Vul deze rubriek altijd in, ook als er geen financiële gevolgen zijn.",
+            "Geef aan welke financiële risico’s er zijn.",
+            "Geef aan hoe die risico’s worden beheerst.",
+            "Geef aan of rekening wordt gehouden met het budgetrecht van Provinciale Staten.",
+            "Bij financiële gevolgen moet de P&C-medewerker mee in de paraferingsronde.",
+            "Afhankelijk van de situatie moet mogelijk ook de financieel manager mee in de paraferingsronde."
+          ],
+          "voorbeelden": [
+            "Het bedrag van € 50.000,- wordt na besluitvorming van Provinciale Staten als krediet beschikbaar gesteld. Het krediet wordt in 4 jaar afgeschreven, de jaarlijkse afschrijvingslasten worden verwerkt in de begroting.",
+            "De eenmalige uitgave van € 25.000 onderzoekskosten wordt gedekt uit het budget Mobiliteit , onderdeel ‘strategisch onderzoek’ (budgetnummer vermelden)."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker beschrijft de financiële impact. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Afstemming met P&C-medewerker vermelden of geborgd\n• Bij financiële gevolgen ook de dekking aangeven\n• Rubriek ALTIJD invullen (ook als er geen financiële gevolgen zijn)\n• Benoem financiële risico's\n• Benoem hoe financiële risico's worden beheerst\n• Benoem budgetrecht van Provinciale Staten\n• P&C-medewerker meenemen in paraferingsronde\n• Financieel manager meenemen in paraferingsronde (indien van toepassing)\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Afstemming / Dekking / Volledigheid / Risico / Beheersing / Budgetrecht / Parafering / ManagerParafering / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Dekking\": \"Financiële gevolgen zijn genoemd maar de dekking ontbreekt; vermeld waar het budget vandaan komt, bv. \\\"Gedekt uit budget X\\\".\",\n\"Volledigheid\": \"De financiële impact is niet ingevuld; specificeer deze, ook als er geen gevolgen zijn (bv. \\\"Geen directe financiële impact\\\").\",\n\"Budgetrecht\": \"Er wordt geen rekening gehouden met het budgetrecht van PS; expliciteer dit indien van toepassing.\",\n\"Suggestie\": \"Het bedrag van € 50.000 wordt na besluitvorming van PS als krediet beschikbaar gesteld en gedekt uit budget X.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Volledigheid\": \"De financiële impact is niet ingevuld; specificeer deze, ook als er geen gevolgen zijn (bv. \\\"Geen directe financiële impact\\\").\",\n\"Budgetrecht\": \"Er wordt geen rekening gehouden met het budgetrecht van PS; expliciteer dit indien van toepassing.\",\n\"Suggestie\": \"Het bedrag van € 50.000 wordt na besluitvorming van PS als krediet beschikbaar gesteld en gedekt uit budget X.\"\n}\n\nVOORBEELD OUTPUT 3\n{\n\"Budgetrecht\": \"Er wordt geen rekening gehouden met het budgetrecht van PS; expliciteer dit indien van toepassing.\",\n\"Suggestie\": \"Het bedrag van € 50.000 wordt na besluitvorming van PS als krediet beschikbaar gesteld en gedekt uit budget X.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Afstemming\": \"Zoek vroegtijdig afstemming met een P&C-medewerker en vermeld dit indien relevant.\",\n  \"Dekking\": \"Bij financiële gevolgen ontbreekt de dekking; geef specifiek aan uit welk budget of welke post dit wordt betaald.\",\n  \"Volledigheid\": \"Deze rubriek moet altijd worden ingevuld, ook als er geen financiële gevolgen zijn; voeg een passende tekst toe.\",\n  \"Risico\": \"Financiële risico's zijn niet benoemd; voeg deze informatie toe.\",\n  \"Beheersing\": \"De wijze waarop financiële risico's worden beheerst ontbreekt; voeg dit toe.\",\n  \"Budgetrecht\": \"Er wordt niet expliciet ingegaan op het budgetrecht van Provinciale Staten; vermeld hoe hiermee wordt omgegaan.\",\n  \"Parafering\": \"De P&C-medewerker moet worden opgenomen in de paraferingsronde; borg dit proces.\",\n  \"ManagerParafering\": \"De financieel manager moet mogelijk ook worden opgenomen in de paraferingsronde; controleer of dit nodig is.\",\n  \"Suggestie\": \"De eenmalige uitgave van € 25.000 onderzoekskosten wordt gedekt uit het budget Mobiliteit, onderdeel ‘strategisch onderzoek’.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h9",
+          "titel": "Personele impact",
+          "doel": "De lezer begrijpt de formatieve, financiële en rechtspositionele gevolgen voor personeel.",
+          "vereisten": [
+            "Betrek een P&O-adviseur bij het bepalen van de impact.",
+            "Beschrijf de personele gevolgen in formatieve zin: o\ttijdelijk o\tpermanent",
+            "Beschrijf ook de financiering daarvan.",
+            "Beschrijf hoe medezeggenschap is geregeld: o\tGO en/of OR",
+            "Benoem overige relevante personele aspecten: o\topleiding o\tvereiste kennis o\tvereiste vaardigheden"
+          ],
+          "voorbeelden": [
+            "Er zijn 2 extra FTE’s nodig in schaal VP, functiegroep T voor bewaking en valet parking. De OR heeft hierop positief geadviseerd per brief dd. 14.02.2001. De formatie wordt toegevoegd aan de afdeling SenM en gefinancierd van budget 2468.10."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker beschrijft de personele impact. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Afstemming met P&O-adviseur vermelden\n• Personele gevolgen in formatieve zin beschrijven\n• Onderscheid maken tussen tijdelijke en permanente formatie\n• Financiering van personele gevolgen beschrijven\n• Medezeggenschap (GO en/of OR) regeling vermelden\n• Benoem opleidingen/scholingsbehoefte\n• Benoem vereiste kennis\n• Benoem vereiste vaardigheden\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Afstemming / Formatie / Duur / Financiering / Medezeggenschap / Opleiding / Kennis / Vaardigheden / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Formatie\": \"Formatieve gevolgen zijn niet gespecificeerd; geef aan of het gaat om uitbreiding in FTE.\",\n\"Medezeggenschap\": \"Informatie over medezeggenschap ontbreekt; vermeld of de OR of het GO is betrokken of geraadpleegd.\",\n\"Suggestie\": \"Er zijn 2 extra FTE’s nodig in schaal VP. De OR heeft positief geadviseerd; financiering via budget X.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Medezeggenschap\": \"Informatie over medezeggenschap ontbreekt; vermeld of de OR of het GO is betrokken of geraadpleegd.\",\n\"Suggestie\": \"Er zijn 2 extra FTE’s nodig in schaal VP. De OR heeft positief geadviseerd; financiering via budget X.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Afstemming\": \"Betrek een P&O-adviseur bij het bepalen van de personele impact en vermeld dit.\",\n  \"Formatie\": \"De personele gevolgen in formatieve zin zijn niet duidelijk beschreven; specificeer dit in FTE.\",\n  \"Duur\": \"Er wordt geen onderscheid gemaakt tussen tijdelijke of permanente formatie; verduidelijk dit.\",\n  \"Financiering\": \"De wijze waarop de personele gevolgen worden gefinancierd ontbreekt; voeg deze informatie toe.\",\n  \"Medezeggenschap\": \"Er wordt niets vermeld over de rol van medezeggenschap (GO of OR); verduidelijk hoe dit is geregeld.\",\n  \"Opleiding\": \"Eventuele scholingsbehoefte of benodigde opleidingen zijn niet benoemd; voeg dit toe.\",\n  \"Kennis\": \"De vereiste kennis voor het project of de functie is niet benoemd; specificeer dit.\",\n  \"Vaardigheden\": \"De vereiste vaardigheden zijn niet benoemd; voeg deze toe indien van toepassing.\",\n  \"Suggestie\": \"Er zijn 2 extra FTE’s nodig voor bewaking. De OR heeft positief geadviseerd; de formatie wordt gefinancierd uit budget X.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h10",
+          "titel": "Bevoegdheden GS",
+          "doel": "Het moet duidelijk zijn op basis waarvan GS bevoegd zijn het besluit te nemen.",
+          "vereisten": [
+            "Geef aan welk wetsartikel leidend is voor de bevoegdheid van GS.",
+            "Vaak betreft dit artikelen uit: o\tde Provinciewet o\ten/of de Omgevingswet",
+            "Geef aan welke overige wetsartikelen medebepalend zijn.",
+            "Noem relevante artikelen uit: o\tverordeningen o\tconvenanten o\tsamenwerkingsovereenkomsten",
+            "Als het onderwerp impact heeft op de fysieke leefomgeving: o\tbenoem dat de Omgevingswet aan de orde is o\tbenoem de GS-PS Samenwerkingsafspraken Omgevingswet o\tgeef aan of het een lichte of zware procedure betreft",
+            "Betrek bij vragen over de formulering een jurist."
+          ],
+          "voorbeelden": [
+            "De juridische grondslag is: - Provinciewet: artikel 158, lid 1 – b. - Artikel Algemene Wet Bestuursrecht. - Omgevingswet: artikel 3.4 (vaststellen programma) - Participatieverordening Provincie Flevoland, artikel … (deze verordening moet nog worden opge- steld en vastgesteld). - Artikel over geheimhouding. - Algemene Subsidieverordening Flevoland 2023. - Samenwerkingsovereenkomst Metropoolregio Amsterdam."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker beschrijft de bevoegdheden van GS. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Leidend wetsartikel voor bevoegdheid GS vermelden (bv. Provinciewet/Omgevingswet)\n• Overige medebepalende wetsartikelen noemen (verordeningen, convenanten, SOK)\n• Bij fysieke leefomgeving: Omgevingswet benoemen\n• Bij fysieke leefomgeving: GS-PS Samenwerkingsafspraken benoemen\n• Vermelden of het een lichte of zware procedure betreft (indien Omgevingswet)\n• Betrek jurist bij twijfel over formulering\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Grondslag / Wetgeving / Omgevingswet / Samenwerkingsafspraken / Procedure / Jurist / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Grondslag\": \"Hét leidende wetsartikel voor de bevoegdheid ontbreekt; verwijs expliciet naar bv. Provinciewet artikel 158.\",\n\"Omgevingswet\": \"Bij impact op de fysieke leefomgeving ontbreekt de verwijzing naar de Omgevingswet; voeg deze toe.\",\n\"Suggestie\": \"De juridische grondslag is Provinciewet artikel 158, lid 1-b en de Algemene Wet Bestuursrecht.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Omgevingswet\": \"Bij impact op de fysieke leefomgeving ontbreekt de verwijzing naar de Omgevingswet; voeg deze toe.\",\n\"Suggestie\": \"De juridische grondslag is Provinciewet artikel 158, lid 1-b en de Algemene Wet Bestuursrecht.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Grondslag\": \"Hét leidende wetsartikel voor de bevoegdheid ontbreekt; verwijs expliciet naar bv. Provinciewet artikel 158.\",\n  \"Wetgeving\": \"Overige medebepalende wetsartikelen of verordeningen ontbreken; noem relevante artikelen uit bv. de Algemene Subsidieverordening.\",\n  \"Omgevingswet\": \"Bij impact op de fysieke leefomgeving ontbreekt de verwijzing naar de Omgevingswet; voeg deze toe.\",\n  \"Samenwerkingsafspraken\": \"Bij onderwerpen die de Omgevingswet raken ontbreekt de verwijzing naar de GS-PS Samenwerkingsafspraken; voeg deze toe.\",\n  \"Procedure\": \"Bij onderwerpen die de fysieke leefomgeving raken ontbreekt of het een lichte of zware procedure betreft; specificeer dit.\",\n  \"Jurist\": \"Betrek bij vragen over de juridische formulering een jurist.\",\n  \"Suggestie\": \"De juridische grondslag is Provinciewet artikel 158, lid 1-b en de Algemene Wet Bestuursrecht.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h11",
+          "titel": "Externe afstemming",
+          "doel": "Het college heeft inzicht in de relevante externe partijen waarmee het voorstel is afgestemd.",
+          "vereisten": [
+            "•\tGeef aan welke externe partijen op voorhand betrokken waren bij het opstellen van het voorstel.",
+            "•\tDeze partijen kunnen, maar hoeven niet, dezelfde te zijn als participatiebetrokkenen.",
+            "•\tZorg voor documentatie of vastlegging van de adviezen als bewijslast."
+          ],
+          "voorbeelden": [
+            "Externe partij: Uitkomst 3 commerciële partijen parkeergarages: Onderhandse marktconsultatie uitgevoerd Gemeente Lelystad: Onderzoek bestemmingsplan NS (Stationsgebied Lelystad Centrum): Akkoord met suggestie"
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker geeft de externe afstemming weer. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Benoem externe partijen die betrokken waren bij het opstellen\n• Maak onderscheid tussen afstemming en participatie\n• Bewijslast/adviezen documenteren\n• Bewijslast/adviezen vastleggen\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Partijen / Onderscheid / Bewijslast / Vastlegging / Suggestie)\n• value: 1 zin uitleg why deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Partijen\": \"De betrokken externe partijen worden niet concreet benoemd; specificeer welke organisaties of partijen input hebben gegeven.\",\n\"Bewijslast\": \"Er wordt niet verwezen naar documentatie van de adviezen; zorg dat de uitkomst schriftelijk is vastgelegd.\",\n\"Suggestie\": \"Gemeente Lelystad: Akkoord met het suggestie van de marktconsultatie door 3 commerciële partijen.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Bewijslast\": \"Er wordt niet verwezen naar documentatie van de adviezen; zorg dat de uitkomst schriftelijk is vastgelegd.\",\n\"Suggestie\": \"Gemeente Lelystad: Akkoord met het suggestie van de marktconsultatie door 3 commerciële partijen.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Partijen\": \"De betrokken externe partijen worden niet concreet benoemd; specificeer welke organisaties of partijen input hebben gegeven.\",\n  \"Onderscheid\": \"Het onderscheid tussen externe afstemming en participatie is niet duidelijk; verduidelijk dit indien deze partijen verschillen.\",\n  \"Bewijslast\": \"Er wordt niet verwezen naar documentatie van de adviezen; zorg voor schriftelijke bewijslast.\",\n  \"Vastlegging\": \"De wijze van vastlegging van de adviezen ontbreekt; geef aan waar dit is vastgelegd.\",\n  \"Suggestie\": \"Gemeente Lelystad: Akkoord met het suggestie van de marktconsultatie door 3 commerciële partijen.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h12",
+          "titel": "Participatie",
+          "doel": "De lezer krijgt inzicht in het participatietraject met de samenleving.",
+          "vereisten": [
+            "Geef aan of het participatietraject aankomend, lopend of afgerond is.",
+            "Als participatie is afgerond: o\tgeef aan waar het resultaat te vinden is o\tgeef aan hoe de participatie is verwerkt in het voorstel",
+            "Als het onderwerp impact heeft op de fysieke leefomgeving: o\tbenoem dat de Omgevingswet aan de orde is o\thoud rekening met de motiveringsplicht o\thoud rekening met specifieke vereisten bij een projectbesluit",
+            "Betrek een participatieadviseur of communicatieadviseur.",
+            "Gebruik het stappenplan uit het participatiebeleid.",
+            "Noteer beknopt ten minste de antwoorden op vragen 1, 2, 6, 8 en 12 uit hoofdstuk 5 van dat stappenplan.",
+            "Beschrijf op hoofdlijnen de planning van het participatietraject.",
+            "Overweeg of een apart beslispunt nodig is als participatie veel impact heeft op de besluitvorming."
+          ],
+          "voorbeelden": [],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker beschrijft het participatietraject. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Status aangeven (aankomend, lopend, afgerond)\n• Indien afgerond: vindplaats resultaat noemen\n• Indien afgerond: verwerking in voorstel noemen\n• Bij fysieke leefomgeving: Omgevingswet benoemen\n• Bij fysieke leefomgeving: motiveringsplicht benoemen\n• Bij fysieke leefomgeving: projectbesluit vereisten benoemen\n• Betrek participatieadviseur\n• Betrek communicatieadviseur\n• Gebruik stappenplan participatiebeleid (kernvragen 1, 2, 6, 8, 12)\n• Beknopte planning traject beschrijven\n• Overweeg apart beslispunt bij veel impact\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Status / Vindplaats / Verwerking / Omgevingswet / Motiveringsplicht / Projectbesluit / Participatieadviseur / Communicatieadviseur / Stappenplan / Planning / Beslispunt / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Status\": \"De huidige fase van het participatietraject ontbreekt; geef aan of het traject aankomend, lopend of afgerond is.\",\n\"Stappenplan\": \"De antwoorden op de kernvragen (1, 2, 6, 8, 12) uit het stappenplan ontbreken; voeg deze beknopt toe.\",\n\"Suggestie\": \"Het participatietraject is afgerond; het resultaat is verwerkt in bijlage X en heeft geleid tot aanpassing van punt Y.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Stappenplan\": \"De antwoorden op de kernvragen (1, 2, 6, 8, 12) uit het stappenplan ontbreken; voeg deze beknopt toe.\",\n\"Suggestie\": \"Het participatietraject is afgerond; het resultaat is verwerkt in bijlage X en heeft geleid tot aanpassing van punt Y.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Status\": \"De huidige fase van het participatietraject ontbreekt; geef aan of het traject aankomend, lopend of afgerond is.\",\n  \"Vindplaats\": \"In geval van een afgerond traject ontbreekt de vindplaats van het resultaat; voeg deze informatie toe.\",\n  \"Verwerking\": \"In geval van een afgerond traject ontbreekt de wijze van verwerking in het voorstel; voeg dit toe.\",\n  \"Omgevingswet\": \"Bij impact op de fysieke leefomgeving ontbreekt de verwijzing naar de Omgevingswet; voeg deze toe.\",\n  \"Motiveringsplicht\": \"Bij impact op de fysieke leefomgeving ontbreekt de verwijzing naar de motiveringsplicht; voeg deze toe.\",\n  \"Projectbesluit\": \"In geval van een projectbesluit ontbreken de specifieke vereisten; voeg deze toe.\",\n  \"Participatieadviseur\": \"Betrek een participatieadviseur bij het opstellen van dit onderdeel.\",\n  \"Communicatieadviseur\": \"Betrek een communicatieadviseur bij het opstellen van dit onderdeel.\",\n  \"Stappenplan\": \"De antwoorden op de kernvragen (1, 2, 6, 8, 12) uit hoofdstuk 5 van het stappenplan ontbreken; voeg deze beknopt toe.\",\n  \"Planning\": \"Een beknopte planning van het participatietraject ontbreekt; voeg de planning op hoofdlijnen toe.\",\n  \"Beslispunt\": \"Bij grote impact op de besluitvorming is een apart beslispunt nodig; overweeg of dit hier aan de orde is.\",\n  \"Suggestie\": \"Het participatietraject is afgerond; het resultaat is verwerkt in bijlage X en heeft geleid tot aanpassing van punt Y.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h13",
+          "titel": "Externe communicatie",
+          "doel": "De lezer weet hoe aanvullend wordt gecommuniceerd over het besluit, naast de reguliere besluitenlijst.",
+          "vereisten": [
+            "Betrek een communicatieadviseur.",
+            "Geef aan via welke communicatiemiddelen wordt gecommuniceerd."
+          ],
+          "voorbeelden": [
+            "Er gaat een persbericht uit naar aanleiding van het besluit.",
+            "Gedeputeerde X geeft op datum X een interview over het genomen besluit aan Omroep Flevoland."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker beschrijft de externe communicatie. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Betrek communicatieadviseur\n• Geef aan welke communicatiemiddelen worden ingezet\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Communicatieadviseur / Middelen / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT\n{\n\"Middelen\": \"Er worden geen specifieke communicatiemiddelen genoemd; vermeld of er bv. een persbericht, interview of social media post volgt.\",\n\"Suggestie\": \"Er gaat een persbericht uit; gedeputeerde X geeft op datum Y een interview aan Omroep Flevoland.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Communicatieadviseur\": \"Betrek een communicatieadviseur bij het plannen van de externe communicatie.\",\n  \"Middelen\": \"Er worden geen specifieke communicatiemiddelen genoemd; vermeld via welke middelen (bv. persbericht of interview) wordt gecommuniceerd.\",\n  \"Suggestie\": \"Er gaat een persbericht uit; gedeputeerde X geeft op datum Y een interview aan Omroep Flevoland.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h14",
+          "titel": "Samenvatting voor op de openbare besluitenlijst",
+          "doel": "De lezer weet welke informatie publiekelijk wordt verstrekt over het besluit.",
+          "vereisten": [
+            "De beslispunten zelf staan al op de besluitenlijst; herhaal die niet letterlijk.",
+            "Vermelding van de datum van de GS-vergadering is niet nodig.",
+            "Geef een korte en bondige samenvatting van het besluit.",
+            "Overweeg te starten met het omgevingsbelang en daarna het besluit van GS.",
+            "Gebruik voor het publiek begrijpelijke taal.",
+            "Schrijf afkortingen voluit.",
+            "Richtlijn: maximaal 6 regels.",
+            "Let op met persoonsgegevens in verband met AVG.",
+            "Als niet voor direct publiceren wordt gekozen: o\tnoteer wanneer of onder welke voorwaarden publicatie wel kan o\tpas de standaardtekst daarop aan"
+          ],
+          "voorbeelden": [
+            "Gedeputeerde Staten van Flevoland hebben besloten tot een aanbestedingstraject voor de bouw van een ondergrondse parkeergarage onder het provinciehuis. Voor omwonenden worden informatieavon- den gehouden.",
+            "Om de parkeerdruk rondom het Provinciehuis en het station te verminderen hebben Gedeputeerde Staten hebben onderzoek laten uitvoeren naar mogelijke oplossingen. Zij sturen de resultaten van het onderzoek voor bespreking naar Provinciale Staten. Gedeputeerde Staten zijn voorstander van het bouwen van een parkeergarage onder het provinciehuis. De geraamde kosten zijn € 4 miljoen. Deze kosten worden terugverdiend met parkeerinkomsten. Op 17 februari om 19:30 uur vindt een bewoners- bijeenkomst plaats op het provinciehuis.",
+            "Gedeputeerde Staten hebben besloten de heer L. Verbeek vanwege zijn afscheid als Commissaris van de Koning van de Provincie Flevoland de Gouden Kiekendief te schenken als dank voor zijn jarenlange inzet voor de provincie."
+          ],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker schrijft de samenvatting voor de besluitenlijst. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Beslispunten niet letterlijk herhalen\n• Geen vermelding van datum GS-vergadering\n• Korte en bondige samenvatting\n• Starten met omgevingsbelang, daarna besluit GS\n• Begrijpelijke taal voor het publiek\n• Afkortingen voluit schrijven\n• Maximaal 6 regels\n• Geen persoonsgegevens (AVG proof)\n• Vermelden wanneer/onder welke voorwaarden publicatie kan (indien niet direct)\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Herhaling / GeenDatum / Beknoptheid / Structuur / Begrijpelijkheid / Afkortingen / Regellimiet / AVG / Publicatievoorwaarden / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT 1\n{\n\"Herhaling\": \"De beslispunten worden letterlijk herhaald; schrijf een overkoepelende samenvatting.\",\n\"Regellimiet\": \"De samenvatting is langer dan 6 regels; beperk de tekst tot de kern.\",\n\"AVG\": \"Er staan namen van personen in de tekst; verwijder deze in verband met de AVG.\",\n\"Suggestie\": \"Gedeputeerde Staten hebben besloten tot een aanbestedingstraject voor de bouw van een parkeergarage.\"\n}\n\nVOORBEELD OUTPUT 2\n{\n\"Regellimiet\": \"De samenvatting is langer dan 6 regels; beperk de tekst tot de kern.\",\n\"AVG\": \"Er staan namen van personen in de tekst; verwijder deze in verband met de AVG.\",\n\"Suggestie\": \"Gedeputeerde Staten hebben besloten tot een aanbestedingstraject voor de bouw van een parkeergarage.\"\n}\n\nVOORBEELD OUTPUT 3\n{\n\"AVG\": \"Er staan namen van personen in de tekst; verwijder deze in verband met de AVG.\",\n\"Suggestie\": \"Gedeputeerde Staten hebben besloten tot een aanbestedingstraject voor de bouw van een parkeergarage.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Herhaling\": \"De beslispunten worden letterlijk herhaald; schrijf een overkoepelende, publieksvriendelijke samenvatting.\",\n  \"GeenDatum\": \"Vermelding van de datum van de GS-vergadering is niet nodig; verwijder dit uit de samenvatting.\",\n  \"Beknoptheid\": \"De samenvatting is onvoldoende kort en bondig; formuleer de tekst krachtiger.\",\n  \"Structuur\": \"Overweeg te starten met het omgevingsbelang en daarna pas het besluit van GS.\",\n  \"Begrijpelijkheid\": \"Gebruik begrijpelijke taal voor een breed publiek en vermijd vaktermen.\",\n  \"Afkortingen\": \"Schrijf afkortingen voluit zodat ze ook voor buitenstaanders begrijpelijk zijn.\",\n  \"Regellimiet\": \"De samenvatting overschrijdt de richtlijn van 6 regels; kort de tekst in.\",\n  \"AVG\": \"De tekst bevat persoonsgegevens; verwijder deze om te voldoen aan de AVG.\",\n  \"Publicatievoorwaarden\": \"Indien niet voor direct publiceren wordt gekozen, noteer wanneer of onder welke voorwaarden dit wel kan.\",\n  \"Suggestie\": \"Gedeputeerde Staten hebben besloten tot een aanbestedingstraject voor de bouw van een parkeergarage onder het provinciehuis.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "h15",
+          "titel": "Bijlagen",
+          "doel": "De lezer heeft een compleet overzicht van de bijlagen en hun openbaarheidsstatus.",
+          "vereisten": [
+            "Naam van de bijlage",
+            "Het e-Docs nummer",
+            "Openbaar in de zin van de Woo: ja of nee"
+          ],
+          "voorbeelden": [],
+          "fout_voorbeelden": [],
+          "instructie": "",
+          "agent_digitale_toegankelijkheid": "",
+          "agent_open_overheid": "",
+          "agent_structuur": "DOEL\nDe gebruiker somt de bijlagen op. Geef een nieuwe verbeterde input terug als suggestie (binnen de context van de gebruiker; wat voldoet aan ALLE regels). Geef aan waarom de input niet aan de regels te voldoet, wees EXACT. Alleen suggesties om de regels te behalen. Controleer vóór je antwoord nogmaals dat elke suggestie aan ALLE regels voldoet.\n\nREGELS\n• Naam van de bijlage vermelden\n• e-Docs nummer vermelden\n• Openbaarheid in kader van Woo vermelden (ja/nee)\n\nOUTPUT\n• JSON formaat\n• Geef uitsluitend een geldig JSON-object terug van de regels die NIET voldoen.\n• Per suggestie:\n• key: 1 woord (Naam / EDocs / Openbaarheid / Suggestie)\n• value: 1 zin uitleg waarom deze tekst NIET voldoet aan de regel, wees exact + Geef suggestie.\n• bij de laatste key (suggestie) geef een concreet suggestie voor de gebruiker.\n\nVOORBEELD OUTPUT\n{\n\"EDocs\": \"Het e-Docs nummer ontbreekt bij een of meerdere bijlagen; voeg het registratienummer toe.\",\n\"Openbaarheid\": \"De status van openbaarheid (ja/nee) ontbreekt; geef dit per bijlage aan.\",\n\"Suggestie\": \"Bijlage 1: Projectplan parkeergarage, e-Docs 123456, Openbaar: ja.\"\n}",
+          "agent_structuur_output_template": "{\n  \"Naam\": \"De naam van een of meerdere bijlagen ontbreekt; vermeld de titels van alle documenten.\",\n  \"EDocs\": \"Het e-Docs nummer ontbreekt bij een of meerdere bijlagen; voeg voor elke bijlage het nummer toe.\",\n  \"Openbaarheid\": \"De openbaarheidsstatus in de zin van de Woo (ja/nee) ontbreekt; voeg dit per bijlage toe.\",\n  \"Suggestie\": \"Bijlage 1: Projectplan parkeergarage, e-Docs 123456, Openbaar: ja.\"\n}",
+          "agent_spelling_grammatica": "",
+          "agent_spelling_grammatica_output_template": "",
+          "agent_b1": "Jij bent een B1-niveau taalcoach voor de overheid. Controleer spelling, grammatica, interpunctie en begrijpelijkheid (eenvoudige taal, weinig jargon).\n\nDIMENSIES (toets expliciet waar relevant; vermeld in elke Uitleg bij welke dimensie(s) je verbetert):\n- woordkeuze en formaliteit\n- zinslengte en leesbaarheid\n- passieve formuleringen\n- jargon en zwaar taalgebruik\n- samenhang (verwijzingen, signaalwoorden)\n- alinea-opbouw\n- formulering en toon\n- kernboodschap en helderheid\n\nKOPPELING AAN DE TEKST (VERPLICHT):\n- Elk item in \"Suggesties\" is precies één concreet taalprobleem.\n- Origineel MOET een exacte, letterlijk overgenomen deelstring uit de gebruikersinput zijn: bij voorkeur één woord of een korte woordgroep; hoogstens één zin als de fout zinsbouw betreft. Nooit een heel alinea of de volledige invoer als Origineel.\n- Verplicht: minimaal TWEE verschillende actieve herschrijvingen per item in de array \"Herschrijvingen\". Elk object heeft \"Tekst\" (het vervangende fragment, zelfde granulariteit als Origineel) en \"Uitleg\" (1 tot 3 zinnen B1-rationale, inclusief welke dimensies hier worden verbeterd).\n- Gebruik geen losse sleutel \"Suggestie\"; alleen \"Origineel\" en \"Herschrijvingen\".\n- Geen extra toplevel-velden (zoals Analysis, Samenvatting of Feedback); alleen het object met uitsluitend de sleutel Suggesties zoals in het schema.\n\nBronnen waar relevant: Woordenlijst Nederlandse Taal; Schrijfwijzer (Renkema); Taaladvies.net.\n\nAntwoord ALLEEN met geldig JSON:\n{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"...\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" },\n        { \"Tekst\": \"...\", \"Uitleg\": \"...\" }\n      ]\n    }\n  ]\n}",
+          "agent_b1_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}",
+          "agent_digitale_toegankelijkheid_output_template": "",
+          "agent_open_overheid_output_template": "",
+          "agent_woordenlijst": "Jij bent een B1-taalcoach voor de overheid. Beoordeel alleen op WOORDNIVEAU: (1) te moeilijk voor B1, (2) vaag of onduidelijk, (3) jargon of ambtelijk. Geef per word dat niet voldoet exact twee eenvoudige alternatieven (B1). Origineel is steeds één woord of één samenstelling zonder spaties uit de brontekst. Antwoord alleen met JSON volgens agent_woordenlijst_output_template.",
+          "agent_woordenlijst_output_template": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"string\",\n      \"Categorie\": \"niet-B1 | vaag | jargon\",\n      \"Alternatieven\": [\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" },\n        { \"Tekst\": \"string\", \"Uitleg\": \"string\" }\n      ]\n    }\n  ]\n}"
+        }
+      ],
+      "terminologie": [
+        {
+          "id": "t1700000000001",
+          "category": "Terminologie",
+          "severity": "red",
+          "triggerWords": [
+            "aanbesteding"
+          ],
+          "alternatives": [
+            "inkoop"
+          ],
+          "explanation": "Gebruik de term uit de inkoopnota."
+        },
+        {
+          "id": "t1700000000002",
+          "category": "Terminologie",
+          "severity": "yellow",
+          "triggerWords": [
+            "GS",
+            "Gedeputeerde Staten"
+          ],
+          "alternatives": [
+            "Gedeputeerde Staten (GS)"
+          ],
+          "explanation": "Schrijf de afkorting de eerste keer uit."
+        },
+        {
+          "id": "t1700000000003",
+          "category": "Terminologie",
+          "severity": "yellow",
+          "triggerWords": [
+            "a*",
+            "(a+)+$"
+          ],
+          "alternatives": [],
+          "explanation": "Letterlijke tekens, geen patroon."
+        }
+      ],
+      "regels": [
+        {
+          "id": "r1700000000001",
+          "category": "B1 Taal",
+          "severity": "yellow",
+          "triggerWords": [
+            "attenderen",
+            "verzoeken"
+          ],
+          "alternatives": [
+            "laten weten",
+            "vragen"
+          ],
+          "explanation": "Kies een eenvoudiger woord."
+        },
+        {
+          "id": "r1-1700000000002",
+          "category": "Zakelijk",
+          "severity": "red",
+          "triggerWords": [
+            "wij verzoeken u"
+          ],
+          "alternatives": [
+            "wij vragen u"
+          ],
+          "explanation": "Minder ambtelijk."
+        },
+        {
+          "id": "r1700000000003",
+          "category": "Spelling",
+          "severity": "green",
+          "triggerWords": [
+            "e-mail"
+          ],
+          "alternatives": [
+            "e-mail"
+          ],
+          "explanation": ""
+        },
+        {
+          "id": "r1700000000004",
+          "category": "B1 Taal",
+          "severity": "yellow",
+          "triggerWords": [],
+          "alternatives": [],
+          "explanation": "Zonder triggerwoorden."
+        }
+      ],
+      "woordenlijst": [
+        "Hallo"
+      ]
+    },
+    "b1Guidelines": {
+      "globalSources": [
+        {
+          "label": "Groene Boekje — Woordenlijst",
+          "url": "https://woordenlijst.org/",
+          "note": "Volgens officiële spelling van de NL-overheid. Richtlijn: het Groene Boekje."
+        },
+        {
+          "label": "Schrijfwijzer (Jan Renkema)",
+          "url": "https://www.schrijfwijzer.nl/",
+          "note": "Voor grammaticale vragen en interpunctie."
+        },
+        {
+          "label": "Taaladvies.net",
+          "url": "https://taaladvies.net/",
+          "note": "Voor grammaticale vragen en interpunctie."
+        },
+        {
+          "label": "Gebruiker Centraal — Direct Duidelijk",
+          "url": "https://www.gebruikercentraal.nl/aan-de-slag/direct-duidelijk/duidelijke-teksten-schrijven/",
+          "note": "Normen voor direct duidelijk schrijven."
+        },
+        {
+          "label": "Toolkit Taal — Als je gaat schrijven",
+          "url": "https://www.gebruikercentraal.nl/toolkit-taal/als-je-gaat-schrijven/",
+          "note": "Toolkit Taal (Gebruiker Centraal)."
+        },
+        {
+          "label": "Onze Taal — Checklist alinea's schrijven",
+          "url": "https://onzetaal.nl/taalloket/checklist-alineas-schrijven",
+          "note": "Checklist voor alinea-opbouw."
+        }
+      ],
+      "metrics": {
+        "avgWordsPerSentence": {
+          "good": [
+            0,
+            15
+          ],
+          "warn": [
+            16,
+            20
+          ],
+          "target": "≤ 15",
+          "direction": "lower",
+          "sources": [
+            {
+              "label": "Schrijven bij de overheid — Korte zinnen",
+              "url": "https://www.schrijven-bij-de-overheid.nl/korte-zinnen-voor-een-duidelijke-tekst/",
+              "note": "Publieke richtlijn: korte zinnen; vuistregel 10–15 woorden."
+            },
+            {
+              "label": "KCBR — Duidelijke taal",
+              "url": "https://www.kcbr.nl/themas/themas-z/duidelijke-taal",
+              "note": "Richtlijn: zin van maximaal ongeveer 15 woorden. Productdefault “goed ≤ 15” volgt die strengere lijn."
+            }
+          ]
+        },
+        "passiveSentencePercent": {
+          "good": [
+            0,
+            20
+          ],
+          "warn": [
+            21,
+            35
+          ],
+          "target": "≤ 20%",
+          "direction": "lower",
+          "sources": [
+            {
+              "label": "CommunicatieRijk — Actieve zinnen",
+              "url": "https://www.communicatierijk.nl/vakkennis/taalkompas/stijl/actieve-zinnen",
+              "note": "Richtlijn: vermijd lijdende vorm waar het kan. Geen percentage-drempel in de richtlijn; percentages in deze app zijn een hulpmiddel."
+            },
+            {
+              "label": "CommunicatieRijk — Taalniveau B1",
+              "url": "https://www.communicatierijk.nl/vakkennis/rijkswebsites/aanbevolen-richtlijnen/taalniveau-b1",
+              "note": "B1: voorkeur voor actieve zinnen (kwalitatief); geen officiële %-limiet in deze richtlijn."
+            }
+          ]
+        },
+        "jargonProxyPer1000": {
+          "good": [
+            0,
+            10
+          ],
+          "warn": [
+            11,
+            25
+          ],
+          "target": "≤ 10",
+          "direction": "lower",
+          "sources": [
+            {
+              "label": "KCBR — Duidelijke taal",
+              "url": "https://www.kcbr.nl/themas/themas-z/duidelijke-taal",
+              "note": "Intentie: duidelijke taal, minder jargon; op de pagina ook verwijzing naar de Handreiking duidelijke taal (PDF). Drempels per 1000 woorden zijn productkeuze op deze proxy-lijst."
+            },
+            {
+              "label": "CommunicatieRijk — Taalniveau B1",
+              "url": "https://www.communicatierijk.nl/vakkennis/rijkswebsites/aanbevolen-richtlijnen/taalniveau-b1",
+              "note": "Eenvoudige woorden; geen “jargon per 1000”-norm — getallen in deze tool zijn indicatief."
+            }
+          ]
+        },
+        "formalWordPer1000": {
+          "good": [
+            0,
+            20
+          ],
+          "warn": [
+            21,
+            40
+          ],
+          "target": "≤ 20",
+          "direction": "lower",
+          "sources": [
+            {
+              "label": "CommunicatieRijk — Taalniveau B1",
+              "url": "https://www.communicatierijk.nl/vakkennis/rijkswebsites/aanbevolen-richtlijnen/taalniveau-b1",
+              "note": "B1: eenvoudige woorden. Geen officiële “formele termen per 1000”-norm; getallen zijn tool-hulplijnen."
+            },
+            {
+              "label": "KCBR — Duidelijke taal",
+              "url": "https://www.kcbr.nl/themas/themas-z/duidelijke-taal",
+              "note": "Ondersteunt “lichtere” woordkeuze; drempels hier zijn intern afgeleid."
+            }
+          ]
+        },
+        "longWordPer1000": {
+          "good": [
+            0,
+            60
+          ],
+          "warn": [
+            61,
+            100
+          ],
+          "target": "≤ 60",
+          "direction": "lower",
+          "sources": [
+            {
+              "label": "CommunicatieRijk — Taalniveau B1",
+              "url": "https://www.communicatierijk.nl/vakkennis/rijkswebsites/aanbevolen-richtlijnen/taalniveau-b1",
+              "note": "Wijst op controle op o.a. moeilijke woorden (in productie/tooling); geen publieke “≤ N lange woorden / 1000”-tabel die deze drempel vastlegt."
+            },
+            {
+              "label": "KCBR — Duidelijke taal",
+              "url": "https://www.kcbr.nl/themas/themas-z/duidelijke-taal",
+              "note": "Duidelijke taal = minder zwaar woordgebruik; 10-lettergrens en percentages zijn technische proxies."
+            }
+          ]
+        },
+        "avgWordsPerParagraph": {
+          "good": [
+            0,
+            80
+          ],
+          "warn": [
+            81,
+            120
+          ],
+          "target": "≤ 80",
+          "direction": "lower",
+          "sources": [
+            {
+              "label": "CommunicatieRijk — Taalniveau B1",
+              "url": "https://www.communicatierijk.nl/vakkennis/rijkswebsites/aanbevolen-richtlijnen/taalniveau-b1",
+              "note": "Korte alinea’s en rust (kwalitatief); geen exacte woordlimiet in deze richtlijn."
+            },
+            {
+              "label": "Voorbeeld — korte alinea’s op B1 (ca. 100 woorden)",
+              "url": "https://www.decommunicatieassistent.nl/schrijf-teksten-op-taalniveau-b1/",
+              "note": "Derde partij; noemt o.a. korte alinea’s en richting ~100 woorden. Niet overheidsbron; dient ter leesorientatie. Product gebruikt 80 als strictere band."
+            }
+          ]
+        },
+        "cohesionSignalHits": {
+          "good": [
+            3,
+            "Infinity"
+          ],
+          "warn": [
+            1,
+            2
+          ],
+          "target": "≥ 3",
+          "direction": "higher",
+          "sources": [
+            {
+              "label": "CommunicatieRijk — Taalniveau B1",
+              "url": "https://www.communicatierijk.nl/vakkennis/rijkswebsites/aanbevolen-richtlijnen/taalniveau-b1",
+              "note": "Structuur en toegankelijkheid; geen “minimaal X signaalwoorden” in de richtlijn."
+            },
+            {
+              "label": "Onze Taal — Verbindingswoord / signaalwoord",
+              "url": "https://onzetaal.nl/taalloket/verbindingswoord-signaalwoord/",
+              "note": "Achtergrond over signaalwoorden; het drempelgetal in de app is zelf gekozen."
+            }
+          ]
+        }
+      },
+      "presetLabel": "Standaard (product)",
+      "sourceNote": "Deze preset mengt publieke schrijfrichtlijnen (namen en bronnen per metriek) met indicatieve drempels uit deze app. Getallen als “≤ 20% passief” of “≤ 10 jargon / 1000 woorden” zijn geen wettelijke norm — waar dat speelt, staat het bij de bronvermelding. Organisaties kunnen eigen drempels en bronnen instellen via Beheer."
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h4",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"BesluitVerband\": \"Regel 'BesluitVerband': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Coalitieakkoord\": \"Regel 'Coalitieakkoord': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Bestuursafspraak\": \"Regel 'Bestuursafspraak': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Fase\": \"Regel 'Fase': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Beknoptheid\": \"Regel 'Beknoptheid': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"GSDatum\": \"Regel 'GSDatum': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"EDocsNummer\": \"Regel 'EDocsNummer': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"PSURL\": \"Regel 'PSURL': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "BesluitVerband": "Regel 'BesluitVerband': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Coalitieakkoord": "Regel 'Coalitieakkoord': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Bestuursafspraak": "Regel 'Bestuursafspraak': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Fase": "Regel 'Fase': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Beknoptheid": "Regel 'Beknoptheid': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "GSDatum": "Regel 'GSDatum': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "EDocsNummer": "Regel 'EDocsNummer': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "PSURL": "Regel 'PSURL': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

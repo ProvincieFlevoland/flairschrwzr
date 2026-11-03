@@ -1,0 +1,13 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h7",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Substantie\": \"Regel 'Substantie': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Afwijking\": \"Regel 'Afwijking': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Onderbouwing\": \"Regel 'Onderbouwing': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Opmaak\": \"Regel 'Opmaak': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Substantie": "Regel 'Substantie': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Afwijking": "Regel 'Afwijking': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Onderbouwing": "Regel 'Onderbouwing': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Opmaak": "Regel 'Opmaak': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

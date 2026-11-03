@@ -1,0 +1,12 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h15",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Naam\": \"Regel 'Naam': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"EDocs\": \"Regel 'EDocs': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Openbaarheid\": \"Regel 'Openbaarheid': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Naam": "Regel 'Naam': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "EDocs": "Regel 'EDocs': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Openbaarheid": "Regel 'Openbaarheid': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

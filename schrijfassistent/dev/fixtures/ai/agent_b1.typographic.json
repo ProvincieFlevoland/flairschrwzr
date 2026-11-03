@@ -1,0 +1,22 @@
+{
+  "assignment": "agent_b1",
+  "variant": "typographic",
+  "raw": "{\n  \"Suggesties\": [\n    {\n      \"Origineel\": \"Wij verzoeken u dit te accorderen.\",\n      \"Herschrijvingen\": [\n        { \"Tekst\": \"Wij vragen u dit goed te keuren.\", \"Uitleg\": \"Het woord “accorderen” is geen B1; gebruik ‘goedkeuren’.\" },\n        { \"Tekst\": \"Keur dit voorstel goed.\", \"Uitleg\": \"Directe aanspreekvorm (B1).\" }\n      ]\n    }\n  ]\n}",
+  "expected": {
+    "Suggesties": [
+      {
+        "Origineel": "Wij verzoeken u dit te accorderen.",
+        "Herschrijvingen": [
+          {
+            "Tekst": "Wij vragen u dit goed te keuren.",
+            "Uitleg": "Het woord 'accorderen' is geen B1; gebruik 'goedkeuren'."
+          },
+          {
+            "Tekst": "Keur dit voorstel goed.",
+            "Uitleg": "Directe aanspreekvorm (B1)."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+// log-tokens: role-check=denied
+// Callers of the configuration writes who are verified but not an Open WebUI admin: WARNING "role-check=denied", answered 403.
+// Expected: none from beheerders. A line means a beheerder without the Open WebUI role admin; give the role, do not loosen the check.
+// Workspace: the Log Analytics workspace of the Container Apps environment. Table of the classic schema shown;
+// the resource-specific schema is ContainerAppConsoleLogs with the columns Log and ContainerAppName (swap the two names in the first lines).
+let appName = "aca-flair-schrijfassistent-api-dev-schrwzr";   // the name of the backend Container App (see schrijfassistent/OPERATIONS.md); change it to the name in your environment
+let window = 7d;
+let logs = ContainerAppConsoleLogs_CL
+    | where ContainerAppName_s == appName and TimeGenerated > ago(window)
+    | extend Line = tostring(Log_s);
+logs
+| where Line has "role-check=denied"
+| extend Day = bin(TimeGenerated, 1d), UserId = extract(@"user_id=(\S+)", 1, Line), Role = extract(@"role='([^']*)'", 1, Line), Route = extract(@"route=(.+)$", 1, Line)
+| summarize Calls = count() by Day, UserId, Role, Route
+| order by Day desc, Calls desc

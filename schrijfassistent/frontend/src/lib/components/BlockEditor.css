@@ -1,0 +1,159 @@
+.sa-root .sa-block-editor-agent-pending-track {
+    height: 3px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-radius: 0 0 2px 2px;
+    background: rgba(11, 110, 219, 0.08);
+    overflow: hidden;
+    flex-shrink: 0;
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.sa-root .sa-block-editor-agent-pending-fill {
+    height: 100%;
+    width: 100%;
+    transform-origin: left center;
+    background: rgba(11, 110, 219, 0.6);
+    will-change: transform;
+}
+
+.sa-root .editor-cell.sa-block-editor-analyzing {
+    border-color: var(--sa-primary-color);
+    box-shadow: 0 0 0 2px rgba(11, 110, 219, 0.1);
+}
+
+.sa-root .cell-content-wrapper.sa-block-editor-locked {
+    cursor: wait;
+    position: relative;
+}
+
+.sa-root .cell-content-wrapper.sa-block-editor-workflow-readonly {
+    cursor: default;
+    position: relative;
+}
+
+.sa-root .sa-block-editor-editor-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 5;
+    border-radius: 4px;
+    cursor: wait;
+}
+
+.sa-root .sa-block-editor-editor-overlay-readonly {
+    background: rgba(248, 250, 252, 0.22);
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Structuur highlight: visual indicator on entire cell */
+.sa-root .cell-content-wrapper.has-structuur-highlight {
+    position: relative;
+}
+
+/* Wavy yellow underline on the entire text content for structuur */
+.sa-root .cell-content-wrapper.has-structuur-highlight .cell-content {
+    text-decoration: underline wavy #f6ad55 2px;
+    text-underline-offset: 4px;
+    cursor: pointer;
+    transition: text-decoration-color 0.2s;
+}
+
+.sa-root .cell-content-wrapper.has-structuur-highlight .cell-content:hover {
+    text-decoration-color: #ed8936;
+}
+
+.sa-root .sa-block-editor-wf-done-pill {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--sa-text-muted);
+    background: rgba(5, 150, 105, 0.08);
+    border: 1px solid rgba(4, 120, 87, 0.2);
+    padding: 2px 8px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sa-root .cell-content .suggestion-highlight.source-structuur {
+    text-decoration: underline wavy #f6ad55 2px;
+    text-underline-offset: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.sa-root .cell-content .suggestion-highlight.source-structuur:hover {
+    background-color: rgba(246, 224, 94, 0.3);
+}
+
+.sa-root .cell-content .suggestion-highlight.source-b1 {
+    text-decoration: underline solid #0b6edb 2px;
+    text-underline-offset: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.sa-root .cell-content .suggestion-highlight.source-b1:hover {
+    background-color: rgba(11, 110, 219, 0.15);
+}
+
+.sa-root .cell-content .suggestion-highlight.source-spelling {
+    text-decoration: underline wavy #10b981 2px;
+    text-underline-offset: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.sa-root .cell-content .suggestion-highlight.source-spelling:hover {
+    background-color: rgba(16, 185, 129, 0.18);
+}
+
+.sa-root .cell-content .suggestion-highlight.source-woordenlijst {
+    text-decoration: underline solid #9b59b6 2px;
+    text-underline-offset: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.sa-root .cell-content .suggestion-highlight.source-woordenlijst:hover {
+    background-color: rgba(155, 89, 182, 0.15);
+}
+
+.sa-root .cell-content .suggestion-highlight.source-structuur.hovered-from-sidebar {
+    background-color: rgba(246, 224, 94, 0.35);
+}
+
+.sa-root .cell-content .suggestion-highlight.source-b1.hovered-from-sidebar {
+    background-color: rgba(11, 110, 219, 0.2);
+}
+
+.sa-root .cell-content .suggestion-highlight.source-spelling.hovered-from-sidebar {
+    background-color: rgba(16, 185, 129, 0.25);
+}
+
+.sa-root .cell-content .suggestion-highlight.source-woordenlijst.hovered-from-sidebar {
+    background-color: rgba(155, 89, 182, 0.22);
+}
+
+.sa-root .cell-content .non-b1-word {
+    color: #e53e3e;
+}

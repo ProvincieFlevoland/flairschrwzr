@@ -1,0 +1,18 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h14",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Herhaling\": \"Regel 'Herhaling': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"GeenDatum\": \"Regel 'GeenDatum': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Beknoptheid\": \"Regel 'Beknoptheid': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Structuur\": \"Regel 'Structuur': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Begrijpelijkheid\": \"Regel 'Begrijpelijkheid': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Afkortingen\": \"Regel 'Afkortingen': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Regellimiet\": \"Regel 'Regellimiet': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"AVG\": \"Regel 'AVG': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Publicatievoorwaarden\": \"Regel 'Publicatievoorwaarden': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Herhaling": "Regel 'Herhaling': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "GeenDatum": "Regel 'GeenDatum': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Beknoptheid": "Regel 'Beknoptheid': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Structuur": "Regel 'Structuur': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Begrijpelijkheid": "Regel 'Begrijpelijkheid': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Afkortingen": "Regel 'Afkortingen': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Regellimiet": "Regel 'Regellimiet': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "AVG": "Regel 'AVG': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Publicatievoorwaarden": "Regel 'Publicatievoorwaarden': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

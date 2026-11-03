@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schrijfassistent dev harness</title>
+  <!--
+    Dev harness (development and tests only, never published): stands in for Open WebUI + loader.js. It loads
+    /static/apps/schrijfassistent/manifest.json and the bundle the way loader.js does and mounts it with a
+    fake identity. Served by dev/serve.mjs (`npm run dev:harness`) and by the end-to-end tests.
+
+    Query parameters:
+      api=<backend origin>   config.api_base_url            (default http://localhost:8001)
+      user=<id> name=<name> email=<email> role=<admin|user>  the fake Open WebUI user (default test-a / Test Auteur / user)
+      token=<string>         what getToken() returns        (default "dev-token")
+      dark=1                 start with the .dark class on <html>
+      autostart=0            do not mount automatically
+  -->
+  <!-- The host's own rules, not copies: Tailwind Preflight (Open WebUI's reset), the overlay's custom.css (read from
+       admin/defaults on every request) and, when OPENWEBUI_APP_CSS names one, Open WebUI's built app.css. -->
+  <link rel="stylesheet" href="/dev/host/preflight.css" />
+  <link rel="stylesheet" href="/dev/host/openwebui.css" />
+  <link rel="stylesheet" href="/dev/host/custom.css" />
+  <style>
+    /* Minimal stand-in for Open WebUI's page and for admin/defaults/custom.css (the container rules come from custom.css below). */
+    html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f9fafb; color: #111827; }
+    html.dark body { background: #0f172a; color: #e5e7eb; }
+    .host-bar { padding: 12px 16px; display: flex; gap: 12px; align-items: center; border-bottom: 1px solid #e5e7eb; }
+    html.dark .host-bar { border-color: #334155; }
+    .host-bar button { padding: 6px 12px; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; cursor: pointer; }
+    html.dark .host-bar button { background: #1f2937; color: #e5e7eb; border-color: #4b5563; }
+    .host-bar code { font-size: 0.8rem; opacity: 0.8; }
+    #host-status { padding: 16px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="host-bar">
+    <strong>Open WebUI stand-in</strong>
+    <button id="host-open" type="button">Open Schrijfassistent</button>
+    <button id="host-dark" type="button" title="Toggle the .dark class on html">Toggle dark</button>
+    <code id="host-info"></code>
+    <!-- a host input outside .sa-root, for the keydown rule (host inputs never trigger the shortcuts) -->
+    <input id="host-input" type="text" placeholder="host input (outside .sa-root)" style="margin-left:auto" />
+  </div>
+  <div id="host-status">Niet geopend.</div>
+  <script src="/dev/harness.js"></script>
+</body>
+</html>

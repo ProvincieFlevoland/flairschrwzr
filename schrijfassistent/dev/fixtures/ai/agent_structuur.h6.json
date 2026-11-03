@@ -1,0 +1,19 @@
+{
+  "assignment": "agent_structuur",
+  "chapter_id": "h6",
+  "template_broken_in_v5": false,
+  "raw": "{\n  \"Cursief\": \"Regel 'Cursief': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Nummering\": \"Regel 'Nummering': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"FinancieelRisico\": \"Regel 'FinancieelRisico': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Bestuursrisico\": \"Regel 'Bestuursrisico': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"HRMRisico\": \"Regel 'HRMRisico': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Beheersing\": \"Regel 'Beheersing': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Gevoeligheid\": \"Regel 'Gevoeligheid': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Tegenargumenten\": \"Regel 'Tegenargumenten': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Invulplicht\": \"Regel 'Invulplicht': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"ImpactNul\": \"Regel 'ImpactNul': de tekst voldoet hier nog niet aan; zie de suggestie.\",\n  \"Suggestie\": \"1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\\n2. Het subsidieplafond 2026 vast te stellen.\"\n}",
+  "expected": {
+    "Cursief": "Regel 'Cursief': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Nummering": "Regel 'Nummering': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "FinancieelRisico": "Regel 'FinancieelRisico': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Bestuursrisico": "Regel 'Bestuursrisico': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "HRMRisico": "Regel 'HRMRisico': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Beheersing": "Regel 'Beheersing': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Gevoeligheid": "Regel 'Gevoeligheid': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Tegenargumenten": "Regel 'Tegenargumenten': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Invulplicht": "Regel 'Invulplicht': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "ImpactNul": "Regel 'ImpactNul': de tekst voldoet hier nog niet aan; zie de suggestie.",
+    "Suggestie": "1. Opdracht te verlenen tot het bouwen van een parkeergarage onder het provinciehuis.\n2. Het subsidieplafond 2026 vast te stellen."
+  }
+}

@@ -1,0 +1,185 @@
+.sa-root .sa-delete-config-modal-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998; /* Above almost everything; capped below the container's 10000 */
+    backdrop-filter: blur(8px);
+    animation: sa-delete-config-modal-fadeIn 0.2s ease-out;
+}
+
+.sa-root .sa-delete-config-modal-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: sa-delete-config-modal-slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes sa-delete-config-modal-fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes sa-delete-config-modal-slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.sa-root .sa-delete-config-modal-modal-header {
+    padding: 24px 24px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sa-root .sa-delete-config-modal-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #991b1b; /* Dark red */
+}
+
+.sa-root .sa-delete-config-modal-btn-close {
+    background: #f1f5f9;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.sa-root .sa-delete-config-modal-btn-close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.sa-root .sa-delete-config-modal-modal-body {
+    padding: 0 24px 24px;
+}
+
+.sa-root .sa-delete-config-modal-alert-box {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.sa-root .sa-delete-config-modal-alert-box.sa-delete-config-modal-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.sa-root .sa-delete-config-modal-alert-box i {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.sa-root .sa-delete-config-modal-alert-message {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.sa-root .sa-delete-config-modal-instruction {
+    font-size: 0.95rem;
+    color: #334155;
+    margin-bottom: 12px;
+}
+
+.sa-root .sa-delete-config-modal-confirm-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sa-root .sa-delete-config-modal-form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.sa-root .sa-delete-config-modal-form-input:focus {
+    outline: none;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+.sa-root .sa-delete-config-modal-input-hint {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.sa-root .sa-delete-config-modal-name-confirm {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.sa-root .sa-delete-config-modal-modal-footer {
+    padding: 20px 24px;
+    background: #f8fafc;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Local buttons if not globally available */
+.sa-root .sa-delete-config-modal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.sa-root .sa-delete-config-modal-btn-secondary {
+    background: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.sa-root .sa-delete-config-modal-btn-secondary:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.sa-root .sa-delete-config-modal-btn-danger-solid {
+    background: #dc2626; /* white on this red reads at 4.8:1 */
+    color: white;
+}
+
+.sa-root .sa-delete-config-modal-btn-danger-solid:hover:not(:disabled) {
+    background: #b91c1c;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.sa-root .sa-delete-config-modal-btn-danger-solid:disabled {
+    background: #dc2626; /* dimmed as a whole, not white on pale pink */
+    cursor: not-allowed;
+    opacity: 0.45;
+}
