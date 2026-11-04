@@ -159,6 +159,14 @@ def test_agent_response_typographic_quotes(client, auth, fixtures):
     assert "“" not in json.dumps(body["ai_response"], ensure_ascii=False)
 
 
+def test_agent_defaults(client, auth):
+    """GET /agent-defaults returns the default spelling instruction that an empty chapter field falls back to."""
+    r = client.get(f"{S}/agent-defaults", headers=auth)
+    assert r.status_code == 200
+    text = r.json()["instructions"]["agent_spelling_grammatica"]
+    assert isinstance(text, str) and "spelling" in text
+
+
 def test_agent_response_spelling_is_unvalidated_text(client, auth, fixtures):
     """agent_spelling_grammatica on the v5 config has an empty output template, so the backend returns the raw model text as a string with validated false."""
     fx = fixtures("ai", "agent_spelling_grammatica.json")
