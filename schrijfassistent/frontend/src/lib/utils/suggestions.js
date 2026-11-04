@@ -239,7 +239,7 @@ export function feedbackToSuggestions(
             const oRaw = decodeHtmlSpaceEntities(String(s.Origineel || s.Original || ''));
             const sRaw = decodeHtmlSpaceEntities(String(s.Suggestie || s.suggestie || ''));
             /** @type {string} */
-            let original = oRaw.trim();
+            let original = assignment === 'agent_spelling_grammatica' ? oRaw : oRaw.trim();
 
             let suggested;
             let explanation;
@@ -258,7 +258,7 @@ export function feedbackToSuggestions(
                 suggested = alternatives[0].tekst;
                 explanation = alternatives[0].uitleg || '';
             } else {
-                suggested = sRaw.trim();
+                suggested = assignment === 'agent_spelling_grammatica' ? sRaw : sRaw.trim();
                 explanation = s.Uitleg || s.verbetering || s.explanation || '';
             }
 
@@ -292,9 +292,10 @@ export function feedbackToSuggestions(
                     : Boolean(
                           original &&
                               (spellingMatchPlain.includes(original) ||
-                                  collapsePlainWhitespace(spellingMatchPlain).includes(
-                                      collapsePlainWhitespace(original)
-                                  ))
+                                  (collapsePlainWhitespace(original) &&
+                                      collapsePlainWhitespace(spellingMatchPlain).includes(
+                                          collapsePlainWhitespace(original)
+                                      )))
                       );
 
             const row = {
@@ -327,8 +328,8 @@ export function feedbackToSuggestions(
         const sugRaw = decodeHtmlSpaceEntities(
             String(parsedFeedback.Suggestie || parsedFeedback.suggestie || '')
         );
-        const fragmentToReplace = fragRaw.trim();
-        const suggestie = sugRaw.trim();
+        const fragmentToReplace = assignment === 'agent_spelling_grammatica' ? fragRaw : fragRaw.trim();
+        const suggestie = assignment === 'agent_spelling_grammatica' ? sugRaw : sugRaw.trim();
         if (!fragmentToReplace || !suggestie || fragmentToReplace === suggestie) return [];
         if (fragmentToReplace.length > B1_MAX_ORIGINAL_CHARS) {
             console.warn(
@@ -344,9 +345,10 @@ export function feedbackToSuggestions(
                 : Boolean(
                       fragmentToReplace &&
                           (spellingMatchPlain.includes(fragmentToReplace) ||
-                              collapsePlainWhitespace(spellingMatchPlain).includes(
-                                  collapsePlainWhitespace(fragmentToReplace)
-                              ))
+                              (collapsePlainWhitespace(fragmentToReplace) &&
+                                  collapsePlainWhitespace(spellingMatchPlain).includes(
+                                      collapsePlainWhitespace(fragmentToReplace)
+                                  )))
                   );
         /** @type {Record<string, unknown>} */
         const singleRow = {

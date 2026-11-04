@@ -612,8 +612,6 @@
     }
 
     /** Rebuild inline highlights from persisted chapter feedback (structuur + B1 + spelling). */
-    // Known behaviour: the editor feeds the LIVE cell HTML (including the highlight spans it painted) to `stripBlockPlainForTaalreview`,
-    // where every tag becomes a space, while the sidebar computes from `content`; local spelling rows then differ by padded whitespace.
     function syncLastSuggestionsFromNota() {
         if (!nota?.id) {
             lastSuggestions = {};
@@ -661,8 +659,7 @@
                     : spellRaw && typeof spellRaw === 'object'
                       ? spellRaw
                       : null;
-            const htmlForSpelling =
-                typeof document !== 'undefined' ? getLiveBlockBodyHtml(block.id) || block.content : block.content;
+            const htmlForSpelling = block.content;
             const agentSpell =
                 spellObj && typeof spellObj === 'object' && !spellObj.FOUT
                     ? feedbackToSuggestions(
@@ -1818,4 +1815,3 @@
         {/if}
     </main>
 </div>
-

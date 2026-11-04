@@ -28,7 +28,7 @@ export function stripBlockPlain(html) {
 }
 
 /**
- * Plain text for taalreview requests: tags → space, nbsp → space.
+ * Plain text for taalreview requests: block boundaries become newlines, nbsp becomes space.
  * Preserves formatting: newlines, tabs, multiple spaces.
  * Only removes HTML tags and normalizes non-breaking spaces.
  * @param {string} html
@@ -36,8 +36,8 @@ export function stripBlockPlain(html) {
  */
 export function stripBlockPlainForTaalreview(html) {
     return decodeHtmlSpaceEntities(html || '')
-        .replace(/<[^>]*>/g, ' ')  // HTML tags → space (prevents word collision)
+        .replace(/<\/(?:p|div|li|h[1-6]|tr|blockquote)>|<br\b[^>]*>/gi, '\n')
+        .replace(/<[^>]*>/g, '')
         // Andere breed-/smalle spaties (o.a. na plakken uit Word/PDF) → gewone spatie
-        .replace(/[\u1680\u2000-\u200A\u202F\u205F\u3000]/g, ' ')
-        .trim();
+        .replace(/[\u1680\u2000-\u200A\u202F\u205F\u3000]/g, ' ');
 }
