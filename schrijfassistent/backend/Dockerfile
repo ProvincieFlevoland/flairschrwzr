@@ -1,6 +1,8 @@
 # Schrijfassistent backend image.
-# API only: the frontend bundle ships through the admin image. Built by the pipeline with
-# `az acr build --build-context schrijfassistent/backend`; deployed by digest to its own Container App.
+# API only: the frontend bundle ships through the admin image. Built by GitHub Actions
+# (.github/workflows/build.yml, context schrijfassistent/backend) and published as
+# ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z, the same tag as the admin image;
+# Azure DevOps then points its own Container App at that tag.
 FROM python:3.12-slim
 
 # Build metadata passed by the pipeline (same arguments as the admin image).

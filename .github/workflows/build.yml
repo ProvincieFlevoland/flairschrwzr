@@ -8,9 +8,11 @@ name: Container images
 #                          (+ latest when it is the highest released version)
 #                          then notify Azure DevOps (job notify-ado) to roll out vX.Y.Z
 #
-# Images: ghcr.io/<owner>/<repo>-<name>:vX.Y.Z
-# Promotion to the Azure Container Registry happens afterwards from this exact image
-# (by digest); it is never rebuilt per environment.
+# Images: ghcr.io/<owner>/<repo>-<name>:vX.Y.Z, one per matrix entry, all with the same tag:
+#   ghcr.io/provincieflevoland/flairschrwzr-admin                  (admin + Schrijfassistent frontend)
+#   ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api   (Schrijfassistent backend)
+# Azure DevOps rolls out these exact images straight from ghcr.io (no ACR); an image is never
+# rebuilt per environment.
 
 on:
   push:
@@ -190,8 +192,11 @@ jobs:
   # Version tags: after every image was pushed, tell Azure DevOps to roll out this version.
   # Sends {"tag":"vX.Y.Z"} to the incoming webhook 'gh-schrijfassistent-webhook'
   # (service connection 'sc-schrijfassistent-webhook'), signed with X-Hub-Signature
-  # (HMAC-SHA1 of the body with the repo secret ADO_WEBHOOK_SECRET). Runs only when the
-  # release job succeeded, so never for pull requests or for a version that already existed.
+  # (HMAC-SHA1 of the body with the repo secret ADO_WEBHOOK_SECRET). One call per release for
+  # all images: ADO rolls out the admin and the backend Container App to the same tag.
+  # 'needs: release' waits for every matrix entry of release; if any image fails (or the
+  # version already existed), this job is skipped, so ADO never gets a half-built release.
+  # Never runs for pull requests.
   # ---------------------------------------------------------------------------------------
   notify-ado:
     needs: [verify-tag, release]
