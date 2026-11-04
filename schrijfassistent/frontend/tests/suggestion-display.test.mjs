@@ -5,13 +5,11 @@ import {
     suggestionDisplayText
 } from '../src/lib/utils/suggestions.js';
 
-test('whitespace-only sidebar text displays the reason without changing the replacement', () => {
+test('whitespace-only collapsed preview displays the reason without changing the suggestion', () => {
     const [row] = localMultiSpaceSuggestions('<p>Een  voorbeeld.</p>', 'block-h1', 'h1');
+    const before = structuredClone(row);
     assert.equal(suggestionDisplayText(row.original, row.explanation), 'Gebruik een enkele spatie.');
-    assert.equal(suggestionDisplayText(row.suggested, row.explanation), 'Gebruik een enkele spatie.');
-    assert.equal(row.original, '  ');
-    assert.equal(row.suggested, ' ');
-    assert.equal(row.canAccept, true);
+    assert.deepEqual(row, before);
 });
 
 test('empty text, tabs, newlines and non-breaking spaces display the reason', () => {
@@ -22,7 +20,7 @@ test('empty text, tabs, newlines and non-breaking spaces display the reason', ()
     assert.equal(suggestionDisplayText('', '  '), '—');
 });
 
-test('visible text remains unchanged, including punctuation and surrounding spaces', () => {
+test('visible preview text remains unchanged, including punctuation and surrounding spaces', () => {
     for (const text of ['voorbeeld', '.', ' .', ' tekst ']) {
         assert.equal(suggestionDisplayText(text, 'Reden'), text);
     }
