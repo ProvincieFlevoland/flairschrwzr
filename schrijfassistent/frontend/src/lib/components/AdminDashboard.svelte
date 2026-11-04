@@ -1336,8 +1336,8 @@
                                                                 <textarea class={'sa-admin-dashboard-template-textarea'} id="spell-template-{guideline.id}" bind:value={guideline.agent_spelling_grammatica_output_template} on:blur={updateConfig} placeholder={'{"key": "value"}'}></textarea>
                                                             </div>
                                                             <div class="{'sa-admin-dashboard-field'} {'sa-admin-dashboard-mt-2'}">
-                                                                <label for="b1-{guideline.id}">Direct Duidelijk <span class={'sa-admin-dashboard-agent-label-hint'}>(B1-taalniveau)</span></label>
-                                                                <textarea id="b1-{guideline.id}" bind:value={guideline.agent_b1} on:blur={updateConfig} placeholder="B1 taalgebruik toepassen..."></textarea>
+                                                                <label for="b1-{guideline.id}">Direct Duidelijk</label>
+                                                                <textarea id="b1-{guideline.id}" bind:value={guideline.agent_b1} on:blur={updateConfig} placeholder="Helder en begrijpelijk taalgebruik toepassen..."></textarea>
                                                                 <label class={'sa-admin-dashboard-mt-1'} for="b1-template-{guideline.id}" style="text-transform: none; opacity: 0.7;">JSON Output Validatie (Optioneel)</label>
                                                                 <textarea class={'sa-admin-dashboard-template-textarea'} id="b1-template-{guideline.id}" bind:value={guideline.agent_b1_output_template} on:blur={updateConfig} placeholder={'{"key": "value"}'}></textarea>
                                                             </div>
