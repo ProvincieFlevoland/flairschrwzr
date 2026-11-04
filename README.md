@@ -40,7 +40,24 @@ Elke versie levert precies één vast image op. De workflow staat in
 |---|---|
 | Pull request naar `main` (ook uit forks) | Alle images bouwen en scannen met Trivy. Geen login, geen secrets, niets gepubliceerd. |
 | Handmatig: *Actions → Container images → Run workflow* op een branch | Hetzelfde als een pull request: bouwen en scannen, niets gepubliceerd. |
-| Tag `vX.Y.Z` op een commit in `main` | Tag controleren, alle images één keer bouwen en pushen naar ghcr.io met dezelfde tag, daarna ADO laten uitrollen. |
+| Tag `vX.Y.Z` op een commit in `main` | Tag controleren, alle images één keer bouwen en pushen naar ghcr.io met dezelfde tag, daarna ADO laten uitrollen naar **dev**. |
+| Tag `acc/vX.Y.Z` op dezelfde commit | Niets bouwen. Controleren dat `vX.Y.Z` bestaat en alle images op ghcr.io staan, daarna ADO laten uitrollen naar **acc**. |
+| Tag `prod/vX.Y.Z` op dezelfde commit | Hetzelfde naar **prod**, maar alleen als `acc/vX.Y.Z` al bestaat. |
+
+**Promoveren naar acc en prod**
+
+Een versie wordt één keer gebouwd (`vX.Y.Z`, gaat naar dev). Doorzetten naar een volgende omgeving
+doe je met een extra tag op dezelfde commit; acc en prod krijgen dus precies de images die op dev
+draaiden:
+
+```
+git tag acc/v1.2.0 v1.2.0 && git push origin acc/v1.2.0     # naar acceptatie
+git tag prod/v1.2.0 v1.2.0 && git push origin prod/v1.2.0   # naar productie (na acc)
+```
+
+In GitHub Desktop kan het ook: rechtsklik op de commit van `v1.2.0` → *Create Tag…* →
+`acc/v1.2.0`, en daarna pushen. Zet bij voorkeur een tag-ruleset op `prod/*` in de
+repository-instellingen, zodat alleen bevoegde mensen naar productie kunnen promoveren.
 
 **Images**
 
@@ -80,7 +97,9 @@ De uitrol loopt zonder ACR: de Container App haalt het image direct van ghcr.io.
 
 1. Na een geslaagde push van alle images (admin én backend) start de job `notify-ado` in
    `.github/workflows/build.yml`. Die stuurt `{"tag":"vX.Y.Z"}` naar de ADO-webhook
-   `gh-schrijfassistent-webhook`, ondertekend met de header `X-Hub-Signature` (HMAC-SHA1 met het
+   `gh-schrijfassistent-webhook` (bij een promotietag doet de job `promote` dat na zijn controles).
+   De payload is `{"tag":"vX.Y.Z","version":"X.Y.Z","environment":"dev"}`; `environment` is `dev`,
+   `acc` of `prod`. De webhook is ondertekend met de header `X-Hub-Signature` (HMAC-SHA1 met het
    secret `ADO_WEBHOOK_SECRET`). Bestond de versie al, of is het een pull request, dan wordt ADO
    niet aangeroepen. Faalt één van de images, dan wordt ADO ook niet aangeroepen. Geeft ADO geen
    2xx terug, dan faalt de GitHub-run.
@@ -92,7 +111,9 @@ De uitrol loopt zonder ACR: de Container App haalt het image direct van ghcr.io.
    nooit tegen een oudere backend draait. Faalt de backend, dan blijft de admin-app ongewijzigd.
 3. ADO wacht per app tot de nieuwe revisie gezond is en doet een smoke test (backend: `GET /health`).
 
-GitHub stuurt alleen versie-tags `vX.Y.Z`, nooit `latest`.
+GitHub stuurt alleen versie-tags `vX.Y.Z`, nooit `latest`. De ADO-pipeline kiest aan de hand
+van `environment` welke Container Apps hij bijwerkt; zolang er alleen dev is, moet hij `acc` en
+`prod` overslaan.
 
 Benodigd:
 - In GitHub het repository-secret `ADO_WEBHOOK_SECRET`, met dezelfde waarde als het secret in
