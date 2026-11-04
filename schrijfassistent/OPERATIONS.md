@@ -6,7 +6,7 @@ This checklist covers the backend Container App, its identity and roles, the Fro
 
 | Item | Value |
 |---|---|
-| Image | `schrijfassistent-api` from the environment's container registry, built from `schrijfassistent/backend/` by the pipeline |
+| Image | `ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z`, built from `schrijfassistent/backend/` by GitHub Actions (`.github/workflows/build.yml`) with the same release tag as the admin image |
 | Name | set in the pipeline variable `backendContainerApp`; the resource group in `backendResourceGroup`; the container name in `backendContainerName` (`api`) |
 | Port | 8000 (`gunicorn.conf.py` binds `0.0.0.0:8000`) |
 | Resources | 0.5 vCPU, 1 GiB |
@@ -14,7 +14,7 @@ This checklist covers the backend Container App, its identity and roles, the Fro
 | Workers | `WEB_CONCURRENCY=2`. Do not use the CPU count of the node. |
 | Probes | liveness, readiness and startup all use `GET /health` on port 8000; the startup probe waits 20 s first. The answer is `{"status":"healthy","version":"1.1"}`. |
 | User | non-root `app` (uid 10001) |
-| Image rollout | the pipeline runs `az containerapp update` with the image digest and smoke-tests `GET /health` on the app FQDN. The agent pool must reach that FQDN. |
+| Image rollout | the Azure DevOps pipeline runs `az containerapp update` with the release tag (before the admin app) and smoke-tests `GET /health` on the app FQDN. The agent pool must reach that FQDN. |
 | Image ownership | with `image_managed_externally = true` in the Terraform module, Terraform leaves `image` alone after creation |
 
 The backend deploy step in the pipeline is skipped while `backendContainerApp` still holds its `TODO` value.
@@ -123,4 +123,4 @@ Redeploy an earlier image digest:
 az containerapp update -n <app> -g <resource group> --image <registry>/schrijfassistent-api@sha256:<earlier digest>
 ```
 
-The pipeline publishes each digest in the `image-backend` artifact.
+Each digest is in the summary of the GitHub Actions release run (job `release`, entry `schrijfassistent-api`). Redeploying an earlier release tag works the same way: `--image ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z`.

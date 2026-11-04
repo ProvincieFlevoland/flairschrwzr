@@ -23,9 +23,10 @@ GovChat-NL project documentation and still describes how the overlay itself work
   a deliberate deviation from upstream to avoid colliding with Open WebUI's own sidebar toggle.
 
 **To roll out a change:** push a release tag `vX.Y.Z` on `main` (see *Releases en
-container-images* below). GitHub Actions builds the image once, publishes it to ghcr.io and then
-notifies Azure DevOps, which points the TEST container app at that exact ghcr.io image.
-Azure DevOps no longer builds the image, and no ACR is involved.
+container-images* below). GitHub Actions builds the images (admin and Schrijfassistent backend)
+once, publishes them to ghcr.io with the same tag and then notifies Azure DevOps, which points the
+TEST container apps at those exact ghcr.io images. Azure DevOps no longer builds images, and no ACR
+is involved.
 
 The GitHub fork (`BvO-Flevoland/GovChat-AdminOverlay`) is left in place for now as a historical
 reference; this repo is what the pipeline actually builds from going forward.
@@ -37,27 +38,36 @@ Elke versie levert precies één vast image op. De workflow staat in
 
 | Gebeurtenis | Wat er gebeurt |
 |---|---|
-| Pull request naar `main` (ook uit forks) | Image bouwen en scannen met Trivy. Geen login, geen secrets, niets gepubliceerd. |
+| Pull request naar `main` (ook uit forks) | Alle images bouwen en scannen met Trivy. Geen login, geen secrets, niets gepubliceerd. |
 | Handmatig: *Actions → Container images → Run workflow* op een branch | Hetzelfde als een pull request: bouwen en scannen, niets gepubliceerd. |
-| Tag `vX.Y.Z` op een commit in `main` | Tag controleren, één keer bouwen en pushen naar ghcr.io. |
+| Tag `vX.Y.Z` op een commit in `main` | Tag controleren, alle images één keer bouwen en pushen naar ghcr.io met dezelfde tag, daarna ADO laten uitrollen. |
 
 **Images**
 
-| Image | Dockerfile | Build context |
-|---|---|---|
-| `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z` | `admin/Dockerfile` | `admin/` |
+| Image | Inhoud | Dockerfile | Build context | Container App (dev) |
+|---|---|---|---|---|
+| `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z` | Admin panel + Schrijfassistent-frontend | `admin/Dockerfile` | `.` (repo-root) | `aca-flair-admin-dev-schrwzr` |
+| `ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z` | Schrijfassistent-backend (API) | `schrijfassistent/backend/Dockerfile` | `schrijfassistent/backend` | nog te bevestigen (zie *Uitrol*) |
+
+Beide images worden in dezelfde run gebouwd en krijgen dezelfde tag `vX.Y.Z`; een release bevat
+dus altijd een frontend en backend die bij elkaar horen.
 
 Het admin-image is `node:20-alpine`. Dependencies worden in een aparte stage geïnstalleerd met
 `npm ci --omit=dev` (volgens `package-lock.json`). In het uiteindelijke image staan alleen node,
 `node_modules`, `server.js`, `views/` en `defaults/`; npm, corepack en yarn zijn eruit gehaald.
 De container luistert op poort 3002.
+Het backend-image is `python:3.12-slim` met gunicorn, draait als non-root user `app` (uid 10001),
+luistert op poort 8000 en heeft `GET /health` voor probes en smoke test (zie
+[schrijfassistent/backend/README.md](schrijfassistent/backend/README.md)).
 Een nieuw image voeg je toe als extra regel in de `matrix` van zowel `pr-build` als `release`.
 
 **Buildstappen bij een versietag**
 
 1. `verify-tag` controleert dat de tag de vorm `vX.Y.Z` heeft en dat de commit op `main` staat.
 2. De build stopt als `vX.Y.Z` al op ghcr.io staat: een versie wordt nooit opnieuw gebouwd.
-   Nieuwe wijziging betekent een nieuwe tag.
+   Nieuwe wijziging betekent een nieuwe tag. Faalt maar één van de images (bijvoorbeeld door een
+   netwerkfout), gebruik dan *Re-run failed jobs*: alleen het gefaalde image wordt opnieuw gebouwd,
+   en daarna loopt `notify-ado` alsnog.
 3. Het image wordt gebouwd met build-args `VERSION` en `GIT_COMMIT` en gepusht als `vX.Y.Z`.
    `latest` schuift alleen mee als dit de hoogste versie is (een hotfix op een oudere lijn
    verschuift `latest` dus niet).
@@ -68,15 +78,19 @@ Een nieuw image voeg je toe als extra regel in de `matrix` van zowel `pr-build` 
 
 De uitrol loopt zonder ACR: de Container App haalt het image direct van ghcr.io.
 
-1. Na een geslaagde push van alle images start de job `notify-ado` in
+1. Na een geslaagde push van alle images (admin én backend) start de job `notify-ado` in
    `.github/workflows/build.yml`. Die stuurt `{"tag":"vX.Y.Z"}` naar de ADO-webhook
    `gh-schrijfassistent-webhook`, ondertekend met de header `X-Hub-Signature` (HMAC-SHA1 met het
    secret `ADO_WEBHOOK_SECRET`). Bestond de versie al, of is het een pull request, dan wordt ADO
-   niet aangeroepen. Geeft ADO geen 2xx terug, dan faalt de GitHub-run.
+   niet aangeroepen. Faalt één van de images, dan wordt ADO ook niet aangeroepen. Geeft ADO geen
+   2xx terug, dan faalt de GitHub-run.
 2. De ADO-pipeline (Incoming WebHook-service connection `sc-schrijfassistent-webhook`) leest
-   `tag` uit de payload en zet de Container App `aca-flair-admin-dev-schrwzr`
-   (`rg-flairschrwzr-dev-001`) op `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z`.
-3. ADO wacht tot de nieuwe revisie gezond is en doet een smoke test.
+   `tag` uit de payload en zet eerst de backend-Container App (variabele `backendContainerApp`)
+   op `ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z` en daarna de Container
+   App `aca-flair-admin-dev-schrwzr` (`rg-flairschrwzr-dev-001`) op
+   `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z`. Backend eerst, zodat de nieuwe frontend
+   nooit tegen een oudere backend draait. Faalt de backend, dan blijft de admin-app ongewijzigd.
+3. ADO wacht per app tot de nieuwe revisie gezond is en doet een smoke test (backend: `GET /health`).
 
 GitHub stuurt alleen versie-tags `vX.Y.Z`, nooit `latest`.
 
@@ -84,9 +98,13 @@ Benodigd:
 - In GitHub het repository-secret `ADO_WEBHOOK_SECRET`, met dezelfde waarde als het secret in
   `sc-schrijfassistent-webhook`. Er is geen aparte GitHub-webhook voor *Registry packages* nodig;
   die zou ADO meerdere keren per release starten.
-- Is het ghcr-package privé, dan heeft de Container App eenmalig een ghcr-login nodig (token met
-  alleen `read:packages`):
-  `az containerapp registry set -n aca-flair-admin-dev-schrwzr -g rg-flairschrwzr-dev-001 --server ghcr.io --username <github-user> --password <token>`
+- Is een ghcr-package privé, dan heeft de bijbehorende Container App eenmalig een ghcr-login nodig
+  (token met alleen `read:packages`). Dat geldt per app, dus ook voor de backend-app:
+
+  ```
+  az containerapp registry set -n aca-flair-admin-dev-schrwzr -g rg-flairschrwzr-dev-001 --server ghcr.io --username <github-user> --password <token>
+  az containerapp registry set -n <backend-container-app> -g <resource-group> --server ghcr.io --username <github-user> --password <token>
+  ```
 
 **Versienummers (semantic versioning)**
 
