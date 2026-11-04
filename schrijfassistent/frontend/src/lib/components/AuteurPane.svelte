@@ -1653,9 +1653,9 @@
                                                                                 <i class="ph-bold ph-check-circle" style="font-size: 0.75rem"></i> Voorstel
                                                                             </div>
                                                                             <div style="padding: 8px 10px; font-size: 0.88rem; line-height: 1.5; color: var(--sa-text-main); background: var(--sa-bg-panel); border-left: 3px solid var(--sa-ok-accent)">
-                                                                                {suggestionDisplayText(row.suggested, row.explanation)}
+                                                                                {row.suggested}
                                                                             </div>
-                                                                            {#if row.explanation && row.suggested.trim()}
+                                                                            {#if row.explanation}
                                                                                 <div style="padding: 7px 10px; border-top: 1px solid var(--sa-ok-border); font-size: 0.78rem; color: var(--sa-text-muted); line-height: 1.45; background: var(--sa-ok-bg)">
                                                                                     {row.explanation}
                                                                                 </div>
@@ -1704,7 +1704,7 @@
                                                                 aria-expanded={isExpanded}
                                                             >
                                                                 <span class={'sa-auteur-pane-handled-label'}>{wasAccepted ? 'Geaccepteerd' : 'Afgewezen'}</span>
-                                                                <span class={'sa-auteur-pane-handled-text'}>{suggestionDisplayText(row.original, row.explanation)}</span>
+                                                                <span class={'sa-auteur-pane-handled-text'}>{row.original}</span>
                                                                 <i class="ph {isExpanded ? 'ph-caret-up' : 'ph-caret-down'} {'sa-auteur-pane-handled-caret'}" aria-hidden="true"></i>
                                                             </button>
                                                             {#if isExpanded}
@@ -1788,7 +1788,7 @@
                                                                     <i class="ph-bold ph-x-circle" style="font-size: 0.75rem"></i> Gevonden
                                                                 </div>
                                                                 <div style="font-size: 0.88rem; line-height: 1.5; color: var(--sa-text-main); background: var(--sa-color-red-bg); padding: 8px 10px; border-radius: 6px; border-left: 3px solid var(--sa-color-red)">
-                                                                    {suggestionDisplayText(row.original, row.explanation)}
+                                                                    {row.original || '—'}
                                                                 </div>
                                                             </div>
                                                             {#if row.suggested}
@@ -1802,9 +1802,9 @@
                                                                         <i class="ph-bold ph-check-circle" style="font-size: 0.75rem"></i> Voorstel
                                                                     </div>
                                                                     <div style="padding: 8px 10px; font-size: 0.88rem; line-height: 1.5; color: var(--sa-text-main); background: var(--sa-bg-panel); border-left: 3px solid var(--sa-ok-accent)">
-                                                                        {suggestionDisplayText(row.suggested, row.explanation)}
+                                                                        {row.suggested}
                                                                     </div>
-                                                                    {#if row.explanation && row.suggested.trim()}
+                                                                    {#if row.explanation}
                                                                         <div style="padding: 7px 10px; border-top: 1px solid var(--sa-ok-border); font-size: 0.78rem; color: var(--sa-text-muted); line-height: 1.45; background: var(--sa-ok-bg)">
                                                                             <span style="font-weight: 700; text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.05em; display: block; margin-bottom: 2px; color: var(--sa-ok-text)">Uitleg</span>
                                                                             {row.explanation}
@@ -1828,7 +1828,7 @@
                                                             aria-expanded={isExpanded}
                                                         >
                                                             <span class={'sa-auteur-pane-handled-label'}>{wasAccepted ? 'Geaccepteerd' : 'Afgewezen'}</span>
-                                                            <span class={'sa-auteur-pane-handled-text'}>{suggestionDisplayText(row.original, row.explanation)}</span>
+                                                            <span class={'sa-auteur-pane-handled-text'}>{row.original}</span>
                                                             <i class="ph {isExpanded ? 'ph-caret-up' : 'ph-caret-down'} {'sa-auteur-pane-handled-caret'}" aria-hidden="true"></i>
                                                         </button>
                                                         {#if isExpanded}
