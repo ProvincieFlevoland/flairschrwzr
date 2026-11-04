@@ -9,9 +9,6 @@ It has two parts:
 
 Related documents: [API.md](API.md) describes the HTTP interface and [OPERATIONS.md](OPERATIONS.md) is the Azure Container Apps checklist.
 
-In the taalreview sidebar, whitespace-only text (such as a double-space correction) is displayed as the reason for the suggestion. Accepting the suggestion still applies the actual replacement text.
-Leading and trailing spaces are preserved during taalreview, while inline formatting and highlight spans do not introduce extra spaces. The editor and sidebar derive spelling suggestions from the same content snapshot.
-
 ## Architecture
 
 ```
