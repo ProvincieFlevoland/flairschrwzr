@@ -160,6 +160,21 @@
     font-weight: 400;
     opacity: 0.85;
 }
+.sa-root .sa-admin-dashboard-agent-label-hint {
+    font-weight: 400;
+    text-transform: none;
+    opacity: 0.85;
+}
+.sa-root .sa-admin-dashboard-agent-default-hint {
+    margin: 4px 0 0;
+    font-size: 0.75rem;
+    color: var(--sa-text-muted);
+    line-height: 1.4;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
 .sa-root .sa-admin-dashboard-b1-field input,
 .sa-root .sa-admin-dashboard-b1-field select,
 .sa-root .sa-admin-dashboard-b1-textarea-sm {

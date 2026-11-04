@@ -300,6 +300,7 @@
              }
 
              await fetchBackendConfigs();
+             await fetchAgentDefaults();
         };
         init();
 
@@ -480,6 +481,34 @@
             return { ...curr };
         });
         saveDB();
+    }
+
+    /**
+     * Standaardinstructies van de backend (`GET /agent-defaults`), per opdracht. De backend gebruikt ze als het veld
+     * van een hoofdstuk leeg is; de beheeromgeving toont ze bij dat lege veld en kan ze overnemen.
+     * @type {Record<string, string>}
+     */
+    let agentDefaults = {};
+
+    async function fetchAgentDefaults() {
+        try {
+            const response = await storageFetch(`/agent-defaults`, readInit());
+            if (!response.ok) return;
+            const data = await response.json();
+            const instructions = data && typeof data === 'object' ? data.instructions : null;
+            if (instructions && typeof instructions === 'object') {
+                agentDefaults = Object.fromEntries(
+                    Object.entries(instructions).filter(([, v]) => typeof v === 'string' && v.trim())
+                );
+            }
+        } catch {
+            // zonder standaardtekst blijft het veld gewoon bewerkbaar; alleen de hint ontbreekt
+        }
+    }
+
+    /** True when an instruction field is empty, so the backend uses its default text. */
+    function isEmptyInstruction(value) {
+        return typeof value !== 'string' || !value.trim();
     }
 
     /** Toggles the active/inactive state of a configuration. */
@@ -1286,13 +1315,28 @@
                                                                 <textarea class={'sa-admin-dashboard-template-textarea'} id="struct-template-{guideline.id}" bind:value={guideline.agent_structuur_output_template} on:blur={updateConfig} placeholder={'{"key": "value"}'}></textarea>
                                                             </div>
                                                             <div class="{'sa-admin-dashboard-field'} {'sa-admin-dashboard-mt-2'}">
-                                                                <label for="spell-{guideline.id}">Spelling, grammatica en leestekens</label>
-                                                                <textarea id="spell-{guideline.id}" bind:value={guideline.agent_spelling_grammatica} on:blur={updateConfig} placeholder="Zakelijk, helder..."></textarea>
+                                                                <label for="spell-{guideline.id}">Spelling <span class={'sa-admin-dashboard-agent-label-hint'}>(spelling, grammatica en leestekens)</span></label>
+                                                                <textarea id="spell-{guideline.id}" bind:value={guideline.agent_spelling_grammatica} on:blur={updateConfig} placeholder={agentDefaults.agent_spelling_grammatica || 'Jij bent een taalreviewagent die...'}></textarea>
+                                                                {#if isEmptyInstruction(guideline.agent_spelling_grammatica)}
+                                                                    <p class={'sa-admin-dashboard-agent-default-hint'} role="note">
+                                                                        Dit veld is leeg: de Schrijfassistent gebruikt dan de standaardinstructie{agentDefaults.agent_spelling_grammatica ? ' (grijs in het veld)' : ''}.
+                                                                        {#if agentDefaults.agent_spelling_grammatica}
+                                                                            <button
+                                                                                type="button"
+                                                                                class="sa-btn sa-btn-secondary sa-btn-sm"
+                                                                                on:click={() => {
+                                                                                    guideline.agent_spelling_grammatica = agentDefaults.agent_spelling_grammatica;
+                                                                                    updateConfig();
+                                                                                }}><i class="ph ph-pencil-simple"></i> Standaardtekst overnemen en aanpassen</button>
+                                                                        {/if}
+                                                                    </p>
+                                                                {/if}
+                                                                <p class={'sa-admin-dashboard-agent-default-hint'}>Het antwoordformaat (JSON met Suggesties) voegt de Schrijfassistent zelf toe; beschrijf hier alleen waarop gecontroleerd wordt.</p>
                                                                 <label class={'sa-admin-dashboard-mt-1'} for="spell-template-{guideline.id}" style="text-transform: none; opacity: 0.7;">JSON Output Validatie (Optioneel)</label>
                                                                 <textarea class={'sa-admin-dashboard-template-textarea'} id="spell-template-{guideline.id}" bind:value={guideline.agent_spelling_grammatica_output_template} on:blur={updateConfig} placeholder={'{"key": "value"}'}></textarea>
                                                             </div>
                                                             <div class="{'sa-admin-dashboard-field'} {'sa-admin-dashboard-mt-2'}">
-                                                                <label for="b1-{guideline.id}">B1 Taalniveau</label>
+                                                                <label for="b1-{guideline.id}">Direct Duidelijk <span class={'sa-admin-dashboard-agent-label-hint'}>(B1-taalniveau)</span></label>
                                                                 <textarea id="b1-{guideline.id}" bind:value={guideline.agent_b1} on:blur={updateConfig} placeholder="B1 taalgebruik toepassen..."></textarea>
                                                                 <label class={'sa-admin-dashboard-mt-1'} for="b1-template-{guideline.id}" style="text-transform: none; opacity: 0.7;">JSON Output Validatie (Optioneel)</label>
                                                                 <textarea class={'sa-admin-dashboard-template-textarea'} id="b1-template-{guideline.id}" bind:value={guideline.agent_b1_output_template} on:blur={updateConfig} placeholder={'{"key": "value"}'}></textarea>

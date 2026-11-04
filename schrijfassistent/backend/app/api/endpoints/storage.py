@@ -7,6 +7,7 @@ from app.services.ai_agent import ai_agent
 from app.core.security import get_current_user, require_beheerder
 from app.core.blob_guard import check_segment, check_config_id, check_item_id, check_upload_configuration
 from app.core.validator import validate_agent_response
+from app.core.agent_defaults import DEFAULT_INSTRUCTIONS, resolve_instruction
 from typing import Dict, Any, Optional
 import json
 import logging
@@ -206,6 +207,14 @@ class AgentRequestBody(BaseModel):
     user_message: str
 
 
+@router.get("/agent-defaults")
+def get_agent_defaults():
+    """Standaardinstructies per opdracht, die `generate-agent-response` gebruikt als het veld van een hoofdstuk leeg is.
+
+    Alleen-lezen; de beheeromgeving toont ze bij een leeg veld en kan ze overnemen."""
+    return {"instructions": dict(DEFAULT_INSTRUCTIONS)}
+
+
 @router.post("/generate-agent-response")
 def generate_agent_response(
     config_id: str = Query(...),
@@ -236,14 +245,14 @@ def generate_agent_response(
                 detail=f"Configuration '{config_id}' or chapter '{chapter_id}' not found.",
             )
 
-        # 2. Extract the specific assignment value (instruction)
-        if assignment not in chapter_data:
+        # 2. Extract the specific assignment value (instruction). An empty or missing instruction of an assignment
+        #    with a default (agent_spelling_grammatica) falls back to that default, see app/core/agent_defaults.py.
+        instruction = resolve_instruction(assignment, chapter_data)
+        if instruction is None:
             raise HTTPException(
                 status_code=404,
                 detail=f"Assignment '{assignment}' not found in chapter '{chapter_id}'.",
             )
-
-        instruction = chapter_data[assignment]
 
         # 3. Check for an optional validation template
         # Pattern: {assignment}_output_template
@@ -260,14 +269,13 @@ def generate_agent_response(
                 "Altijd return 'Suggestie'."
             )
         elif assignment == "agent_spelling_grammatica":
+            # Only the answer format lives here; what the agent checks is the instruction (beheeromgeving, or
+            # DEFAULT_SPELLING_INSTRUCTION when the chapter leaves it empty).
             output_rules = (
                 "ANTWOORDREGELS: Geef uitsluitend geldig JSON. Alleen de toplevel-sleutel 'Suggesties' "
                 "(array van objecten met Origineel, Suggestie, Uitleg). "
                 "Voor elk item moet 'Uitleg' een duidelijke, niet-lege reden bevatten (regel, norm of categorie; geen lege of generieke vulling). "
-                "Signaleer ook subtiele problemen: interpunctie (o.a. spatie vóór punt of komma, onjuiste spaties rond leestekens), "
-                "dubbele of meerdere spaties tussen woorden, "
-                "lichte grammatica en inconsistente schrijfwijze — niet alleen grove spelfouten. "
-                "Gebruik een lege Suggesties-array alleen als er echt geen concrete verbetering is. "
+                "Gebruik een lege Suggesties-array als er geen verbetering is. "
                 "In Origineel: kopieer een aaneengesloten substring EXACT uit de tekst die verschijnt na 'GEBRUIKER INPUT:' hieronder. "
                 "Letterlijk dezelfde woorden en leestekens in exacte volgorde zoals ze in die invoertekst staan, "
                 "inclusief alle fouten (dubbele spaties, hoofdletters, spelfouten, grammaticafouten, punten, komma's, etc.). "
