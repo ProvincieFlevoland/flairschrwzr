@@ -3,6 +3,16 @@ import { decodeHtmlSpaceEntities, stripBlockPlainForTaalreview } from './blockPl
 /** Max characters for B1 Origineel — longer spans are skipped (forces granular model output). */
 export const B1_MAX_ORIGINAL_CHARS = 200;
 
+/**
+ * Display-only fallback: keep whitespace replacements intact when applying a suggestion.
+ * @param {string} text
+ * @param {string} explanation
+ * @returns {string}
+ */
+export function suggestionDisplayText(text, explanation) {
+    return text?.trim() ? text : explanation?.trim() || '—';
+}
+
 /** Collapses whitespace and nbsp for substring matching (aligned with stripBlockPlain after HTML strip). */
 function collapsePlainWhitespace(s) {
     return (s || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
