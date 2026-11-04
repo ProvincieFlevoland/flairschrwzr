@@ -64,7 +64,7 @@ repository-instellingen, zodat alleen bevoegde mensen naar productie kunnen prom
 | Image | Inhoud | Dockerfile | Build context | Container App (dev) |
 |---|---|---|---|---|
 | `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z` | Admin panel + Schrijfassistent-frontend | `admin/Dockerfile` | `.` (repo-root) | `aca-flair-admin-dev-schrwzr` |
-| `ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z` | Schrijfassistent-backend (API) | `schrijfassistent/backend/Dockerfile` | `schrijfassistent/backend` | nog te bevestigen (zie *Uitrol*) |
+| `ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z` | Schrijfassistent-backend (API) | `schrijfassistent/backend/Dockerfile` | `schrijfassistent/backend` | `aca-flair-schrijfass-dev-schrwzr` (container `schrijfassistent-api`) |
 
 Beide images worden in dezelfde run gebouwd en krijgen dezelfde tag `vX.Y.Z`; een release bevat
 dus altijd een frontend en backend die bij elkaar horen.
@@ -104,7 +104,7 @@ De uitrol loopt zonder ACR: de Container App haalt het image direct van ghcr.io.
    niet aangeroepen. Faalt één van de images, dan wordt ADO ook niet aangeroepen. Geeft ADO geen
    2xx terug, dan faalt de GitHub-run.
 2. De ADO-pipeline (Incoming WebHook-service connection `sc-schrijfassistent-webhook`) leest
-   `tag` uit de payload en zet eerst de backend-Container App (variabele `backendContainerApp`)
+   `tag` uit de payload en zet eerst de backend-Container App `aca-flair-schrijfass-dev-schrwzr`
    op `ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z` en daarna de Container
    App `aca-flair-admin-dev-schrwzr` (`rg-flairschrwzr-dev-001`) op
    `ghcr.io/provincieflevoland/flairschrwzr-admin:vX.Y.Z`. Backend eerst, zodat de nieuwe frontend

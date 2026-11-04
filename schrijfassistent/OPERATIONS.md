@@ -7,7 +7,7 @@ This checklist covers the backend Container App, its identity and roles, the Fro
 | Item | Value |
 |---|---|
 | Image | `ghcr.io/provincieflevoland/flairschrwzr-schrijfassistent-api:vX.Y.Z`, built from `schrijfassistent/backend/` by GitHub Actions (`.github/workflows/build.yml`) with the same release tag as the admin image |
-| Name | set in the pipeline variable `backendContainerApp`; the resource group in `backendResourceGroup`; the container name in `backendContainerName` (`api`) |
+| Name | set in the pipeline variable `backendContainerApp`; the resource group in `backendResourceGroup`; the container name in `backendContainerName`. On dev: app `aca-flair-schrijfass-dev-schrwzr`, resource group `rg-flairschrwzr-dev-001`, container `schrijfassistent-api` |
 | Port | 8000 (`gunicorn.conf.py` binds `0.0.0.0:8000`) |
 | Resources | 0.5 vCPU, 1 GiB |
 | Scale | minimum 1, maximum 2 replicas. The token cache lives in memory per worker, and autosave writes every 10 s while someone is typing. |
