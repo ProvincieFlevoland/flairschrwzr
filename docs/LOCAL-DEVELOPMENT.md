@@ -120,7 +120,10 @@ Kopieer `.env.example` naar `.env` (git-ignored). Environment variabelen winnen 
 
 | Variabele | Voorbeeld / default | Toelichting |
 |---|---|---|
-| `PROJECT_ENDPOINT` | `https://<resource>.services.ai.azure.com/api/projects/<project>` | Azure AI Foundry project (deployment `chat-agent`). Credential via `az login` (DefaultAzureCredential). Wordt vervangen door LiteLLM (TODO in `.env.example`). |
+| `AI_PROVIDER` | `foundry` | `foundry` of `litellm`. |
+| `AI_MODEL` | Foundry: `chat-agent` | Deployment-naam (Foundry) of modelnaam in LiteLLM (verplicht bij `litellm`). |
+| `PROJECT_ENDPOINT` | `https://<resource>.services.ai.azure.com/api/projects/<project>` | Bij `foundry`: Azure AI Foundry project. Credential via `az login` (DefaultAzureCredential). |
+| `LITELLM_URL`, `LITELLM_API_KEY` | leeg | Bij `litellm`: URL van de LiteLLM-proxy en de virtual key. |
 | `AZURE_STORAGE_CONNECTION_STRING` | leeg | Leeg = lokale blob-emulator. |
 | `AZURE_STORAGE_CONTAINER_NAME` | `schrijfassistentdocs` (code-default `govchat-docs`) | Blob-container voor nota's en configuraties. |
 | `OPENWEBUI_INTERNAL_URL` | `http://localhost:3000` | **Verplicht**; de backend start niet zonder. Tokens worden hiertegen geverifieerd. |

@@ -5,7 +5,8 @@
 #   bash schrijfassistent/dev/run-local-dev.sh stop     # stop what the script started
 #
 # Settings come from schrijfassistent/backend/.env (copy .env.example and fill it in; the file is git-ignored):
-#   * .env present   -> real AI: PROJECT_ENDPOINT from the file, `az login` for the credential.
+#   * .env present   -> real AI: with AI_PROVIDER=foundry (default) PROJECT_ENDPOINT from the file and `az login` for the
+#                       credential; with AI_PROVIDER=litellm the LiteLLM proxy in LITELLM_URL, LITELLM_API_KEY and AI_MODEL.
 #                       Storage: if the file holds AZURE_STORAGE_CONNECTION_STRING the app uses that real storage;
 #                       if it is empty the script starts a local blob emulator on :10001
 #                       and seeds three fixture notas, so nothing is written to Azure.
@@ -53,13 +54,25 @@ stop_all
 
 # value of a setting in the .env file (empty when the file or the line is missing)
 envval() { [ -f "$ENVFILE" ] && sed -n "s/^$1=//p" "$ENVFILE" | head -1 | tr -d '\r"' || true; }
+# value of a setting as the backend sees it: the environment variable when set, otherwise the .env file
+setting() { if [ -n "${!1:-}" ]; then printf '%s' "${!1}"; else envval "$1"; fi; }
 
-DEMO=0; EMULATOR=1; AI_PYTHONPATH=""
+DEMO=0; EMULATOR=1; AI_PYTHONPATH=""; AI_LABEL="recorded fixtures"
 if [ ! -f "$ENVFILE" ]; then
   DEMO=1; AI_PYTHONPATH="$DEV/mock"
   say "no schrijfassistent/backend/.env: demo mode (recorded AI answers, only for the seeded notas)"
 else
-  [ -n "$(envval PROJECT_ENDPOINT)" ] || { echo "$ENVFILE has no PROJECT_ENDPOINT (see .env.example)"; exit 1; }
+  AI_PROVIDER_VALUE="$(setting AI_PROVIDER | tr '[:upper:]' '[:lower:]')"
+  case "${AI_PROVIDER_VALUE:-foundry}" in
+    litellm)
+      [ -n "$(setting LITELLM_URL)" ] || { echo "AI_PROVIDER=litellm but no LITELLM_URL in $ENVFILE (see .env.example)"; exit 1; }
+      [ -n "$(setting AI_MODEL)" ] || { echo "AI_PROVIDER=litellm but no AI_MODEL in $ENVFILE (see .env.example)"; exit 1; }
+      AI_LABEL="real, LiteLLM at $(setting LITELLM_URL), model $(setting AI_MODEL)" ;;
+    foundry)
+      [ -n "$(setting PROJECT_ENDPOINT)" ] || { echo "$ENVFILE has no PROJECT_ENDPOINT; set it, or use AI_PROVIDER=litellm (see .env.example)"; exit 1; }
+      AI_LABEL="real, Azure AI Foundry" ;;
+    *) echo "AI_PROVIDER=$AI_PROVIDER_VALUE is not supported (use foundry or litellm)"; exit 1 ;;
+  esac
   if [ -n "$(envval AZURE_STORAGE_CONNECTION_STRING)" ]; then EMULATOR=0; fi
 fi
 
@@ -108,5 +121,5 @@ if [ "$EMULATOR" = 1 ]; then
   kill_pid "$(cat "$STATE/seed-auth.pid")"; rm -f "$STATE/seed-auth.pid"
 fi
 start_backend "$OPENWEBUI_URL"
-say "backend on http://localhost:$BACKEND_PORT (tokens verified against $OPENWEBUI_URL, AI: $([ "$DEMO" = 1 ] && echo 'recorded fixtures' || echo 'real, from .env'))"
+say "backend on http://localhost:$BACKEND_PORT (tokens verified against $OPENWEBUI_URL, AI: $AI_LABEL)"
 say "ready. Stop with: bash schrijfassistent/dev/run-local-dev.sh stop"

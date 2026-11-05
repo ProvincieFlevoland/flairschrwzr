@@ -28,7 +28,11 @@ The `.env` file is not read in the container (`SCHRIJFASSISTENT_IN_CONTAINER=1` 
 | `AZURE_STORAGE_CONNECTION_STRING` | yes, Container App secret | connection string of the storage account |
 | `AZURE_STORAGE_CONTAINER_NAME` | no | `govchat-docs` |
 | `AZURE_CLIENT_ID` | no | client id of the user-assigned identity, so `DefaultAzureCredential` picks it |
-| `PROJECT_ENDPOINT` | yes, Container App secret | endpoint of the AI Foundry project that hosts the `chat-agent` deployment |
+| `AI_PROVIDER` | no | `foundry` (default) or `litellm` |
+| `AI_MODEL` | no | model name: the Foundry deployment (default `chat-agent`) or the model name in LiteLLM (required for `litellm`) |
+| `PROJECT_ENDPOINT` | yes, Container App secret | only for `foundry`: endpoint of the AI Foundry project that hosts the deployment in `AI_MODEL` |
+| `LITELLM_URL` | no | only for `litellm`: on dev `http://aca-flair-litellm-dev-schrwzr/v1` |
+| `LITELLM_API_KEY` | yes, Container App secret | only for `litellm`: the LiteLLM virtual key of this backend |
 | `OPENWEBUI_INTERNAL_URL` | no | internal URL of the Open WebUI Container App. Required: the backend does not start without it. |
 | `OPENWEBUI_VERIFY_TIMEOUT_SEC` | no | `3` |
 | `CORS_ALLOW_ORIGINS` | no | the GovChat origin, for example `https://flair-dev.ai.flevoland.nl`. Only needed when the app is called from another origin. |
@@ -36,7 +40,7 @@ The `.env` file is not read in the container (`SCHRIJFASSISTENT_IN_CONTAINER=1` 
 | `WEB_CONCURRENCY` | no | `2` |
 | `SOFTWARE_VERSION_TAG` | no | set by the pipeline on every rollout |
 
-The two secret values are stored as Container App secrets, and their environment variables reference the secret (`secretref`). No Key Vault is used.
+The secret values are stored as Container App secrets, and their environment variables reference the secret (`secretref`). No Key Vault is used.
 
 ## 3. Identity and roles
 
