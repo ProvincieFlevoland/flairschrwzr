@@ -74,6 +74,43 @@ def normalize_json_like_text(response_str: str) -> str:
     return s
 
 
+def parse_template_str(template: str) -> Any:
+    """
+    Parses an output template that a beheerder typed in the admin UI.
+
+    Unlike AI output, a template is written by hand and often pasted from a word processor, so its JSON delimiters
+    can be typographic double quotes (“key”: “”). The standard repair maps those to ASCII single quotes, which is
+    right for quotes inside AI text but breaks a template written entirely with them. So: first the standard repair;
+    if that does not parse, typographic double quotes become ASCII double quotes; json_repair is the last resort.
+
+    Raises:
+        json.JSONDecodeError: If none of the attempts yields JSON.
+    """
+    try:
+        return json.loads(repair_json_str(template))
+    except json.JSONDecodeError as first_error:
+        s = template
+        for ch in ("\u201c", "\u201d", "\u201e", "\u201f", "\u00ab", "\u00bb"):  # “ ” „ ‟ « »
+            s = s.replace(ch, '"')
+        s = s.replace("\u2018", "'").replace("\u2019", "'")  # ‘ ’
+        s = s.replace("\u00a0", " ").lstrip("\ufeff")
+        for _zw in ("\u200b", "\u200c", "\u200d"):
+            s = s.replace(_zw, "")
+        start, end = s.find("{"), s.rfind("}")
+        if start != -1 and end != -1:
+            s = s[start:end + 1]
+        s = re.sub(r',\s*}', '}', s)
+        s = re.sub(r',\s*\]', ']', s)
+        try:
+            parsed = json.loads(s)
+        except json.JSONDecodeError:
+            parsed = json_repair.loads(s)
+            if not isinstance(parsed, dict) or not parsed:
+                raise first_error
+        logger.warning("Output template uses typographic quotes as JSON delimiters; parsed after normalising them.")
+        return parsed
+
+
 def validate_agent_response(template: Union[Dict[str, Any], str], response_str: str) -> Dict[str, Any]:
     """
     Validates a JSON string response against a template using a dynamic Pydantic model.
@@ -99,7 +136,7 @@ def validate_agent_response(template: Union[Dict[str, Any], str], response_str: 
         # 1. Ensure template is a dict
         if isinstance(template, str):
             try:
-                template = json.loads(repair_json_str(template))
+                template = parse_template_str(template)
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse template as JSON: {template}")
                 raise ValueError(f"Het validatie-template is geen geldige JSON: {str(e)}")
