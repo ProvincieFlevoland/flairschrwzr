@@ -33,8 +33,19 @@ class Settings(BaseSettings):
     AZURE_STORAGE_CONNECTION_STRING: str = ""
     AZURE_STORAGE_CONTAINER_NAME: str = "govchat-docs"
 
-    # Azure AI Project Settings
+    # --- AI provider (app/services/ai_agent.py) ------------------------------------------------
+    # "foundry" (default): the Azure AI Foundry project at PROJECT_ENDPOINT, via DefaultAzureCredential.
+    # "litellm": an OpenAI-compatible LiteLLM proxy at LITELLM_URL with LITELLM_API_KEY.
+    AI_PROVIDER: str = "foundry"
+    # Model to call: the deployment name in Foundry (empty = "chat-agent"), the model name in LiteLLM (required).
+    AI_MODEL: str = ""
+
+    # Azure AI Project Settings (AI_PROVIDER=foundry)
     PROJECT_ENDPOINT: str = ""
+
+    # LiteLLM proxy (AI_PROVIDER=litellm), e.g. http://aca-flair-litellm-dev-schrwzr/v1 inside the Container Apps environment
+    LITELLM_URL: str = ""
+    LITELLM_API_KEY: str = ""
 
     # Deployment flags
     SCM_DO_BUILD_DURING_DEPLOYMENT: str = "false"

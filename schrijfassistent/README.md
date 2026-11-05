@@ -44,7 +44,10 @@ The backend reads environment variables. Outside a container it also reads `back
 |---|---|---|
 | `OPENWEBUI_INTERNAL_URL` | none, required | Base URL of Open WebUI, used to verify tokens. The service refuses to start without it. |
 | `OPENWEBUI_VERIFY_TIMEOUT_SEC` | `3` | Timeout of the verification call |
-| `PROJECT_ENDPOINT` | empty | Azure AI Foundry project endpoint for the `chat-agent` deployment |
+| `AI_PROVIDER` | `foundry` | AI service: `foundry` or `litellm` |
+| `AI_MODEL` | Foundry: `chat-agent` | Model name: Foundry deployment, or LiteLLM model name (required for `litellm`) |
+| `PROJECT_ENDPOINT` | empty | Azure AI Foundry project endpoint (`foundry`) |
+| `LITELLM_URL`, `LITELLM_API_KEY` | empty | LiteLLM proxy URL and virtual key (`litellm`) |
 | `AZURE_STORAGE_CONNECTION_STRING` | empty | Blob access with the storage account's connection string |
 | `AZURE_STORAGE_CONTAINER_NAME` | `govchat-docs` | Blob container |
 | `AZURE_CLIENT_ID` | none | Client id of a user-assigned identity (read by the Azure SDK) |

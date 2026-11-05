@@ -1,6 +1,6 @@
 # Schrijfassistent-backend
 
-FastAPI-service voor de Schrijfassistent in GovChat. De backend slaat nota's en configuraties op in Azure Blob Storage, roept een Azure AI Foundry-agent aan (deployment `chat-agent`) en controleert bij elke aanvraag het Open WebUI-token van de gebruiker. Alleen de API zit in dit image; de frontend-bundle komt via het admin-image.
+FastAPI-service voor de Schrijfassistent in GovChat. De backend slaat nota's en configuraties op in Azure Blob Storage, roept een taalmodel aan via Azure AI Foundry of via LiteLLM (instelbaar met `AI_PROVIDER`, zie [AI-voorziening](#ai-voorziening)) en controleert bij elke aanvraag het Open WebUI-token van de gebruiker. Alleen de API zit in dit image; de frontend-bundle komt via het admin-image.
 
 ## In het kort
 
@@ -10,7 +10,7 @@ FastAPI-service voor de Schrijfassistent in GovChat. De backend slaat nota's en 
 | Poort | **8000** (gunicorn, `gunicorn.conf.py`) |
 | Health | `GET /health` (ook `/api/health`) geeft `{"status":"healthy","version":"1.1"}`. Gebruik dit voor liveness-, readiness- en startup-probes. |
 | API | `/api/v1/storage/...`, elke route vraagt `Authorization: Bearer <Open WebUI-token>` |
-| Afhankelijkheden | Open WebUI (tokencontrole), Azure Blob Storage, Azure AI Foundry-project |
+| Afhankelijkheden | Open WebUI (tokencontrole), Azure Blob Storage, en een AI-voorziening: Azure AI Foundry-project of LiteLLM |
 | Resources | 0,5 vCPU / 1 GiB is genoeg, met `WEB_CONCURRENCY=2` |
 
 ## Omgevingsvariabelen
@@ -22,7 +22,11 @@ Bron: `app/core/config.py` en `main.py`. In de container wordt alleen de omgevin
 | Variabele | Secret | Standaard | Wat |
 |---|---|---|---|
 | `OPENWEBUI_INTERNAL_URL` | nee | geen | Basis-URL van Open WebUI zoals de backend die bereikt (in Azure de interne URL van de Open WebUI Container App). **Verplicht: zonder deze waarde start de backend niet.** Per token roept de backend `GET {url}/api/v1/auths/` aan. |
-| `PROJECT_ENDPOINT` | **ja** | leeg | Project-endpoint van Azure AI Foundry, bijv. `https://<resource>.services.ai.azure.com/api/projects/<project>`. Het project moet een deployment `chat-agent` hebben. Zonder deze waarde start de app wel, maar de AI-routes werken niet (503 of fout). |
+| `AI_PROVIDER` | nee | `foundry` | Welke AI-voorziening de backend aanroept: `foundry` of `litellm`. Zie [AI-voorziening](#ai-voorziening). |
+| `AI_MODEL` | nee | Foundry: `chat-agent`; LiteLLM: geen | Naam van het model: bij Foundry de deployment-naam, bij LiteLLM de modelnaam zoals die in LiteLLM staat. **Bij `litellm` verplicht.** Hiermee hernoem je het model zonder codewijziging. |
+| `PROJECT_ENDPOINT` | **ja** | leeg | Alleen bij `AI_PROVIDER=foundry`. Project-endpoint van Azure AI Foundry, bijv. `https://<resource>.services.ai.azure.com/api/projects/<project>`. Het project moet een deployment met de naam uit `AI_MODEL` hebben. Zonder deze waarde start de app wel, maar de AI-routes werken niet (503 of fout). |
+| `LITELLM_URL` | nee | leeg | Alleen bij `AI_PROVIDER=litellm`. Basis-URL van de LiteLLM-proxy, met of zonder `/v1`. Op dev: `http://aca-flair-litellm-dev-schrwzr/v1` (interne naam in de Container Apps-omgeving). |
+| `LITELLM_API_KEY` | **ja** | leeg | Alleen bij `AI_PROVIDER=litellm`. Virtual key van LiteLLM voor deze backend. Nooit in code of `.env.example` zetten. |
 | `AZURE_STORAGE_CONNECTION_STRING` | **ja** | leeg | Connection string van het storage-account. Zonder deze waarde werkt opslaan en lezen van nota's en configuraties niet. |
 | `AZURE_STORAGE_CONTAINER_NAME` | nee | `govchat-docs` | Naam van de blob-container. Let op: `.env.example` vult `schrijfassistentdocs` in; kies er één per omgeving. |
 | `CORS_ALLOW_ORIGINS` | nee | `http://localhost:3000,http://localhost:5174` | Origins die de API vanuit de browser mogen aanroepen, kommagescheiden. Zet hier de GovChat-origin (bijv. `https://flair-dev.ai.flevoland.nl`). Niet nodig als browser en backend via Front Door dezelfde origin delen. |
@@ -42,13 +46,41 @@ Bron: `app/core/config.py` en `main.py`. In de container wordt alleen de omgevin
 | `API_V1_STR`, `PROJECT_NAME`, `SCM_DO_BUILD_DURING_DEPLOYMENT` | | Bestaan in de code; laten zoals ze zijn |
 | `SCHRIJFASSISTENT_ENV_FILE` | | Lokaal: pad naar een ander `.env`-bestand, of leeg om geen bestand te lezen |
 
-De twee secrets (`PROJECT_ENDPOINT`, `AZURE_STORAGE_CONNECTION_STRING`) horen als Container App-secret te staan, met de env var als `secretref`.
+De secrets (`AZURE_STORAGE_CONNECTION_STRING`, en `PROJECT_ENDPOINT` of `LITELLM_API_KEY` afhankelijk van `AI_PROVIDER`) horen als Container App-secret te staan, met de env var als `secretref`.
+
+## AI-voorziening
+
+Alle AI-aanroepen lopen via `app/services/ai_agent.py`. De routes (suggesties, titel, samenvatting) merken niet welke voorziening gebruikt wordt.
+
+| `AI_PROVIDER` | Nodig | Inloggen |
+|---|---|---|
+| `foundry` (standaard) | `PROJECT_ENDPOINT`, optioneel `AI_MODEL` (standaard `chat-agent`) | `DefaultAzureCredential`: managed identity in Azure, `az login` lokaal. Vraagt de Foundry-rollen hieronder. |
+| `litellm` | `LITELLM_URL`, `LITELLM_API_KEY`, `AI_MODEL` | De virtual key. Geen Azure-rol voor AI nodig. |
+
+Overstappen naar LiteLLM op de Container App:
+
+```bash
+# 1. de virtual key als Container App-secret (de waarde niet in een script of pipeline opslaan)
+az containerapp secret set -n <app> -g <resource group> --secrets litellm-api-key=<virtual key>
+#    of als Key Vault-referentie, zoals de andere secrets:
+#    --secrets litellm-api-key=keyvaultref:<key vault secret-URI>,identityref:<resource-id van de user-assigned identity>
+# 2. de env vars
+az containerapp update -n <app> -g <resource group> --set-env-vars \
+  AI_PROVIDER=litellm \
+  LITELLM_URL=http://aca-flair-litellm-dev-schrwzr/v1 \
+  AI_MODEL=<modelnaam in LiteLLM> \
+  LITELLM_API_KEY=secretref:litellm-api-key
+```
+
+Terug naar Foundry: `AI_PROVIDER=foundry` (of de variabele weghalen). `PROJECT_ENDPOINT` kan daarvoor blijven staan.
+
+In de log staat bij het opstarten `AI provider <foundry|litellm> initialized (model <naam>)`. Ontbreekt er iets, dan staat er een waarschuwing en geven de AI-routes 503.
 
 ## Azure-rechten
 
 De code gebruikt twee manieren van inloggen:
 
-- **AI Foundry** via `DefaultAzureCredential` (`app/services/ai_agent.py`). In Azure is dat de managed identity van de Container App; lokaal je `az login`.
+- **AI Foundry** (bij `AI_PROVIDER=foundry`) via `DefaultAzureCredential` (`app/services/ai_agent.py`). In Azure is dat de managed identity van de Container App; lokaal je `az login`. Bij `AI_PROVIDER=litellm` is de virtual key genoeg en zijn de AI-rollen hieronder niet nodig.
 - **Storage** via de connection string (`app/services/azure_storage.py`). De managed identity heeft daarvoor dus **geen** storage-rol nodig; de sleutel zit in de connection string.
 
 | Wie | Rol | Scope | Waarom |
@@ -63,13 +95,15 @@ Gebruik je een user-assigned identity, zet dan ook `AZURE_CLIENT_ID`.
 ## Netwerk
 
 - De backend moet `OPENWEBUI_INTERNAL_URL` kunnen bereiken. Kan dat niet, dan krijgt elke aanvraag 401 (log: `auth=denied`). Het TLS-certificaat van die URL moet geldig zijn voor de standaard trust store van Python.
-- Uitgaand naar het storage-account en het AI Foundry-endpoint.
+- Uitgaand naar het storage-account en de AI-voorziening (het AI Foundry-endpoint, of LiteLLM binnen dezelfde Container Apps-omgeving).
 - AI-aanroepen kunnen lang duren: gunicorn staat 230 s toe. Zet de origin-timeout van Front Door op 240 s (standaard 60 s geeft 504).
 - `upload-configuration` kan groter zijn dan de standaard WAF-limiet (128 KB); verhoog die voor alleen die route naar 12 MiB.
 
 ## Lokaal draaien
 
-Vereist: Python 3.12, Azure CLI (voor echte AI) en een draaiende Open WebUI (standaard `http://localhost:3000`).
+Vereist: Python 3.12, Azure CLI (voor echte AI via Foundry) en een draaiende Open WebUI (standaard `http://localhost:3000`).
+
+Foundry en LiteLLM zijn allebei alleen bereikbaar vanuit het Azure-netwerk. Kan je machine daar niet bij, start dan zonder `.env` met `schrijfassistent/dev/run-local-dev.sh`: die gebruikt opgenomen AI-antwoorden.
 
 ```bash
 cd schrijfassistent/backend
@@ -77,8 +111,8 @@ python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-cp .env.example .env      # en vul in: OPENWEBUI_INTERNAL_URL, PROJECT_ENDPOINT, AZURE_STORAGE_*
-az login                  # voor PROJECT_ENDPOINT (DefaultAzureCredential)
+cp .env.example .env      # en vul in: OPENWEBUI_INTERNAL_URL, AZURE_STORAGE_* en de AI-voorziening
+az login                  # alleen bij AI_PROVIDER=foundry (DefaultAzureCredential)
 
 uvicorn main:app --reload --port 8000
 curl http://localhost:8000/health
@@ -92,13 +126,13 @@ Met Docker:
 docker build -t schrijfassistent-api schrijfassistent/backend
 docker run --rm -p 8000:8000 \
   -e OPENWEBUI_INTERNAL_URL=http://host.docker.internal:3000 \
-  -e PROJECT_ENDPOINT=... \
+  -e AI_PROVIDER=litellm -e LITELLM_URL=... -e LITELLM_API_KEY=... -e AI_MODEL=... \
   -e AZURE_STORAGE_CONNECTION_STRING=... \
   -e AZURE_STORAGE_CONTAINER_NAME=govchat-docs \
   schrijfassistent-api
 ```
 
-In de container werkt `az login` niet; voor de AI-routes heb je dan een service principal nodig (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`, die `DefaultAzureCredential` oppakt) of je test de AI-routes buiten Docker.
+Met Foundry in plaats van LiteLLM zet je `-e PROJECT_ENDPOINT=...`. In de container werkt `az login` niet; voor Foundry heb je dan een service principal nodig (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`, die `DefaultAzureCredential` oppakt) of je test de AI-routes buiten Docker.
 
 Unittests (geen netwerk of storage nodig):
 
