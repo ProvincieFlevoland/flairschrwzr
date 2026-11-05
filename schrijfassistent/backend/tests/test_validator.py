@@ -5,6 +5,7 @@ import unittest
 
 
 from app.core.validator import (
+    parse_template_str,
     repair_json_str,
     sanitize_json_str,
     validate_agent_response,
@@ -66,6 +67,26 @@ class TestValidateAgentResponse(unittest.TestCase):
         self.assertEqual(out["Suggesties"][0]["Origineel"], "oud fragment")
         self.assertEqual(len(out["Suggesties"][0]["Herschrijvingen"]), 2)
 
+
+
+class TestParseTemplate(unittest.TestCase):
+    """Templates typed in the admin UI may use typographic quotes as JSON delimiters (seen on dev for agent_structuur)."""
+
+    def test_plain_template(self):
+        self.assertEqual(parse_template_str('{"Suggestie": ""}'), {"Suggestie": ""})
+
+    def test_template_with_typographic_delimiters(self):
+        raw = '{\u201cSuggesties\u201d: [{\u201cOrigineel\u201d: \u201c\u201d, \u201cSuggestie\u201d: \u201c\u201d}]}'
+        self.assertEqual(parse_template_str(raw), {"Suggesties": [{"Origineel": "", "Suggestie": ""}]})
+
+    def test_validation_works_with_typographic_template(self):
+        template = '{\u201cAanleiding\u201d: \u201c\u201d, \u201cSuggestie\u201d: \u201c\u201d}'
+        out = validate_agent_response(template, '{"Aanleiding": "a", "Suggestie": "b"}')
+        self.assertEqual(out["Suggestie"], "b")
+
+    def test_garbage_template_still_raises(self):
+        with self.assertRaises(ValueError):
+            validate_agent_response("geen json", '{"a": 1}')
 
 if __name__ == "__main__":
     unittest.main()

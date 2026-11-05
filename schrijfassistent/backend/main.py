@@ -1,15 +1,17 @@
 import logging
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import storage
-from app.core.config import settings
-from app.core.body_limit import BodyLimitMiddleware
-
+# Logging is configured before the app modules are imported: importing app.api.endpoints.storage creates the AI
+# client, and its INFO line ("AI provider <name> initialized (model <model>)") would otherwise be dropped.
 # The auth=<kind> lines of app.core.security are INFO; the Azure SDK's per-request logging stays off.
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logging.getLogger("azure").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
+
+from fastapi import FastAPI  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from app.api.endpoints import storage  # noqa: E402
+from app.core.config import settings  # noqa: E402
+from app.core.body_limit import BodyLimitMiddleware  # noqa: E402
 
 # Without a way to verify tokens every request would answer 401: refuse to start instead.
 if not settings.OPENWEBUI_INTERNAL_URL.strip():
