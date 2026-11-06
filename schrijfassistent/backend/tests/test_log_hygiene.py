@@ -40,11 +40,16 @@ class _FakeBlobs:
 
 class _FakeAgent:
     client = object()
+    model = "standaard-model"
+    selectable = False
+
+    def available_models(self):
+        return None
 
     def __init__(self, answer=None, error=None):
         self.answer, self.error = answer, error
 
-    def get_agent_response(self, prompt):
+    def get_agent_response(self, prompt, model=None):
         if self.error:
             raise self.error
         return self.answer
@@ -107,7 +112,7 @@ class LogHygieneTests(unittest.TestCase):
         seen = []
 
         class Echo(_FakeAgent):
-            def get_agent_response(self, prompt):
+            def get_agent_response(self, prompt, model=None):
                 seen.append(prompt)
                 return json.dumps({"Suggesties": []})
 

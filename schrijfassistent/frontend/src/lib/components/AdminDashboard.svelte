@@ -69,6 +69,19 @@
     let configListSyncing = false;
     import { storageFetch } from '$lib/apiClient.js';
     import { ROOT_EL_CONTEXT } from '$lib/hostBridge.js';
+    import {
+        MODELS_KEY,
+        CHAPTER_MODEL_TASKS,
+        NOTA_MODEL_TASKS,
+        SECTION_MODEL_TASKS,
+        setChoice,
+        clearChoices,
+        hasOwnModels,
+        inheritedModel,
+        chaptersWithOwnModels,
+        normaliseModelInfo
+    } from '$lib/aiModels.js';
+    import AiModelCard from '$lib/components/AiModelCard.svelte';
     import { MAX_IMPORT_BYTES, validateConfigId, workingConfigItemProblem, buildUploadPayload, configFromImport, parseImportText, exportFileName } from '$lib/adminConfig.js';
     import './AdminDashboard.css';
 
@@ -146,7 +159,8 @@
                         rules: [],
                         templateGuidelines: [],
                         isActive: meta.isActive !== undefined ? meta.isActive : true,
-                        ...(meta.b1Guidelines !== undefined ? { b1Guidelines: meta.b1Guidelines } : {})
+                        ...(meta.b1Guidelines !== undefined ? { b1Guidelines: meta.b1Guidelines } : {}),
+                        ...(meta[MODELS_KEY] !== undefined ? { [MODELS_KEY]: meta[MODELS_KEY] } : {})
                     });
                 } else {
                     const config = curr.configurations[idx];
@@ -155,6 +169,7 @@
                     if (meta.description !== undefined) config.description = meta.description;
                     if (meta.toneOfVoice) config.toneOfVoice = meta.toneOfVoice;
                     if (meta.b1Guidelines !== undefined) config.b1Guidelines = meta.b1Guidelines;
+                    if (meta[MODELS_KEY] !== undefined) config[MODELS_KEY] = meta[MODELS_KEY];
                     config.isActive = meta.isActive !== undefined ? meta.isActive : true;
                 }
                 return { ...curr };
@@ -301,6 +316,7 @@
 
              await fetchBackendConfigs();
              await fetchAgentDefaults();
+             await fetchAiModels();
         };
         init();
 
@@ -504,6 +520,99 @@
         } catch {
             // zonder standaardtekst blijft het veld gewoon bewerkbaar; alleen de hint ontbreekt
         }
+    }
+
+    /**
+     * The models a beheerder can choose per configuratie, kop and opdracht (`GET /ai-models`, LiteLLM `/v1/models` via the
+     * backend; the LiteLLM key never reaches the browser). Not selectable with Foundry: then every call uses AI_MODEL.
+     */
+    let aiModelInfo = normaliseModelInfo(null);
+    let aiModelInfoLoaded = false;
+
+    async function fetchAiModels() {
+        try {
+            const response = await storageFetch(`/ai-models`, readInit());
+            if (destroyed) return;
+            if (!response.ok) {
+                aiModelInfo = { ...normaliseModelInfo(null), error: 'De lijst met modellen kon niet worden opgehaald.' };
+                return;
+            }
+            aiModelInfo = normaliseModelInfo(await response.json());
+        } catch (error) {
+            if (isAbort(error)) return;
+            aiModelInfo = { ...normaliseModelInfo(null), error: 'De lijst met modellen kon niet worden opgehaald.' };
+        } finally {
+            if (!destroyed) aiModelInfoLoaded = true;
+        }
+    }
+
+    /** The model list for checking a choice, or null when it could not be fetched (then a stored choice is trusted). */
+    $: availableModels = aiModelInfo.selectable && !aiModelInfo.error ? aiModelInfo.models : null;
+
+    /** Stores a model choice on the configuration (`holder` = workingConfig) or a kop, and saves locally. */
+    function chooseModel(holder, task, value) {
+        setChoice(holder, task, value);
+        workingConfig = workingConfig;
+        updateConfig();
+    }
+
+    // The rows of the model blocks. The configuration and the model info are passed in (not read from the closure), so
+    // Svelte redraws the rows when either changes.
+    const std = (model) => `Standaard (${model || 'onbekend'})`;
+
+    /** Rows of the block at the top of an onderdeel (Hoofdstukken, B1-parameters, Woordenlijst). */
+    function sectionRows(section, config, info, available) {
+        return (SECTION_MODEL_TASKS[section] || []).map((t) => ({
+            task: t.key,
+            label: t.label,
+            inheritLabel: std(inheritedModel('configuratie-opdracht', t.key, null, config, info.defaultModel, available))
+        }));
+    }
+
+    /** Rows of the block on Eigenschappen: the model for everything, and the two opdrachten for the whole nota. */
+    function propertyRows(config, info, available) {
+        return [
+            { task: null, label: 'Standaardmodel', inheritLabel: `Systeemstandaard (${info.defaultModel || 'onbekend'})` },
+            ...NOTA_MODEL_TASKS.map((t) => ({
+                task: t.key,
+                label: t.label,
+                inheritLabel: std(inheritedModel('configuratie-opdracht', t.key, null, config, info.defaultModel, available))
+            }))
+        ];
+    }
+
+    const KOP_DEFAULT_ROW = [{ task: null, label: 'Model voor deze kop', inheritLabel: 'Zoals ingesteld bij de onderdelen' }];
+
+    /** Per-taak rows of a kop (optional refinement). */
+    function kopTaskRows(chapter, config, info, available) {
+        return CHAPTER_MODEL_TASKS.map((t) => ({
+            task: t.key,
+            label: t.label,
+            inheritLabel: std(inheritedModel('kop-opdracht', t.key, chapter, config, info.defaultModel, available))
+        }));
+    }
+
+    /** Ids of the koppen whose "Eigen AI-model" switch is on while nothing is chosen yet. */
+    let ownModelKoppen = new Set();
+
+    /** The switch of a kop: off removes every model choice of that kop, so it follows the onderdelen again. */
+    function toggleOwnModel(chapter, on) {
+        const next = new Set(ownModelKoppen);
+        if (on) {
+            next.add(chapter.id);
+        } else {
+            next.delete(chapter.id);
+            clearChoices(chapter);
+            workingConfig = workingConfig;
+            updateConfig();
+        }
+        ownModelKoppen = next;
+    }
+
+    /** True when a kop has a per-taak choice, so its "Per taak" part opens by itself. */
+    function hasTaskChoice(chapter) {
+        const tasks = chapter && chapter[MODELS_KEY] && chapter[MODELS_KEY].opdrachten;
+        return !!tasks && Object.values(tasks).some((v) => typeof v === 'string' && v.trim());
     }
 
     /** True when an instruction field is empty, so the backend uses its default text. */
@@ -1221,6 +1330,18 @@
                                             <h3>Template Structuur</h3>
                                             <button class="sa-btn sa-btn-primary sa-btn-sm" on:click={addSection}><i class="ph ph-plus"></i> Sectie</button>
                                         </div>
+                                        {#if aiModelInfo.selectable}
+                                            <AiModelCard
+                                                title="AI-model voor de hoofdstukken"
+                                                intro="Welk AI-model controleert de structuur en de spelling van de hoofdstukken? Twijfel je, laat het dan op Standaard staan. Wil één kop iets anders, zet dan bij die kop Eigen AI-model aan."
+                                                idPrefix="section-model-hoofdstukken"
+                                                rows={sectionRows('hoofdstukken', workingConfig, aiModelInfo, availableModels)}
+                                                holder={workingConfig}
+                                                info={aiModelInfo}
+                                                available={availableModels}
+                                                onchoose={(task, value) => chooseModel(workingConfig, task, value)}
+                                            />
+                                        {/if}
                                         <div class="template-grid">
                                             {#each workingConfig.templateGuidelines || [] as guideline, i}
                                                 {@const isExpanded = expandedSections.has(guideline.id)}
@@ -1306,6 +1427,46 @@
                                                             </div>
                                                         </div>
 
+                                                        {#if aiModelInfo.selectable}
+                                                            {@const ownOn = hasOwnModels(guideline) || ownModelKoppen.has(guideline.id)}
+                                                            <div class="{'sa-admin-dashboard-mt-4'} {'sa-admin-dashboard-pt-4'} {'sa-admin-dashboard-border-t'}">
+                                                                <label class={'sa-admin-dashboard-ai-switch'}>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={ownOn}
+                                                                        on:change={(e) => toggleOwnModel(guideline, e.currentTarget.checked)}
+                                                                    />
+                                                                    <span><i class="ph ph-sparkle" aria-hidden="true"></i> Eigen AI-model voor deze kop</span>
+                                                                </label>
+                                                                {#if !ownOn}
+                                                                    <p class={'sa-admin-dashboard-agent-default-hint'}>Uit: deze kop gebruikt de AI-modellen die bij de onderdelen zijn ingesteld.</p>
+                                                                {:else}
+                                                                    <AiModelCard
+                                                                        compact
+                                                                        idPrefix="model-{guideline.id}"
+                                                                        rows={KOP_DEFAULT_ROW}
+                                                                        holder={guideline}
+                                                                        info={aiModelInfo}
+                                                                        available={availableModels}
+                                                                        onchoose={(task, value) => chooseModel(guideline, task, value)}
+                                                                    >
+                                                                        <details class={'sa-admin-dashboard-ai-card-more'} open={hasTaskChoice(guideline)}>
+                                                                            <summary>Per taak instellen (optioneel)</summary>
+                                                                            <AiModelCard
+                                                                                compact
+                                                                                idPrefix="model-{guideline.id}"
+                                                                                rows={kopTaskRows(guideline, workingConfig, aiModelInfo, availableModels)}
+                                                                                holder={guideline}
+                                                                                info={aiModelInfo}
+                                                                                available={availableModels}
+                                                                                onchoose={(task, value) => chooseModel(guideline, task, value)}
+                                                                            />
+                                                                        </details>
+                                                                    </AiModelCard>
+                                                                {/if}
+                                                            </div>
+                                                        {/if}
+
                                                         <div class="agent-fields {'sa-admin-dashboard-mt-4'} {'sa-admin-dashboard-pt-4'} {'sa-admin-dashboard-border-t'}">
                                                             <label class={'sa-admin-dashboard-section-sub-label'}>AI Agent Instructies</label>
                                                             <div class="{'sa-admin-dashboard-field'} {'sa-admin-dashboard-mt-2'}">
@@ -1375,6 +1536,18 @@
                                                     Wis overrides (productstandaard)
                                                 </button>
                                             </div>
+                                        {#if aiModelInfo.selectable}
+                                            <AiModelCard
+                                                title="AI-model voor Direct Duidelijk"
+                                                intro="De meters hieronder rekent de Schrijfassistent zelf uit, zonder AI. Dit AI-model maakt de Direct Duidelijk-suggesties (helder en begrijpelijk schrijven)."
+                                                idPrefix="section-model-b1-parameters"
+                                                rows={sectionRows('b1-parameters', workingConfig, aiModelInfo, availableModels)}
+                                                holder={workingConfig}
+                                                info={aiModelInfo}
+                                                available={availableModels}
+                                                onchoose={(task, value) => chooseModel(workingConfig, task, value)}
+                                            />
+                                        {/if}
                                         </div>
                                         <div class={'sa-admin-dashboard-b1-guidelines-panel'}>
                                             <p class={'sa-admin-dashboard-b1-guidelines-hint'}>
@@ -1560,6 +1733,9 @@
                                             <h3>Verboden Terminologie</h3>
                                             <button class="sa-btn sa-btn-primary sa-btn-sm" on:click={() => addRule('Terminologie')}><i class="ph ph-plus"></i> Term</button>
                                         </div>
+                                        {#if aiModelInfo.selectable}
+                                            <p class={'sa-admin-dashboard-ai-none'}><i class="ph ph-info" aria-hidden="true"></i> Dit onderdeel gebruikt geen AI: de controle gebeurt direct in de editor. Je hoeft hier dus geen AI-model te kiezen.</p>
+                                        {/if}
                                         <!-- `bind:value` on an array field shows "a,b" and, on the first edit, stores the typed STRING in `triggerWords` / `alternatives`;
                                              the save sends that string. The sidebar reads such a string as a comma list (adminConfig.js). -->
                                         <table class={'sa-admin-dashboard-admin-table'}>
@@ -1583,6 +1759,9 @@
                                             <h3>B1 Taalregels</h3>
                                             <button class="sa-btn sa-btn-primary sa-btn-sm" on:click={() => addRule('B1 Taal')}><i class="ph ph-plus"></i> Regel</button>
                                         </div>
+                                        {#if aiModelInfo.selectable}
+                                            <p class={'sa-admin-dashboard-ai-none'}><i class="ph ph-info" aria-hidden="true"></i> Dit onderdeel gebruikt geen AI: de controle gebeurt direct in de editor. Je hoeft hier dus geen AI-model te kiezen.</p>
+                                        {/if}
                                         <!-- `bind:value` on an array field shows "a,b" and, on the first edit, stores the typed STRING in `triggerWords` / `alternatives`;
                                              the save sends that string. The sidebar reads such a string as a comma list (adminConfig.js). -->
                                         <table class={'sa-admin-dashboard-admin-table'}>
@@ -1681,6 +1860,31 @@
                                                 </label>
                                             </div>
 
+                                            {#if aiModelInfo.selectable}
+                                                <AiModelCard
+                                                    title="AI-model van deze configuratie"
+                                                    intro="Het standaardmodel geldt voor alles waar je bij een onderdeel of kop niets anders kiest. Titel en samenvatting gelden voor de hele nota."
+                                                    idPrefix="config-model"
+                                                    rows={propertyRows(workingConfig, aiModelInfo, availableModels)}
+                                                    holder={workingConfig}
+                                                    info={aiModelInfo}
+                                                    available={availableModels}
+                                                    onchoose={(task, value) => chooseModel(workingConfig, task, value)}
+                                                >
+                                                    {@const ownKoppen = chaptersWithOwnModels(workingConfig.templateGuidelines)}
+                                                    {#if ownKoppen.length}
+                                                        <p class={'sa-admin-dashboard-ai-card-intro'}>Koppen met een eigen AI-model:</p>
+                                                        <ul class={'sa-admin-dashboard-model-overrides'}>
+                                                            {#each ownKoppen as kop}
+                                                                <li><strong>{kop.id}{kop.titel ? ` ${kop.titel}` : ''}</strong>: {kop.choices.join(', ')}</li>
+                                                            {/each}
+                                                        </ul>
+                                                    {/if}
+                                                </AiModelCard>
+                                            {:else if aiModelInfoLoaded && aiModelInfo.defaultModel}
+                                                <p class={'sa-admin-dashboard-help-text'}>AI-model: {aiModelInfo.defaultModel}. Een ander model kiezen kan alleen als de Schrijfassistent via LiteLLM werkt.</p>
+                                            {/if}
+
                                             <div class={'sa-admin-dashboard-properties-info'}>
                                                 <i class="ph ph-info"></i>
                                                 <div>
@@ -1696,6 +1900,18 @@
                                             <h3>B1 Woordenlijst</h3>
                                             <span class="text-muted" style="font-size:0.8rem">{(workingConfig.woordenlijst || []).length} woorden</span>
                                         </div>
+                                        {#if aiModelInfo.selectable}
+                                            <AiModelCard
+                                                title="AI-model voor de woordenlijst"
+                                                intro="Dit AI-model zoekt moeilijke of vage woorden in de tekst en stelt eenvoudiger woorden voor."
+                                                idPrefix="section-model-woordenlijst"
+                                                rows={sectionRows('woordenlijst', workingConfig, aiModelInfo, availableModels)}
+                                                holder={workingConfig}
+                                                info={aiModelInfo}
+                                                available={availableModels}
+                                                onchoose={(task, value) => chooseModel(workingConfig, task, value)}
+                                            />
+                                        {/if}
 
                                         <div class={'sa-admin-dashboard-word-add-row'}>
                                             <input

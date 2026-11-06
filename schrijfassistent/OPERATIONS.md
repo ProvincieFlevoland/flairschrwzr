@@ -29,7 +29,7 @@ The `.env` file is not read in the container (`SCHRIJFASSISTENT_IN_CONTAINER=1` 
 | `AZURE_STORAGE_CONTAINER_NAME` | no | `govchat-docs` |
 | `AZURE_CLIENT_ID` | no | client id of the user-assigned identity, so `DefaultAzureCredential` picks it |
 | `AI_PROVIDER` | no | `foundry` (default) or `litellm` |
-| `AI_MODEL` | no | model name: the Foundry deployment (default `chat-agent`) or the model name in LiteLLM (required for `litellm`) |
+| `AI_MODEL` | no | model name: the Foundry deployment (default `chat-agent`) or the model name in LiteLLM (required for `litellm`). With `litellm` it is the system default: a beheerder can choose other models per configuration, kop and opdracht in the configurator, from the models the LiteLLM key may use (see backend/README.md) |
 | `PROJECT_ENDPOINT` | yes, Container App secret | only for `foundry`: endpoint of the AI Foundry project that hosts the deployment in `AI_MODEL` |
 | `LITELLM_URL` | no | only for `litellm`: on dev `http://aca-flair-litellm-dev-schrwzr/v1` |
 | `LITELLM_API_KEY` | yes, Container App secret | only for `litellm`: the LiteLLM virtual key of this backend |
@@ -106,6 +106,8 @@ Container console logs go to the environment's Log Analytics workspace. The guni
 | `config-write` | a beheerder saved or deleted a configuration |
 | `role-check=denied` | a non-beheerder tried to write a configuration |
 | `Conflict on nota` | a nota save was refused with 409 |
+| `ai-call task=... model=... source=...` | one line per AI call: the model used and where the choice came from (configurator, or `standaard` for `AI_MODEL`); never nota text |
+| `staat niet in de lijst van de AI-voorziening` / `was refused by` | a model chosen in the configurator is not offered by LiteLLM (anymore); the call fell back to the next level or `AI_MODEL` |
 
 Saved queries are in `schrijfassistent/ops/kql/`:
 

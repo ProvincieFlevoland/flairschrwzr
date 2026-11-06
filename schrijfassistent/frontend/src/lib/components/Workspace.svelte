@@ -907,10 +907,12 @@
         titleGenInFlight = true;
         const gen = getGeneration();
         try {
+            // config_id: the configuration whose model choice applies to the title (Eigenschappen in the configurator).
+            const configId = live.configId || live.templateVersion;
             const response = await storageFetch(`/generate-nota-title`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chapters })
+                body: JSON.stringify(configId ? { chapters, config_id: configId } : { chapters })
             });
             if (!response.ok || !isCurrentGeneration(gen)) return;
 

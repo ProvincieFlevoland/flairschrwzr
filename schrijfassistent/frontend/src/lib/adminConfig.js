@@ -3,6 +3,7 @@
  * is sent to the backend, what is accepted from a file and what is shown to an auteur, so they can be tested
  * without a DOM.
  */
+import { MODELS_KEY, cleanModelsBlock } from './aiModels.js';
 
 /** Blob folders that are not configurations. `GET /configurations` hides `notas`; a save under that id would wipe every nota. */
 const RESERVED_CONFIG_IDS = ['notas'];
@@ -107,6 +108,9 @@ export function buildUploadPayload(workingConfig, currentId) {
     if (workingConfig.b1Guidelines !== undefined && workingConfig.b1Guidelines !== null) {
         payloadInner.b1Guidelines = workingConfig.b1Guidelines;
     }
+    // the model choice of the configuration (src/lib/aiModels.js); the koppen carry their own block in their item.
+    const models = cleanModelsBlock(workingConfig[MODELS_KEY]);
+    if (models) payloadInner[MODELS_KEY] = models;
     return { [currentId]: payloadInner };
 }
 
@@ -233,6 +237,7 @@ export function configFromImport(parsed, sortFn, now = Date.now()) {
         rules,
         woordenlijst,
         ...(imported.b1Guidelines !== undefined ? { b1Guidelines: imported.b1Guidelines } : {}),
+        ...(cleanModelsBlock(imported[MODELS_KEY]) ? { [MODELS_KEY]: cleanModelsBlock(imported[MODELS_KEY]) } : {}),
     };
 }
 
