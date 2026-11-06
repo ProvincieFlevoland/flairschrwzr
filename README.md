@@ -244,7 +244,7 @@ open-webui-help-overlay/
 ├── help-content.json             # Standaard handleiding (fallback)
 ├── apps.json                     # Standaard apps config (fallback)
 ├── docker-compose.govchat.yaml   # Productie config (volledig voorbeeld)
-├── docker-compose.local.yaml     # Lokale ontwikkelomgeving (Open WebUI + admin)
+├── docker-compose.local.yaml     # Lokale stack (Open WebUI, admin, backend en emulator)
 ├── schrijfassistent/             # Schrijfassistent: frontend/, backend/, dev/, tests/, ops/, API.md, OPERATIONS.md
 ├── docs/                         # Ontwerp- en ontwikkelaarsdocumentatie
 ├── .azuredevops/dev/             # Build- en uitrolpipeline
@@ -301,14 +301,13 @@ Beveiligd met een wachtwoord via de `GOVCHAT_ADMIN_PASSWORD` environment variabl
 ## Lokaal draaien
 
 ```bash
-# Open WebUI + admin container (Schrijfassistent-bundle wordt in het image gebouwd)
+# Volledige lokale stack; Compose bouwt ook de basis voor het backend-dev-image
 docker compose -f docker-compose.local.yaml up --build
-
-# Schrijfassistent-backend op http://localhost:8011 (zie schrijfassistent/README.md)
-bash schrijfassistent/dev/run-local-dev.sh
 ```
 
-Open WebUI draait dan op http://localhost:3000 en het admin panel op http://localhost:3002.
+Open WebUI draait dan op http://localhost:3000, het admin panel op http://localhost:3002
+en de backend op http://localhost:8011. De bestaande host-backendroute blijft beschikbaar;
+zie [Lokale ontwikkelomgeving](docs/LOCAL-DEVELOPMENT.md).
 
 ## Tests en build
 

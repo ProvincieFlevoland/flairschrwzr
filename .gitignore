@@ -10,6 +10,7 @@ admin/.env
 # OS / editor
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
 
 
 # Schrijfassistent bundle output (built inside the admin image; never committed)

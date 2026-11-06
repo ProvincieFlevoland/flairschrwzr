@@ -1,0 +1,23 @@
+# Backend-only development image; the frontend is built by admin/Dockerfile.
+# Also supplies the local blob emulator and fixture initialization.
+ARG BACKEND_IMAGE=schrijfassistent-api:local
+FROM ${BACKEND_IMAGE}
+
+USER root
+COPY schrijfassistent/dev/mock /opt/dev/mock
+COPY schrijfassistent/dev/fixtures /opt/dev/fixtures
+COPY schrijfassistent/dev/blobemu/server.py /opt/dev/blobemu.py
+COPY schrijfassistent/dev/seed-container.py /opt/dev/seed-container.py
+COPY schrijfassistent/dev/start-backend.py /opt/dev/start-backend.py
+RUN chmod -R a+rX /opt/dev \
+ && mkdir -p /data /logs \
+ && chown app:app /data /logs
+USER app
+
+ENV PYTHONPATH=/opt/dev/mock \
+    AI_MOCK=1 \
+    AI_MOCK_FIXTURES_DIR=/opt/dev/fixtures \
+    AI_MOCK_LOG=/logs/ai-mock-calls.jsonl
+
+# Initialize local fixtures before starting the same server as production.
+CMD ["python", "/opt/dev/start-backend.py"]
