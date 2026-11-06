@@ -16,7 +16,12 @@ environment variable AI_MOCK_VARIANT. The marker travels inside the request, so 
 Docker as well.
 
 Every call is appended as a JSON line to the file named by AI_MOCK_LOG (default dev/.ai-mock-calls.jsonl), so
-browser scenarios can assert call order.
+browser scenarios can assert call order. The line holds the model the backend asked for, so the model choice per
+configuratie, kop and opdracht can be checked locally too.
+
+The mock behaves like LiteLLM for the model choice: `selectable` is true and `list_models()` gives AI_MOCK_MODELS
+(comma separated, default "mock-snel,mock-slim,mock-standaard"); the default model is AI_MOCK_MODEL
+(default "mock-standaard").
 """
 from __future__ import annotations
 
@@ -80,9 +85,20 @@ class MockAIAgentService:
         self.project_client = None
         self.client = object()
         self.calls = 0
+        self.provider = "mock"
+        self.model = os.environ.get("AI_MOCK_MODEL", "mock-standaard")
+        self.selectable = True
 
-    def get_agent_response(self, user_message: str) -> str:
+    def list_models(self, force: bool = False) -> list[str]:
+        raw = os.environ.get("AI_MOCK_MODELS", "mock-snel,mock-slim,mock-standaard")
+        return sorted({m.strip() for m in raw.split(",") if m.strip()})
+
+    def available_models(self):
+        return self.list_models()
+
+    def get_agent_response(self, user_message: str, model: str | None = None) -> str:
         self.calls += 1
+        self.last_model = (model or "").strip() or self.model
         prompt = user_message or ""
         assignment, chapter = classify(prompt)
         variant = os.environ.get("AI_MOCK_VARIANT", "") or None
@@ -114,7 +130,7 @@ class MockAIAgentService:
             with _LOG.open("a", encoding="utf-8") as fh:
                 fh.write(json.dumps({
                     "ts": time.time(), "assignment": assignment, "chapter": chapter,
-                    "variant": variant, "prompt_chars": len(prompt),
+                    "variant": variant, "model": getattr(self, "last_model", self.model), "prompt_chars": len(prompt),
                     "user_input": prompt.split("GEBRUIKER INPUT: ", 1)[1][:200] if "GEBRUIKER INPUT: " in prompt else None,
                 }, ensure_ascii=False) + "\n")
         except Exception:

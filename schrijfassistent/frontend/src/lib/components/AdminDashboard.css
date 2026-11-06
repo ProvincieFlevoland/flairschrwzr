@@ -668,3 +668,122 @@
 .sa-root .sa-admin-dashboard-properties-info strong {
     color: var(--sa-text-main);
 }
+
+/* AI-modellen: model choice per onderdeel, kop and opdracht (AiModelCard.svelte, src/lib/aiModels.js). */
+.sa-root .sa-admin-dashboard-ai-card {
+    border: 1px solid var(--sa-border-color);
+    border-radius: 10px;
+    background: var(--sa-bg-main);
+    padding: 14px 16px;
+    margin: 0 0 18px;
+}
+.sa-root .sa-admin-dashboard-ai-card--compact {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 8px 0 0;
+}
+.sa-root .sa-admin-dashboard-ai-card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--sa-text-main);
+}
+.sa-root .sa-admin-dashboard-ai-card-head i {
+    color: var(--sa-primary-text);
+}
+.sa-root .sa-admin-dashboard-ai-card-intro {
+    margin: 6px 0 10px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--sa-text-muted);
+}
+.sa-root .sa-admin-dashboard-ai-card-rows {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px 16px;
+}
+.sa-root .sa-admin-dashboard-ai-card-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.sa-root .sa-admin-dashboard-ai-card-row label {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--sa-text-main);
+}
+.sa-root .sa-admin-dashboard-model-select {
+    width: 100%;
+    font-size: 0.82rem;
+    padding: 7px 8px;
+    border: 1px solid var(--sa-border-color);
+    border-radius: 6px;
+    background: var(--sa-bg-main);
+    color: var(--sa-text-main);
+}
+.sa-root .sa-admin-dashboard-model-warning {
+    margin: 4px 0 0;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--sa-color-danger, #c53030);
+}
+.sa-root .sa-admin-dashboard-ai-card-more {
+    margin-top: 10px;
+    font-size: 0.8rem;
+}
+.sa-root .sa-admin-dashboard-ai-card-more summary {
+    cursor: pointer;
+    color: var(--sa-primary-text);
+    font-weight: 500;
+}
+.sa-root .sa-admin-dashboard-ai-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--sa-text-main);
+    cursor: pointer;
+}
+.sa-root .sa-admin-dashboard-ai-switch i {
+    color: var(--sa-primary-text);
+}
+.sa-root .sa-admin-dashboard-ai-none {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    font-size: 0.8rem;
+    color: var(--sa-text-muted);
+}
+.sa-root .sa-admin-dashboard-model-overrides {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--sa-text-main);
+}
+/* inside a kop the generic card-content label and input rules (block, uppercase, full width) would apply */
+.sa-root .sa-admin-dashboard-card-content label.sa-admin-dashboard-ai-switch {
+    display: inline-flex;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: none;
+    color: var(--sa-text-main);
+}
+.sa-root .sa-admin-dashboard-card-content .sa-admin-dashboard-ai-switch input {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    flex: none;
+}
+.sa-root .sa-admin-dashboard-card-content .sa-admin-dashboard-ai-card-row label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: none;
+    color: var(--sa-text-main);
+}

@@ -38,11 +38,16 @@ class _Blobs:
 
 class _Agent:
     client = object()
+    model = "standaard-model"
+    selectable = False
+
+    def available_models(self):
+        return None
 
     def __init__(self):
         self.prompts = []
 
-    def get_agent_response(self, prompt):
+    def get_agent_response(self, prompt, model=None):
         self.prompts.append(prompt)
         return ANSWER
 

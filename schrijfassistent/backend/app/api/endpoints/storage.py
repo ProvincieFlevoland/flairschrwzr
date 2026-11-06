@@ -8,6 +8,7 @@ from app.core.security import get_current_user, require_beheerder
 from app.core.blob_guard import check_segment, check_config_id, check_item_id, check_upload_configuration
 from app.core.validator import validate_agent_response
 from app.core.agent_defaults import DEFAULT_INSTRUCTIONS, resolve_instruction
+from app.core.model_resolver import resolve_model, check_upload_models, TITLE_TASK, SUMMARY_TASK
 from typing import Dict, Any, Optional
 import json
 import logging
@@ -139,6 +140,7 @@ def upload_configuration(data: Dict[str, Any] = Body(...), user: Dict[str, Any] 
     """
     # every key and id that becomes part of a blob name is checked before anything is deleted or written.
     check_upload_configuration(data)
+    check_upload_models(data)
     try:
         if not data:
             raise HTTPException(status_code=400, detail="Empty JSON body")
@@ -213,6 +215,55 @@ def get_agent_defaults():
 
     Alleen-lezen; de beheeromgeving toont ze bij een leeg veld en kan ze overnemen."""
     return {"instructions": dict(DEFAULT_INSTRUCTIONS)}
+
+
+def _config_metadata(config_id: Optional[str]) -> Dict[str, Any]:
+    """metadata.json of a configuration, or {} when there is none (an AI call then uses AI_MODEL)."""
+    if not config_id:
+        return {}
+    try:
+        data = json.loads(azure_storage.download_blob(f"{config_id}/metadata.json").decode("utf-8"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _model_for(task: str, config_id: Optional[str], config: Dict[str, Any], chapter: Optional[Dict[str, Any]] = None,
+               chapter_id: Optional[str] = None) -> Optional[str]:
+    """The model the beheerder chose for this call (app/core/model_resolver.py), or None for AI_MODEL.
+
+    Logs one line per AI call with the model and where the choice came from; never the nota text. Only LiteLLM offers
+    a choice: with Foundry every call keeps AI_MODEL (the deployment), whatever a configuration holds."""
+    if ai_agent.selectable:
+        model, source = resolve_model(task, chapter, config, ai_agent.available_models())
+    else:
+        model, source = None, "standaard"
+    logger.info(
+        "ai-call task=%s model=%s source=%s config=%r chapter=%r",
+        task, model or ai_agent.model, source, config_id, chapter_id,
+    )
+    return model
+
+
+@router.get("/ai-models")
+def get_ai_models(user: Dict[str, Any] = Depends(require_beheerder)):
+    """De modellen die de beheerder per configuratie, kop en opdracht kan kiezen (alleen beheerder).
+
+    Met LiteLLM is dat de lijst van `/v1/models` voor de key van deze backend; de key zelf komt nooit in de browser.
+    `selectable` is false bij Foundry: dan is er alleen het standaardmodel. Is de AI-voorziening niet bereikbaar, dan
+    antwoordt de route toch 200 met een lege lijst en een `error`, zodat de configurator bestaande keuzes kan tonen."""
+    answer = {
+        "provider": ai_agent.provider,
+        "default": ai_agent.model,
+        "selectable": bool(ai_agent.selectable),
+        "models": [],
+    }
+    try:
+        answer["models"] = ai_agent.list_models()
+    except Exception as e:
+        logger.warning("Listing AI models failed: %s", _log_safe_error(e))
+        answer["error"] = "De lijst met modellen kon niet worden opgehaald bij de AI-voorziening. Probeer het later opnieuw."
+    return answer
 
 
 @router.post("/generate-agent-response")
@@ -308,12 +359,14 @@ def generate_agent_response(
                 "Voor citaten of nadruk binnen een waarde: gebruik enkele rechte quotes ('...')."
             )
 
-        # 4. Call the AI Agent with the instruction and user message
+        # 4. Call the AI Agent with the instruction and user message, on the model the beheerder chose for this
+        #    kop and opdracht (or the configuration's choice, or AI_MODEL).
         if ai_agent.client:
             try:
+                model = _model_for(assignment, config_id, _config_metadata(config_id), chapter_data, chapter_id)
                 # We combine the instruction from storage with the user's message
                 full_prompt = f"INSTRUCTION: {instruction}\n\n{output_rules}\n\nGEBRUIKER INPUT: {user_message}"
-                ai_response_text = ai_agent.get_agent_response(full_prompt)
+                ai_response_text = ai_agent.get_agent_response(full_prompt, model=model)
 
                 # 5. If a template exists, validate the response
                 if template:
@@ -587,12 +640,24 @@ def delete_nota_blob(nota_id: str):
         raise HTTPException(status_code=500, detail=STORAGE_ERROR_TEXT)
 
 
+def _optional_config_id(body: Dict[str, Any]) -> Optional[str]:
+    """The optional `config_id` of a nota-wide AI call (title, summary): the configuration whose model choice applies."""
+    config_id = body.get("config_id")
+    if config_id is None or config_id == "":
+        return None
+    if not isinstance(config_id, str):
+        raise HTTPException(status_code=400, detail="config_id moet tekst zijn.")
+    check_config_id(config_id)
+    return config_id
+
+
 @router.post("/generate-nota-title")
 def generate_nota_title(body: Dict[str, Any] = Body(...)):
     """
     Generates a short Dutch GS-nota title from the supplied chapters.
-    Body: { "chapters": [{ "title": str, "content": str }, ...] }
+    Body: { "chapters": [{ "title": str, "content": str }, ...], "config_id": str (optional, for the model choice) }
     """
+    config_id = _optional_config_id(body)
     chapters = body.get("chapters", [])
     if not chapters:
         raise HTTPException(status_code=400, detail="Geen hoofdstukken aangeleverd.")
@@ -630,7 +695,7 @@ def generate_nota_title(body: Dict[str, Any] = Body(...)):
         return " ".join(words)
 
     try:
-        raw = ai_agent.get_agent_response(prompt)
+        raw = ai_agent.get_agent_response(prompt, model=_model_for(TITLE_TASK, config_id, _config_metadata(config_id)))
         title = _clamp_title(raw)
         if not title:
             raise HTTPException(status_code=500, detail="Lege titel ontvangen van AI.")
@@ -646,8 +711,9 @@ def generate_nota_title(body: Dict[str, Any] = Body(...)):
 def summarize_nota(body: Dict[str, Any] = Body(...)):
     """
     Generates a short summary of a GS-nota (government note) from the supplied chapters.
-    Body: { "chapters": [{ "title": str, "content": str }, ...] }
+    Body: { "chapters": [{ "title": str, "content": str }, ...], "config_id": str (optional, for the model choice) }
     """
+    config_id = _optional_config_id(body)
     chapters = body.get("chapters", [])
     if not chapters:
         raise HTTPException(status_code=400, detail="Geen hoofdstukken aangeleverd.")
@@ -671,7 +737,7 @@ def summarize_nota(body: Dict[str, Any] = Body(...)):
         return "\n".join(lines[:3])
 
     try:
-        raw = ai_agent.get_agent_response(prompt)
+        raw = ai_agent.get_agent_response(prompt, model=_model_for(SUMMARY_TASK, config_id, _config_metadata(config_id)))
         summary = _clamp_three_lines(raw)
         return {"summary": summary}
     except Exception as e:

@@ -190,10 +190,12 @@
         }
 
         try {
+            // config_id: the configuration whose model choice applies to the summary (Eigenschappen in the configurator).
+            const configId = selectedNota.configId || selectedNota.templateVersion;
             const response = await storageFetch(`/summarize-nota`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chapters })
+                body: JSON.stringify(configId ? { chapters, config_id: configId } : { chapters })
             });
             if (!response.ok) {
                 const err = await response.json().catch(() => ({}));

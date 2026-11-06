@@ -76,6 +76,21 @@ Terug naar Foundry: `AI_PROVIDER=foundry` (of de variabele weghalen). `PROJECT_E
 
 In de log staat bij het opstarten `AI provider <foundry|litellm> initialized (model <naam>)`. Ontbreekt er iets, dan staat er een waarschuwing en geven de AI-routes 503.
 
+### Model kiezen per configuratie, kop en opdracht
+
+Met `AI_PROVIDER=litellm` kan een beheerder in de configurator een ander model kiezen dan `AI_MODEL`: bovenaan elk onderdeel dat AI gebruikt (Hoofdstukken: structuur en spelling; B1-parameters: Direct Duidelijk; Woordenlijst; Eigenschappen: standaardmodel, titel en samenvatting) en per kop met de schakelaar **Eigen AI-model voor deze kop**. Terminologie, Regels en de B1-meters gebruiken geen AI, bijvoorbeeld een snel, goedkoop model voor spelling en woordenlijst en een slim model voor structuur en samenvatting. De keuze staat in de configuratie in Storage, in `metadata.json` en in de JSON van een kop, in dezelfde vorm:
+
+```json
+"aiModellen": { "standaard": "<model>", "opdrachten": { "agent_spelling_grammatica": "<model>", "titel": "<model>" } }
+```
+
+De meest specifieke keuze wint (`app/core/model_resolver.py`): kop + opdracht, kop, configuratie + opdracht, configuratie, en anders `AI_MODEL`. Titel en samenvatting (`titel`, `samenvatting`) kies je alleen op de configuratie; de frontend stuurt daarvoor `config_id` mee. Zonder `aiModellen` werkt een configuratie zoals voorheen.
+
+- De keuzelijst komt uit `GET /api/v1/storage/ai-models` (alleen beheerder). Die vraagt LiteLLM `/v1/models` met de key van de backend, dus de lijst bevat alleen de modellen die die key mag gebruiken. De key komt niet in de browser. De lijst wordt 5 minuten bewaard.
+- Welke modellen beschikbaar zijn, regel je dus in LiteLLM op de key van de Schrijfassistent. Tip: gebruik aliassen met een betekenis (bijv. `schrwzr-snel`, `schrwzr-slim`), dan hoeft geen configuratie aangepast te worden als het onderliggende model wisselt.
+- Staat een gekozen model niet (meer) in de lijst, of weigert LiteLLM het, dan valt de backend terug op het volgende niveau (uiteindelijk `AI_MODEL`) en zet een waarschuwing in de log. De schrijver merkt er niets van.
+- Met `AI_PROVIDER=foundry` is er geen keuze: alle aanroepen gebruiken `AI_MODEL`, ook als een configuratie `aiModellen` heeft.
+
 ## Azure-rechten
 
 De code gebruikt twee manieren van inloggen:
@@ -142,5 +157,7 @@ pytest tests
 ```
 
 ## Logging
+
+Eén regel per AI-aanroep: `ai-call task=<opdracht> model=<model> source=<kop-opdracht|kop|configuratie-opdracht|configuratie|standaard> config=<id> chapter=<kop>`, zonder notatekst.
 
 Eén regel per aanvraag: `auth=<openwebui|denied> route=<methode pad>`. Het token en de inhoud van nota's worden nooit gelogd; de gunicorn access log staat in de container uit. Andere regels om op te letten: `role-check=denied` (niet-beheerder probeert configuratie te wijzigen) en `Conflict on nota` (409 bij opslaan).
