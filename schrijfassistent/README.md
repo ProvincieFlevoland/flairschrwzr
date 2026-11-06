@@ -66,6 +66,11 @@ The backend reads environment variables. Outside a container it also reads `back
 
 ## Run locally
 
+The complete Docker stack, including the backend and seeded blob emulator, is in
+`docker-compose.local.yaml`. See [local development](../docs/LOCAL-DEVELOPMENT.md).
+The host-backend workflow below remains available; start only `open-webui govchat-admin`
+with Compose when using it, to avoid a second backend on port 8011.
+
 Prerequisites: Python 3.13 (with `uv`, used by `make-venv.sh`), Node 20 or newer.
 
 ```

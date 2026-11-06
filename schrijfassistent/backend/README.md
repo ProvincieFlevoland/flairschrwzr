@@ -122,6 +122,11 @@ curl http://localhost:8000/health
 
 Met Docker:
 
+Voor een volledige lokale Docker-ontwikkelsetup met een afgeleid dev-image,
+blob-emulator en automatische fixture-initialisatie, zie
+[Lokale ontwikkelomgeving](../../docs/LOCAL-DEVELOPMENT.md).
+De bestaande host-setup blijft daarnaast beschikbaar.
+
 ```bash
 docker build -t schrijfassistent-api schrijfassistent/backend
 docker run --rm -p 8000:8000 \

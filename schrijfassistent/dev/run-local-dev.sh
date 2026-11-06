@@ -98,7 +98,7 @@ start_backend() { # $1 = Open WebUI URL the backend verifies tokens against
     AI_MOCK_LOG="$STATE/ai-mock-calls.jsonl" \
     nohup "$PY" -m uvicorn main:app --host 127.0.0.1 --port "$BACKEND_PORT" </dev/null >"$STATE/backend.log" 2>&1 &
     echo $! >"$STATE/backend.pid")
-  local n=0; until curl -fsS "http://127.0.0.1:$BACKEND_PORT/health" >/dev/null 2>&1; do n=$((n+1)); [ $n -gt 60 ] && { echo "backend not healthy"; tail -30 "$STATE/backend.log"; exit 1; }; sleep 0.5; done
+  local n=0; until curl -fsS "http://127.0.0.1:$BACKEND_PORT/health" >/dev/null 2>&1; do n=$((n+1)); [ $n -gt 180 ] && { echo "backend not healthy"; tail -30 "$STATE/backend.log"; exit 1; }; sleep 0.5; done
 }
 stop_backend() {
   if [ -f "$STATE/backend.pid" ]; then
