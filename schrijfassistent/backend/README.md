@@ -91,6 +91,16 @@ De meest specifieke keuze wint (`app/core/model_resolver.py`): kop + opdracht, k
 - Staat een gekozen model niet (meer) in de lijst, of weigert LiteLLM het, dan valt de backend terug op het volgende niveau (uiteindelijk `AI_MODEL`) en zet een waarschuwing in de log. De schrijver merkt er niets van.
 - Met `AI_PROVIDER=foundry` is er geen keuze: alle aanroepen gebruiken `AI_MODEL`, ook als een configuratie `aiModellen` heeft.
 
+### Tellen gebeurt in code, niet door de AI
+
+Een taalmodel kan woorden en zinnen niet betrouwbaar tellen. Daarom telt de backend de tekst van een kop zelf (`app/core/text_count.py`) en geeft de telling mee in de prompt van de structuurcontrole (`agent_structuur`) en Direct Duidelijk (`agent_b1`), tussen de antwoordregels en de invoer. De AI hoeft dan niet meer te tellen, alleen te formuleren.
+
+- **Woord**: alles tussen spaties met minstens één letter of cijfer. Losse leestekens (`-`, `–`, `•`, `€`) tellen niet, en een leesteken splitst geen woord (`GS-voorstel`, `4-5`, `50.000` zijn één woord). Nummering aan het begin van een regel (`1.`, `1.1`, `a)`) telt niet.
+- **Zin**: eindigt op `.`, `!`, `?` of `…`, en aan het eind van een regel. Niet na een afkorting (`bijv.`, `o.a.`, `art.`, `d.w.z.`) of een initiaal (`J.`).
+- **Alinea**: elke regel (Enter in de editor), zoals in Word.
+- **Lengteregels**: staat in de instructie een regel die alleen een limiet is (`• Maximaal 5 woorden`, `• Maximaal 15 woorden per zin`, `• Hooguit drie zinnen`, `• Maximaal 80 woorden per alinea`), dan controleert de backend die zelf en zet de uitkomst ("voldoet" / "voldoet NIET", met de aantallen) in de prompt. Een regel over een deel van de tekst (`Toelichting in maximaal twee zinnen ...`) en `Maximaal N regels` (gedrukte regels) blijven bij de AI, die wel de telling per zin en per alinea krijgt.
+- De B1-meters in de frontend tellen met dezelfde regels (`frontend/src/lib/utils/textCount.js`). `dev/fixtures/text-count-cases.json` bevat de gedeelde testgevallen die beide testsuites controleren.
+
 ## Azure-rechten
 
 De code gebruikt twee manieren van inloggen:

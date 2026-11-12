@@ -67,7 +67,7 @@
         feedbackToSuggestions,
         mergeSpellingSuggestionsWithLocalSpaceRules
     } from '$lib/utils/suggestions.js';
-    import { stripBlockPlain, stripBlockPlainForTaalreview } from '$lib/utils/blockPlainText.js';
+    import { stripBlockPlain, stripBlockPlainForTaalreview, stripBlockPlainWithBreaks } from '$lib/utils/blockPlainText.js';
     import { notaBlocksToClipboardText } from '$lib/utils/clipboardText.js';
     import {
         isTitleAutoGenEligible,
@@ -1133,10 +1133,14 @@
                 chapter_id: chapterId,
                 assignment: assignment
             });
+            // Structuur keeps the line breaks: the backend counts words, sentences and alinea's for the length rules
+            // (backend/app/core/text_count.py) and gives that count to the AI instead of letting it count.
             const userMessage =
                 assignment === 'agent_spelling_grammatica'
                     ? stripBlockPlainForTaalreview(blockContent ?? '')
-                    : stripBlockPlain(blockContent ?? '');
+                    : assignment === 'agent_structuur'
+                      ? stripBlockPlainWithBreaks(blockContent ?? '')
+                      : stripBlockPlain(blockContent ?? '');
 
             const response = await storageFetch(`/generate-agent-response?${params.toString()}`, {
                 method: 'POST',

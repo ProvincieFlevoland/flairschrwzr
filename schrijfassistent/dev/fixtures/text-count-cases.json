@@ -1,0 +1,26 @@
+{
+  "_note": "Gedeelde testgevallen voor de telling in backend/app/core/text_count.py en frontend/src/lib/utils/textCount.js. Beide testsuites lezen dit bestand, zodat de twee hetzelfde tellen. 'sentences' is het aantal woorden per zin, in volgorde.",
+  "cases": [
+    { "name": "titel van vier woorden", "text": "Aanbesteding bouw parkeergarage provinciehuis", "words": 4, "sentences": [4], "paragraphs": 1 },
+    { "name": "koppelteken en getallen zijn één woord", "text": "Subsidietoekenning 4-5 mei comité Flevoland 2024", "words": 6, "sentences": [6], "paragraphs": 1 },
+    { "name": "losse leestekens tellen niet", "text": "Toekennen subsidie – 4-5 mei comité, Flevoland!", "words": 6, "sentences": [6], "paragraphs": 1 },
+    { "name": "samenstellingen met koppelteken", "text": "Het GS-voorstel staat in e-Docs.", "words": 5, "sentences": [5], "paragraphs": 1 },
+    { "name": "bedrag met valutateken", "text": "Het kost € 50.000 per jaar.", "words": 5, "sentences": [5], "paragraphs": 1 },
+    { "name": "opsommingstekens tellen niet", "text": "• Eerste punt\n- Tweede punt\n– Derde punt", "words": 6, "sentences": [2, 2, 2], "paragraphs": 3 },
+    { "name": "genummerde beslispunten", "text": "1. Een parkeergarage te bouwen onder het provinciehuis.\n2. Provinciale Staten voor te stellen een krediet beschikbaar te stellen.", "words": 17, "sentences": [7, 10], "paragraphs": 2 },
+    { "name": "subnummering 1.1", "text": "1.1 Door de parkeergarage komt er ruimte vrij. Hiermee versterkt de provincie haar rol.", "words": 13, "sentences": [7, 6], "paragraphs": 1 },
+    { "name": "letter-nummering", "text": "a) Eerste keuze\nb) Tweede keuze", "words": 4, "sentences": [2, 2], "paragraphs": 2 },
+    { "name": "afkortingen beëindigen geen zin", "text": "Dit is o.a. een test, bijv. van art. 3 en d.w.z. meer. Daarna volgt de rest.", "words": 16, "sentences": [12, 4], "paragraphs": 1 },
+    { "name": "initiaal beëindigt geen zin", "text": "Daarna sprak J. Jansen de raad toe. Hij was kort.", "words": 10, "sentences": [7, 3], "paragraphs": 1 },
+    { "name": "enz. met hoofdletter erna sluit de zin", "text": "We kopen tafels, stoelen enz. De levering is in mei.", "words": 10, "sentences": [5, 5], "paragraphs": 1 },
+    { "name": "enz. midden in de zin", "text": "Tafels, stoelen enz. worden in mei geleverd.", "words": 7, "sentences": [7], "paragraphs": 1 },
+    { "name": "vraag- en uitroepteken", "text": "Is dit klaar? Ja! Dan gaan we verder.", "words": 8, "sentences": [3, 1, 4], "paragraphs": 1 },
+    { "name": "beletselteken gevolgd door kleine letter", "text": "Het kost veel … en dat is jammer. Echt…", "words": 8, "sentences": [7, 1], "paragraphs": 1 },
+    { "name": "decimalen en aanhalingstekens", "text": "Het groeide met 2,5 procent. \"Dat is goed.\" Zei ze.", "words": 10, "sentences": [5, 3, 2], "paragraphs": 1 },
+    { "name": "alinea's op aparte regels", "text": "Eerste alinea hier.\n\nTweede alinea verder. Met een tweede zin.", "words": 10, "sentences": [3, 3, 4], "paragraphs": 2 },
+    { "name": "regel die met kleine letter doorloopt", "text": "1. De agrariërs te informeren dat de provincie haar mogelijkheden\nbenut.\nen geen aanvullende financiering kan bieden.", "words": 16, "sentences": [10, 6], "paragraphs": 3 },
+    { "name": "titel zonder punt gevolgd door alinea", "text": "Kern van het voorstel\nWij bouwen een garage.", "words": 8, "sentences": [4, 4], "paragraphs": 2 },
+    { "name": "lege tekst", "text": "  \n \n", "words": 0, "sentences": [], "paragraphs": 0 },
+    { "name": "alleen leestekens", "text": "– • … !", "words": 0, "sentences": [], "paragraphs": 1 }
+  ]
+}

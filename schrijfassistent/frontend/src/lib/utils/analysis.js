@@ -2,6 +2,7 @@
 // `b1LexiconLoader.js` fetches them from the published assets on the first use of the Direct Duidelijk tab and hands them to
 // `setB1Lexicons`; until then the lists are empty and `b1LexiconsLoaded()` is false.
 import { mergeB1Guidelines, getB1MetricStatus } from './b1Guidelines.js';
+import { countText, wordsIn } from './textCount.js';
 
 export const PASSIVE_PATTERNS = [
     /\bwordt\b/gi, /\bworden\b/gi, /\bwerd\b/gi, /\bwerden\b/gi,
@@ -136,7 +137,7 @@ export function stripHtmlPreservingParagraphs(raw) {
  *   sentenceCount: number,
  *   activeVoicePercent: number,
  *   heldereZinnenScore: number,
- *   avgSentencesPerParagraph: number, // sum of '.' per newline chunk (after stripping leading 'N. ') ÷ paragraph count; oversplit cap when chunk count exceeds total periods
+ *   avgSentencesPerParagraph: number, // sentences ÷ lines; one alinea when the lines outnumber the sentences (oversplit DOM)
  * }}
  */
 export function calculateB1ParameterSnapshot(text) {
@@ -145,18 +146,18 @@ export function calculateB1ParameterSnapshot(text) {
     const withBreaks = stripHtmlPreservingParagraphs(text);
     if (!withBreaks) return null;
 
-    const paragraphs = withBreaks.split(/\n/).map((p) => p.trim()).filter((p) => p.length > 0);
+    // Words, sentences and paragraphs are counted by `textCount.js` (same rules as the backend): punctuation and list
+    // markers are not words, and a full stop after an abbreviation ("bijv.", "o.a.") does not end a sentence.
+    const counted = countText(withBreaks);
+    const paragraphs = counted.paragraphs.map((p) => p.text);
     const paragraphCount = Math.max(paragraphs.length, 1);
 
     const singleSpaceText = paragraphs.join(' ');
-    const words = singleSpaceText.split(/\s+/).filter((w) => w.length > 0);
-    const wordCount = words.length;
+    const words = paragraphs.flatMap((p) => wordsIn(p, true));
+    const wordCount = counted.words;
     if (wordCount < 1) return null;
 
-    const sentenceParts = singleSpaceText
-        .split(/[.!?]+/)
-        .map((s) => s.trim())
-        .filter((s) => s.length > 2);
+    const sentenceParts = counted.sentences.map((s) => s.text);
     const sentenceCountForAvg = Math.max(sentenceParts.length, 1);
     const avgWordsPerSentence = Math.round(wordCount / sentenceCountForAvg);
 
@@ -207,19 +208,13 @@ export function calculateB1ParameterSnapshot(text) {
     const sl = statusToScore(getB1MetricStatus('longWordPer1000', longWordPer1000, m.longWordPer1000));
     const heldereZinnenScore = Math.round((sj + sf + sl) / 3);
 
-    // "Gem. zinnen/alinea": naive period count per newline-separated chunk (user-entered alinea),
-    // minus leading list marker "N. " so "1. Zin een. Zin twee." counts as 2 dots.
-    let totalPeriods = 0;
-    for (const p of paragraphs) {
-        const withoutEnum = p.replace(/^\s*\d+\.\s*/, '');
-        const n = (withoutEnum.match(/\./g) || []).length;
-        totalPeriods += n;
-    }
+    // "Gem. zinnen/alinea": sentences per line (user-entered alinea). When the editor DOM splits one sentence over more
+    // lines than there are sentences, the lines are not real alinea's and the text counts as one alinea.
     const paragraphCountForSentencesPerPara =
-        paragraphCount > totalPeriods && totalPeriods > 0 ? 1 : paragraphCount;
+        paragraphCount > sentenceCount && sentenceCount > 0 ? 1 : paragraphCount;
     const avgSentencesPerParagraph =
         paragraphCountForSentencesPerPara > 0
-            ? Math.round((totalPeriods / paragraphCountForSentencesPerPara) * 10) / 10
+            ? Math.round((sentenceCount / paragraphCountForSentencesPerPara) * 10) / 10
             : 0;
 
     return {
@@ -252,10 +247,11 @@ export const calculateMetrics = (text) => {
 
     // Remove HTML tags for metric calculation
     const cleanText = text.replace(/<[^>]*>/g, ' ');
-    
-    const sentences = cleanText.split(/[.!?]+/).filter(s => s.trim().length > 2);
-    const words = cleanText.split(/\s+/).filter(w => w.length > 0);
-    const wordCount = words.length;
+
+    const counted = countText(stripHtmlPreservingParagraphs(text));
+    const sentences = counted.sentences;
+    const words = counted.paragraphs.flatMap((p) => wordsIn(p.text, true));
+    const wordCount = counted.words;
 
     if (wordCount < 1) return null;
 
