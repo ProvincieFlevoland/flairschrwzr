@@ -41,3 +41,21 @@ export function stripBlockPlainForTaalreview(html) {
         .replace(/[\u1680\u2000-\u200A\u202F\u205F\u3000]/g, ' ')
         .trim();
 }
+
+/**
+ * Plain text from block HTML with one line per paragraph (`<p>`, `<div>`, `<li>`, heading) or line break (`<br>`).
+ * Sent to the structuur agent so the backend can count alinea's (backend/app/core/text_count.py); whitespace within a
+ * line is collapsed and empty lines are dropped.
+ * @param {string} html
+ * @returns {string}
+ */
+export function stripBlockPlainWithBreaks(html) {
+    return decodeHtmlSpaceEntities(html || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(?:p|div|li|h[1-6]|blockquote)>/gi, '\n')
+        .replace(/<[^>]*>/g, ' ')
+        .split('\n')
+        .map((line) => line.replace(/\s+/g, ' ').trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
+}

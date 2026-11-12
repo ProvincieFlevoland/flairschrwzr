@@ -102,7 +102,7 @@ export function getDefaultB1Guidelines() {
                 warn: [16, 20],
                 direction: 'lower',
                 howComputed:
-                    'Alle woorden in het actieve hoofdstuk gedeeld door het aantal zinnen (gesplitst op . ! ?).',
+                    'Alle woorden in het actieve hoofdstuk gedeeld door het aantal zinnen. Leestekens en nummering tellen niet als woord; een zin eindigt op . ! ? of … (niet na afkortingen als “bijv.” of “o.a.”) of aan het eind van een regel.',
                 sources: [
                     {
                         label: 'Schrijven bij de overheid — Korte zinnen',
@@ -212,7 +212,7 @@ export function getDefaultB1Guidelines() {
                 warn: [81, 120],
                 direction: 'lower',
                 howComputed:
-                    'Totaal aantal woorden gedeeld door het geschatte aantal alinea’s (witregels / blokscheiding in de HTML-structuur van het hoofdstuk).',
+                    'Totaal aantal woorden (zonder leestekens en nummering) gedeeld door het aantal alinea’s; elke regel (Enter) is een alinea.',
                 sources: [
                     {
                         label: 'CommunicatieRijk — Taalniveau B1',
@@ -289,7 +289,7 @@ export function getDefaultB1Guidelines() {
                 warn: [7, 10],
                 direction: 'lower',
                 howComputed:
-                    'Aantal zinnen (split op . ! ?) gedeeld door het geschatte aantal alinea’s (zoals bij “Gem. woorden/alinea”).',
+                    'Aantal zinnen (zoals bij “Gem. woorden/zin”) gedeeld door het aantal alinea’s (zoals bij “Gem. woorden/alinea”).',
                 sources: [
                     {
                         label: 'Schrijven bij de overheid — structuur',

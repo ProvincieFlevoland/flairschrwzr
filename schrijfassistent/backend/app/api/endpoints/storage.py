@@ -9,6 +9,7 @@ from app.core.blob_guard import check_segment, check_config_id, check_item_id, c
 from app.core.validator import validate_agent_response
 from app.core.agent_defaults import DEFAULT_INSTRUCTIONS, resolve_instruction
 from app.core.model_resolver import resolve_model, check_upload_models, TITLE_TASK, SUMMARY_TASK
+from app.core.text_count import count_block, truncate_words
 from typing import Dict, Any, Optional
 import json
 import logging
@@ -266,6 +267,19 @@ def get_ai_models(user: Dict[str, Any] = Depends(require_beheerder)):
     return answer
 
 
+# Opdrachten die over lengte oordelen: de applicatie telt de invoer en geeft de telling mee in de prompt, zodat het
+# model niet zelf hoeft te tellen (dat kan een taalmodel niet betrouwbaar). Structuur krijgt de tekst met regeleinden
+# (alinea's); Direct Duidelijk krijgt de tekst zonder regeleinden en dus alleen woorden en zinnen.
+COUNTED_ASSIGNMENTS = {"agent_structuur": True, "agent_b1": False}
+
+
+def _counts_for_prompt(assignment: str, instruction: str, user_message: str) -> str:
+    """The counting facts for `assignment` (see app/core/text_count.py), or "" when the opdracht does not get them."""
+    if assignment not in COUNTED_ASSIGNMENTS:
+        return ""
+    return count_block(user_message, instruction, include_paragraphs=COUNTED_ASSIGNMENTS[assignment])
+
+
 @router.post("/generate-agent-response")
 def generate_agent_response(
     config_id: str = Query(...),
@@ -365,7 +379,11 @@ def generate_agent_response(
             try:
                 model = _model_for(assignment, config_id, _config_metadata(config_id), chapter_data, chapter_id)
                 # We combine the instruction from storage with the user's message
-                full_prompt = f"INSTRUCTION: {instruction}\n\n{output_rules}\n\nGEBRUIKER INPUT: {user_message}"
+                full_prompt = f"INSTRUCTION: {instruction}\n\n{output_rules}\n\n"
+                counts = _counts_for_prompt(assignment, instruction, user_message)
+                if counts:
+                    full_prompt += f"{counts}\n\n"
+                full_prompt += f"GEBRUIKER INPUT: {user_message}"
                 ai_response_text = ai_agent.get_agent_response(full_prompt, model=model)
 
                 # 5. If a template exists, validate the response
@@ -689,10 +707,8 @@ def generate_nota_title(body: Dict[str, Any] = Body(...)):
             if len(line) > 2 and line.startswith(opening) and line.endswith(closing):
                 line = line[1:-1].strip()
         line = line.rstrip(".!?;:")
-        words = line.split()
-        if len(words) > max_words:
-            words = words[:max_words]
-        return " ".join(words)
+        # Counted as in app/core/text_count.py: a loose dash or other punctuation is not a word.
+        return truncate_words(line, max_words)
 
     try:
         raw = ai_agent.get_agent_response(prompt, model=_model_for(TITLE_TASK, config_id, _config_metadata(config_id)))
